@@ -1,4 +1,4 @@
-# WoodChunk 1.5
+# WoodChunk 1.6
 
 Modulare Spiel-Engine mit klarer Trennung von Core-, Game- und UI-Modulen.
 
