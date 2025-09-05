@@ -1,0 +1,12 @@
+{
+  "biomeName": "Badlands",
+  "tiles": [],
+  "excludedFiles": [
+    {
+      "name": "Badlands.png",
+      "path": "assets/biomes/Badlands/Badlands.png",
+      "isTile": false,
+      "reason": "Titelbild des Bioms"
+    }
+  ]
+}

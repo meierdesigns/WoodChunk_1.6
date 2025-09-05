@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WoodChunk 1.6</title>
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <link rel="stylesheet" href="modules/core/styles.css?v=1.5.2">
+    <style>
+        /* Cache busting for Buildings images */
+        img[src*="Buildings"], img[src*="slice_"], img[src*="tile_"] {
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            image-rendering: pixelated;
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- Header Navigation -->
+                       <nav class="app-navigation" id="appNavigation">
+                   <a href="/" class="nav-btn active" data-view="menu" data-view="menu" data-icon="🏠">Menu</a>
+                   <a href="/game" class="nav-btn" data-view="game" data-icon="🎮">Game</a>
+                   <a href="/modules/itemEditor/itemEditor.html" class="nav-btn" data-view="itemEditor" data-icon="🔧">Item</a>
+                   <a href="/modules/peopleEditor/index.html" class="nav-btn" data-view="peopleEditor" data-icon="👥">People</a>
+                   <a href="/modules/characterEditor/characterEditor.html" class="nav-btn" data-view="characterEditor" data-icon="⚔️">Character</a>
+                   <a href="/modules/hexMapEditor/hexMapEditor.html" class="nav-btn" data-view="hexMapEditor" data-icon="🗺️">HexMap</a>
+                   <a href="/modules/abilitiesEditor/abilitiesEditor.html" class="nav-btn" data-view="abilitiesEditor" data-icon="✨">Abilities</a>
+                   <a href="/modules/tileEditor/tileEditor.html" class="nav-btn" data-view="tileEditor" data-icon="🧩">Tiles</a>
+                   <a href="/modules/settings/settings.html" class="nav-btn" data-view="settings" data-icon="⚙️">Settings</a>
+               </nav>
+        
+        <div class="main-menu">
+            <div class="menu-header">
+                <h1>WoodChunk 1.6</h1>
+                <p>Adventure Awaits</p>
+            </div>
+            <nav class="menu-navigation">
+                                <div class="menu-grid">
+                    <a href="/game" class="menu-item game-item">
+                        <span class="icon">🎮</span>
+                        <span class="label">Play Game</span>
+                        <span class="description">Start your adventure</span>
+                    </a>
+                    <a href="/modules/itemEditor/itemEditor.html" class="menu-item item-item">
+                        <span class="icon">🔧</span>
+                        <span class="label">Item Editor</span>
+                        <span class="description">Manage game items and equipment</span>
+                    </a>
+                    <a href="/modules/peopleEditor/index.html" class="menu-item people-item">
+                        <span class="icon">👥</span>
+                        <span class="label">People Editor</span>
+                        <span class="description">Edit NPCs and populations</span>
+                    </a>
+                    <a href="/modules/characterEditor/characterEditor.html" class="menu-item character-item">
+                        <span class="icon">⚔️</span>
+                        <span class="label">Character Editor</span>
+                        <span class="description">Create and customize characters</span>
+                    </a>
+                    <a href="/modules/hexMapEditor/hexMapEditor.html" class="menu-item hexmap-item">
+                        <span class="icon">🗺️</span>
+                        <span class="label">HexMap Editor</span>
+                        <span class="description">Design hex-based maps</span>
+                    </a>
+                    <a href="/modules/abilitiesEditor/abilitiesEditor.html" class="menu-item abilities-item">
+                        <span class="icon">⚡</span>
+                        <span class="label">Abilities Editor</span>
+                        <span class="description">Manage combat, magic, and skills</span>
+                    </a>
+                    <a href="/modules/tileEditor/tileEditor.html" class="menu-item tile-item">
+                        <span class="icon">🧩</span>
+                        <span class="label">Tile Editor</span>
+                        <span class="description">Create and edit tiles</span>
+                    </a>
+                    <a href="/modules/settings/settings.html" class="menu-item settings-item">
+                        <span class="icon">⚙️</span>
+                        <span class="label">Settings</span>
+                        <span class="description">Configure your experience</span>
+                    </a>
+                </div>
+            </nav>
+            <div class="menu-footer">
+                <p>Version 1.6</p>
+            </div>
+        </div>
+
+        
+
+    </div>
+
+    <!-- Core Module -->
+    <script src="modules/core/AppCore.js?v=f18f0cb7"></script>
+    
+    <!-- Debugger Module -->
+    <script src="modules/core/Debugger.js?v=38be1272"></script>
+    
+    <!-- Abilities Editor Modules -->
+    <script src="modules/abilitiesEditor/AbilityDetailsModal.js?v=1.5.2"></script>
+    <script src="modules/abilitiesEditor/AbilitiesTable.js?v=1.5.2"></script>
+    
+    <!-- Other Editor Modules -->
+    <script src="modules/itemEditor/itemEditor.js?v=1951465b"></script>
+    <script src="modules/peopleEditor/peopleEditor.js?v=a0a47cba"></script>
+    <script src="modules/characterEditor/characterEditor.js?v=5f053168"></script>
+    <script src="modules/tileEditor/index.js?v=68326a30"></script>
+    
+    <script>
+        // Wait for DOM to be ready before loading the main module
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('[HTML] DOM loaded, checking modules...');
+            console.log('[HTML] AbilityDetailsModal available:', typeof window.AbilityDetailsModal);
+            console.log('[HTML] AbilitiesTable available:', typeof window.AbilitiesTable);
+            
+            if (typeof window.AbilityDetailsModal === 'undefined' || typeof window.AbilitiesTable === 'undefined') {
+                console.error('[HTML] Modules not loaded, waiting...');
+                setTimeout(function() {
+                    console.log('[HTML] Retrying module check...');
+                    console.log('[HTML] AbilityDetailsModal available:', typeof window.AbilityDetailsModal);
+                    console.log('[HTML] AbilitiesTable available:', typeof window.AbilitiesTable);
+                    
+                    if (typeof window.AbilityDetailsModal !== 'undefined' && typeof window.AbilitiesTable !== 'undefined') {
+                        console.log('[HTML] Modules loaded, loading abilitiesEditor...');
+                        const script = document.createElement('script');
+                        script.src = 'modules/abilitiesEditor/abilitiesEditor.js';
+                        document.body.appendChild(script);
+                    } else {
+                        console.error('[HTML] Modules still not available after retry');
+                    }
+                }, 100);
+            } else {
+                console.log('[HTML] Modules loaded, loading abilitiesEditor...');
+                const script = document.createElement('script');
+                script.src = 'modules/abilitiesEditor/abilitiesEditor.js';
+                document.body.appendChild(script);
+            }
+        });
+    </script>
+    <script src="modules/itemEditor/itemEditor.js?v=1951465b"></script>
+    <script src="modules/peopleEditor/peopleEditor.js?v=a0a47cba"></script>
+    <script src="modules/characterEditor/characterEditor.js?v=5f053168"></script>
+    <script src="modules/tileEditor/index.js?v=68326a30"></script>
+
+</body>
+</html>

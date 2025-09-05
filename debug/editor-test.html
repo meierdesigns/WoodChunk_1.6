@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor Test - WoodChunk 1.5</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f0f0f0;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .editor-test {
+            border: 2px solid #ddd;
+            min-height: 300px;
+            margin: 20px 0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .success { border-color: #28a745; }
+        .error { border-color: #dc3545; }
+        .loading { border-color: #ffc107; }
+        .test-header {
+            background: #f8f9fa;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            font-weight: bold;
+        }
+        .test-content {
+            padding: 20px;
+            min-height: 200px;
+        }
+        .status {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .status.loading { background: #fff3cd; color: #856404; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Editor Test - WoodChunk 1.5</h1>
+    
+    <div class="test-container">
+        <h2>Item Editor Test</h2>
+        <div class="editor-test loading" id="itemEditorTest">
+            <div class="test-header">⚔️ Item Editor</div>
+            <div class="test-content">
+                <div class="status loading">Lade Item Editor...</div>
+                <div id="itemEditorContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="test-container">
+        <h2>Character Editor Test</h2>
+        <div class="editor-test loading" id="characterEditorTest">
+            <div class="test-header">👤 Character Editor</div>
+            <div class="test-content">
+                <div class="status loading">Lade Character Editor...</div>
+                <div id="characterEditorContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="test-container">
+        <h2>Abilities Editor Test</h2>
+        <div class="editor-test loading" id="abilitiesEditorTest">
+            <div class="test-header">✨ Abilities Editor</div>
+            <div class="test-content">
+                <div class="status loading">Lade Abilities Editor...</div>
+                <div id="abilitiesEditorContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="test-container">
+        <h2>People Editor Test</h2>
+        <div class="editor-test loading" id="peopleEditorTest">
+            <div class="test-header">👥 People Editor</div>
+            <div class="test-content">
+                <div class="status loading">Lade People Editor...</div>
+                <div id="peopleEditorContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Test ItemEditor Module
+        async function testItemEditor() {
+            const container = document.getElementById('itemEditorTest');
+            const statusDiv = container.querySelector('.status');
+            
+            try {
+                console.log('Testing ItemEditor module...');
+                
+                // Load HTML
+                const response = await fetch('/modules/itemEditor/itemEditor.html');
+                if (response.ok) {
+                    const html = await response.text();
+                    document.getElementById('itemEditorContainer').innerHTML = html;
+                    
+                    // Load JavaScript
+                    const script = document.createElement('script');
+                    script.src = '/modules/itemEditor/itemEditor.js';
+                    
+                    script.onload = () => {
+                        console.log('ItemEditor script loaded');
+                        if (window.ItemEditor) {
+                            window.itemEditor = new ItemEditor();
+                            window.itemEditor.initialize().then(() => {
+                                container.className = 'editor-test success';
+                                statusDiv.className = 'status success';
+                                statusDiv.textContent = '✅ ItemEditor erfolgreich geladen!';
+                            });
+                        }
+                    };
+                    
+                    script.onerror = () => {
+                        container.className = 'editor-test error';
+                        statusDiv.className = 'status error';
+                        statusDiv.textContent = '❌ ItemEditor Script konnte nicht geladen werden';
+                    };
+                    
+                    document.head.appendChild(script);
+                }
+            } catch (error) {
+                console.error('ItemEditor test failed:', error);
+                container.className = 'editor-test error';
+                statusDiv.className = 'status error';
+                statusDiv.textContent = `❌ Fehler: ${error}`;
+            }
+        }
+
+        // Test CharacterEditor Module
+        async function testCharacterEditor() {
+            const container = document.getElementById('characterEditorTest');
+            const statusDiv = container.querySelector('.status');
+            
+            try {
+                console.log('Testing CharacterEditor module...');
+                
+                // Load HTML
+                const response = await fetch('/modules/characterEditor/characterEditor.html');
+                if (response.ok) {
+                    const html = await response.text();
+                    document.getElementById('characterEditorContainer').innerHTML = html;
+                    
+                    // Load JavaScript
+                    const script = document.createElement('script');
+                    script.src = '/modules/characterEditor/characterEditor.js';
+                    
+                    script.onload = () => {
+                        console.log('CharacterEditor script loaded');
+                        if (window.CharacterEditor) {
+                            window.characterEditor = new CharacterEditor();
+                            window.characterEditor.initialize().then(() => {
+                                container.className = 'editor-test success';
+                                statusDiv.className = 'status success';
+                                statusDiv.textContent = '✅ CharacterEditor erfolgreich geladen!';
+                            });
+                        }
+                    };
+                    
+                    script.onerror = () => {
+                        container.className = 'editor-test error';
+                        statusDiv.className = 'status error';
+                        statusDiv.textContent = '❌ CharacterEditor Script konnte nicht geladen werden';
+                    };
+                    
+                    document.head.appendChild(script);
+                }
+            } catch (error) {
+                console.error('CharacterEditor test failed:', error);
+                container.className = 'editor-test error';
+                statusDiv.className = 'status error';
+                statusDiv.textContent = `❌ Fehler: ${error}`;
+            }
+        }
+
+        // Test AbilitiesEditor Module
+        async function testAbilitiesEditor() {
+            const container = document.getElementById('abilitiesEditorTest');
+            const statusDiv = container.querySelector('.status');
+            
+            try {
+                console.log('Testing AbilitiesEditor module...');
+                
+                // Load HTML
+                const response = await fetch('/modules/abilitiesEditor/abilitiesEditor.html');
+                if (response.ok) {
+                    const html = await response.text();
+                    document.getElementById('abilitiesEditorContainer').innerHTML = html;
+                    
+                    // Load JavaScript
+                    const script = document.createElement('script');
+                    script.src = '/modules/abilitiesEditor/abilitiesEditor.js';
+                    
+                    script.onload = () => {
+                        console.log('AbilitiesEditor script loaded');
+                        if (window.AbilitiesEditor) {
+                            window.abilitiesEditor = new AbilitiesEditor();
+                            container.className = 'editor-test success';
+                            statusDiv.className = 'status success';
+                            statusDiv.textContent = '✅ AbilitiesEditor erfolgreich geladen!';
+                        }
+                    };
+                    
+                    script.onerror = () => {
+                        container.className = 'editor-test error';
+                        statusDiv.className = 'status error';
+                        statusDiv.textContent = '❌ AbilitiesEditor Script konnte nicht geladen werden';
+                    };
+                    
+                    document.head.appendChild(script);
+                }
+            } catch (error) {
+                console.error('AbilitiesEditor test failed:', error);
+                container.className = 'editor-test error';
+                statusDiv.className = 'status error';
+                statusDiv.textContent = `❌ Fehler: ${error}`;
+            }
+        }
+
+        // Test PeopleEditor Module
+        async function testPeopleEditor() {
+            const container = document.getElementById('peopleEditorTest');
+            const statusDiv = container.querySelector('.status');
+            
+            try {
+                console.log('Testing PeopleEditor module...');
+                
+                // Load HTML
+                const response = await fetch('/modules/peopleEditor/index.html');
+                if (response.ok) {
+                    const html = await response.text();
+                    document.getElementById('peopleEditorContainer').innerHTML = html;
+                    
+                    // Load JavaScript
+                    const script = document.createElement('script');
+                    script.src = '/modules/peopleEditor/peopleEditor.js';
+                    
+                    script.onload = () => {
+                        console.log('PeopleEditor script loaded');
+                        if (window.PeopleEditor) {
+                            window.peopleEditor = new PeopleEditor();
+                            container.className = 'editor-test success';
+                            statusDiv.className = 'status success';
+                            statusDiv.textContent = '✅ PeopleEditor erfolgreich geladen!';
+                        }
+                    };
+                    
+                    script.onerror = () => {
+                        container.className = 'editor-test error';
+                        statusDiv.className = 'status error';
+                        statusDiv.textContent = '❌ PeopleEditor Script konnte nicht geladen werden';
+                    };
+                    
+                    document.head.appendChild(script);
+                }
+            } catch (error) {
+                console.error('PeopleEditor test failed:', error);
+                container.className = 'editor-test error';
+                statusDiv.className = 'status error';
+                statusDiv.textContent = `❌ Fehler: ${error}`;
+            }
+        }
+
+        // Start tests when page loads
+        window.addEventListener('load', () => {
+            setTimeout(testItemEditor, 500);
+            setTimeout(testCharacterEditor, 1000);
+            setTimeout(testAbilitiesEditor, 1500);
+            setTimeout(testPeopleEditor, 2000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Test - WoodChunk 1.5</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f0f0f0;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .css-test {
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>🧪 CSS Test - WoodChunk 1.5</h1>
+    
+    <div class="test-container">
+        <h2>CSS-Dateien Test</h2>
+        <div id="cssTestResults">
+            <div class="css-test">Lade CSS-Dateien...</div>
+        </div>
+    </div>
+
+    <script>
+        async function testCSSFile(cssPath, name) {
+            try {
+                const response = await fetch(cssPath);
+                if (response.ok) {
+                    const content = await response.text();
+                    return {
+                        success: true,
+                        name: name,
+                        path: cssPath,
+                        size: content.length,
+                        preview: content.substring(0, 100) + '...'
+                    };
+                } else {
+                    return {
+                        success: false,
+                        name: name,
+                        path: cssPath,
+                        error: `HTTP ${response.status}: ${response.statusText}`
+                    };
+                }
+            } catch (error) {
+                return {
+                    success: false,
+                    name: name,
+                    path: cssPath,
+                    error: error.message
+                };
+            }
+        }
+
+        async function runCSSTests() {
+            const cssFiles = [
+                { path: '/modules/itemEditor/itemEditor.css', name: 'Item Editor CSS' },
+                { path: '/modules/characterEditor/characterEditor.css', name: 'Character Editor CSS' },
+                { path: '/modules/abilitiesEditor/abilitiesEditor.css', name: 'Abilities Editor CSS' },
+                { path: '/modules/peopleEditor/peopleEditor.css', name: 'People Editor CSS' },
+                { path: '/modules/colorEditor/colorEditor.css', name: 'Color Editor CSS' },
+                { path: '/modules/tileEditor/tileEditor.css', name: 'Tile Editor CSS' }
+            ];
+
+            const resultsContainer = document.getElementById('cssTestResults');
+            resultsContainer.innerHTML = '';
+
+            for (const cssFile of cssFiles) {
+                const result = await testCSSFile(cssFile.path, cssFile.name);
+                const resultDiv = document.createElement('div');
+                resultDiv.className = `css-test ${result.success ? 'success' : 'error'}`;
+                
+                if (result.success) {
+                    resultDiv.innerHTML = `
+                        <strong>✅ ${result.name}</strong><br>
+                        <small>Pfad: ${result.path}</small><br>
+                        <small>Größe: ${result.size} Zeichen</small><br>
+                        <small>Vorschau: ${result.preview}</small>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <strong>❌ ${result.name}</strong><br>
+                        <small>Pfad: ${result.path}</small><br>
+                        <small>Fehler: ${result.error}</small>
+                    `;
+                }
+                
+                resultsContainer.appendChild(resultDiv);
+            }
+        }
+
+        // Start tests when page loads
+        window.addEventListener('load', runCSSTests);
+    </script>
+</body>
+</html>

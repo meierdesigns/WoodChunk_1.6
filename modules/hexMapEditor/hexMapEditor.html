@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HexMap Editor - WoodChunk 1.5</title>
+    <link rel="icon" type="image/x-icon" href="../../assets/favicon.ico">
+    <link rel="stylesheet" href="../../modules/core/styles.css?v=v1">
+    <style>
+        /* Cache busting for Buildings images */
+        img[src*="Buildings"], img[src*="slice_"], img[src*="tile_"] {
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            image-rendering: pixelated;
+        }
+    </style>
+    <style>
+        body { 
+            margin: 0; 
+            padding: 0; 
+            overflow: hidden; 
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        }
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        .iframe-container {
+            height: calc(100vh - 120px);
+            padding: 1rem;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 1rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Navigation -->
+                   <nav class="app-navigation" id="appNavigation">
+                   <a href="/" class="nav-btn" data-view="menu" data-view="menu" data-icon="🏠">Menu</a>
+                   <a href="/modules/itemEditor/itemEditor.html" class="nav-btn" data-view="itemEditor" data-icon="🛡️">Item</a>
+                   <a href="/modules/peopleEditor/index.html" class="nav-btn" data-view="peopleEditor" data-icon="👥">People</a>
+                   <a href="/modules/characterEditor/characterEditor.html" class="nav-btn" data-view="characterEditor" data-icon="⚔️">Character</a>
+                   <a href="/modules/hexMapEditor/hexMapEditor.html" class="nav-btn active" data-view="hexMapEditor" data-icon="🗺️">HexMap</a>
+                   <a href="/modules/abilitiesEditor/abilitiesEditor.html" class="nav-btn" data-view="abilitiesEditor" data-icon="✨">Abilities</a>
+                   <a href="/modules/tileEditor/tileEditor.html" class="nav-btn" data-view="tileEditor" data-icon="🧩">Tiles</a>
+               </nav>
+    
+    <div class="iframe-container">
+        <iframe src="index.html" title="HexMap Editor"></iframe>
+    </div>
+
+    <!-- Load modules in correct order -->
+    <script src="utils/BiomeUtils.js?v=v1"></script>
+    <script src="utils/StorageUtils.js?v=v1"></script>
+    <script src="utils/DOMUtils.js?v=v1"></script>
+    <script src="core/core.js?v=v1"></script>
+    <script src="core/renderer.js?v=v1"></script>
+    <script src="ui/main.js?v=v1"></script>
+    <script src="modules/BiomeCore.js?v=v1"></script>
+    <script src="modules/BiomeData.js?v=v1"></script>
+    <script src="modules/BiomeUI.js?v=v1"></script>
+    
+    <!-- Debugger Module -->
+    <!-- <script src="modules/core/Debugger.js?v=v1"></script> -->
+    <!-- TileEditor loading disabled for HexMapEditor -->
+    <script>
+        // Disable TileEditor loading for HexMapEditor
+        window.DISABLE_TILE_EDITOR = true;
+        console.log('[HexMapEditor] TileEditor loading disabled');
+    </script>
+</body>
+</html>

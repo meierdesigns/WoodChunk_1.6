@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Fly-in Card</title>
+    <style>
+        /* Fly-in Card Container */
+        .debug-flyin-container {
+            position: fixed;
+            top: 20px;
+            right: -400px; /* Start hidden */
+            width: 380px;
+            height: calc(100vh - 40px);
+            background: #1a1a1a;
+            color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            transition: right 0.3s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            border: 2px solid #4CAF50;
+        }
+
+        .debug-flyin-container.open {
+            right: 20px;
+        }
+
+        /* Header */
+        .debug-flyin-header {
+            background: #2a2a2a;
+            padding: 15px;
+            border-bottom: 1px solid #444;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .debug-flyin-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .debug-flyin-toggle {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .debug-flyin-toggle:hover {
+            background: #45a049;
+        }
+
+        /* Content */
+        .debug-flyin-content {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            font-size: 12px;
+        }
+
+        /* Sections */
+        .debug-section {
+            background: #333;
+            border: 1px solid #555;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .debug-section h3 {
+            margin: 0 0 8px 0;
+            color: #4CAF50;
+            font-size: 14px;
+        }
+
+        .debug-section button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 3px;
+            cursor: pointer;
+            margin: 2px;
+            font-size: 11px;
+        }
+
+        .debug-section button:hover {
+            background: #45a049;
+        }
+
+        .debug-section button.danger {
+            background: #f44336;
+        }
+
+        .debug-section button.danger:hover {
+            background: #d32f2f;
+        }
+
+        /* Status indicators */
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+
+        .status-indicator.success { background: #4CAF50; }
+        .status-indicator.error { background: #f44336; }
+        .status-indicator.warning { background: #ff9800; }
+        .status-indicator.info { background: #2196F3; }
+
+        /* Log output */
+        .debug-log {
+            background: #222;
+            border: 1px solid #444;
+            border-radius: 3px;
+            padding: 8px;
+            margin-top: 8px;
+            font-family: monospace;
+            font-size: 10px;
+            max-height: 120px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        .debug-log.success { border-color: #4CAF50; color: #4CAF50; }
+        .debug-log.error { border-color: #f44336; color: #f44336; }
+        .debug-log.warning { border-color: #ff9800; color: #ff9800; }
+
+        /* Metrics */
+        .debug-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .metric-item {
+            background: #333;
+            border: 1px solid #555;
+            border-radius: 3px;
+            padding: 6px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 14px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .metric-label {
+            font-size: 10px;
+            color: #888;
+        }
+
+        /* Toggle button for fly-in */
+        .debug-flyin-trigger {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 10000;
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .debug-flyin-trigger:hover {
+            background: #45a049;
+            transform: scale(1.1);
+        }
+        
+        /* Cache busting for Buildings images */
+        img[src*="Buildings"], img[src*="slice_"], img[src*="tile_"] {
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            image-rendering: pixelated;
+        }
+
+        /* Auto-refresh indicator */
+        .auto-refresh-indicator {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #4CAF50;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Toggle Button -->
+    <button class="debug-flyin-trigger" onclick="toggleDebugFlyin()" title="Debug Panel">🐛</button>
+
+    <!-- Fly-in Debug Card -->
+    <div id="debugFlyinCard" class="debug-flyin-container">
+        <div class="debug-flyin-header">
+            <div class="debug-flyin-title">🐛 Debug Panel</div>
+            <button class="debug-flyin-toggle" onclick="toggleDebugFlyin()">✕</button>
+        </div>
+        
+        <div class="debug-flyin-content">
+            <!-- System Status -->
+            <div class="debug-section">
+                <h3><span class="status-indicator success"></span>System Status</h3>
+                <button onclick="checkSystemStatus()">Check Status</button>
+                <button onclick="checkTileEditor()">Check TileEditor</button>
+                <button onclick="checkBiomeData()">Check BiomeData</button>
+                <div id="system-status-log" class="debug-log"></div>
+            </div>
+
+            <!-- Performance -->
+            <div class="debug-section">
+                <h3><span class="status-indicator info"></span>Performance</h3>
+                <button onclick="startPerformanceMonitoring()">Start Monitor</button>
+                <button onclick="stopPerformanceMonitoring()">Stop Monitor</button>
+                <div class="debug-metrics">
+                    <div class="metric-item">
+                        <div class="metric-value" id="fps-value">--</div>
+                        <div class="metric-label">FPS</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value" id="memory-value">--</div>
+                        <div class="metric-label">Memory</div>
+                    </div>
+                </div>
+                <div id="performance-log" class="debug-log"></div>
+            </div>
+
+            <!-- Biome Cards -->
+            <div class="debug-section">
+                <h3><span class="status-indicator warning"></span>Biome Cards</h3>
+                <button onclick="loadBiomeCards()">Load Cards</button>
+                <button onclick="optimizeBiomeLoading()">Optimize Loading</button>
+                <button onclick="clearBiomeCache()" class="danger">Clear Cache</button>
+                <div class="debug-metrics">
+                    <div class="metric-item">
+                        <div class="metric-value" id="biome-count">--</div>
+                        <div class="metric-label">Biomes</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value" id="load-time">--</div>
+                        <div class="metric-label">Load Time</div>
+                    </div>
+                </div>
+                <div id="biome-log" class="debug-log"></div>
+            </div>
+
+            <!-- Auto Debug -->
+            <div class="debug-section">
+                <h3><span class="status-indicator info"></span>Auto Debug</h3>
+                <button onclick="runQuickDebug()">Quick Debug</button>
+                <button onclick="runComprehensiveDebug()">Full Debug</button>
+                <button onclick="toggleAutoRefresh()">Auto Refresh</button>
+                <div id="auto-debug-log" class="debug-log"></div>
+            </div>
+
+            <!-- Server Status -->
+            <div class="debug-section">
+                <h3><span class="status-indicator success"></span>Server Status</h3>
+                <button onclick="checkServerStatus()">Check Server</button>
+                <button onclick="startServerMonitoring()">Start Monitor</button>
+                <button onclick="stopServerMonitoring()">Stop Monitor</button>
+                <div id="server-log" class="debug-log"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        'use strict';
+
+        // Global variables
+        let debugFlyinOpen = false;
+        let performanceMonitoring = false;
+        let serverMonitoring = false;
+        let autoRefresh = false;
+        let autoRefreshInterval = null;
+        let fpsInterval = null;
+        let memoryInterval = null;
+        let serverInterval = null;
+
+        // Toggle fly-in card
+        function toggleDebugFlyin() {
+            const container = document.getElementById('debugFlyinCard');
+            debugFlyinOpen = !debugFlyinOpen;
+            
+            if (debugFlyinOpen) {
+                container.classList.add('open');
+                logToSection('system-status-log', 'Debug panel opened', 'success');
+                runInitialChecks();
+            } else {
+                container.classList.remove('open');
+                logToSection('system-status-log', 'Debug panel closed', 'info');
+            }
+        }
+
+        // Log to specific section
+        function logToSection(sectionId, message, type = 'info') {
+            const logElement = document.getElementById(sectionId);
+            if (logElement) {
+                const timestamp = new Date().toLocaleTimeString();
+                const className = `debug-log ${type}`;
+                
+                logElement.className = className;
+                logElement.textContent += `[${timestamp}] ${message}\n`;
+                logElement.scrollTop = logElement.scrollHeight;
+            }
+        }
+
+        // Initial system checks
+        function runInitialChecks() {
+            logToSection('system-status-log', '=== INITIAL SYSTEM CHECK ===', 'info');
+            
+            // Check TileEditor
+            if (window.tileEditor) {
+                logToSection('system-status-log', '✅ TileEditor available', 'success');
+                logToSection('system-status-log', `📊 Categories: ${window.tileEditor.categories ? window.tileEditor.categories.length : 0}`, 'info');
+            } else {
+                logToSection('system-status-log', '❌ TileEditor not available', 'error');
+            }
+
+            // Check BiomeData
+            if (window.BiomeData) {
+                logToSection('system-status-log', '✅ BiomeData available', 'success');
+            } else {
+                logToSection('system-status-log', '❌ BiomeData not available', 'error');
+            }
+
+            // Check performance
+            if (performance.memory) {
+                const memory = performance.memory;
+                const usedMB = Math.round(memory.usedJSHeapSize / 1024 / 1024);
+                logToSection('system-status-log', `📊 Memory usage: ${usedMB}MB`, 'info');
+            }
+        }
+
+        // System status functions
+        function checkSystemStatus() {
+            logToSection('system-status-log', '=== SYSTEM STATUS CHECK ===', 'info');
+            logToSection('system-status-log', `URL: ${window.location.href}`, 'info');
+            logToSection('system-status-log', `User Agent: ${navigator.userAgent}`, 'info');
+            logToSection('system-status-log', `Screen: ${screen.width}x${screen.height}`, 'info');
+            logToSection('system-status-log', `Viewport: ${window.innerWidth}x${window.innerHeight}`, 'info');
+        }
+
+        function checkTileEditor() {
+            logToSection('system-status-log', '=== TILEEDITOR CHECK ===', 'info');
+            
+            if (window.tileEditor) {
+                logToSection('system-status-log', '✅ TileEditor object found', 'success');
+                logToSection('system-status-log', `Categories: ${window.tileEditor.categories ? window.tileEditor.categories.length : 'undefined'}`, 'info');
+                logToSection('system-status-log', `Selected category: ${window.tileEditor.selectedCategoryId || 'none'}`, 'info');
+                logToSection('system-status-log', `Debug mode: ${window.tileEditor.debugMode ? 'enabled' : 'disabled'}`, 'info');
+            } else {
+                logToSection('system-status-log', '❌ TileEditor object not found', 'error');
+            }
+        }
+
+        function checkBiomeData() {
+            logToSection('system-status-log', '=== BIOMEDATA CHECK ===', 'info');
+            
+            if (window.BiomeData) {
+                logToSection('system-status-log', '✅ BiomeData object found', 'success');
+                logToSection('system-status-log', `Biomes: ${window.BiomeData.biomes ? window.BiomeData.biomes.length : 'undefined'}`, 'info');
+            } else {
+                logToSection('system-status-log', '❌ BiomeData object not found', 'error');
+            }
+        }
+
+        // Performance monitoring
+        function startPerformanceMonitoring() {
+            if (performanceMonitoring) {
+                logToSection('performance-log', 'Performance monitoring already running', 'warning');
+                return;
+            }
+
+            logToSection('performance-log', '🚀 Starting performance monitoring...', 'info');
+            performanceMonitoring = true;
+
+            // FPS monitoring
+            let frameCount = 0;
+            let lastTime = performance.now();
+            
+            fpsInterval = setInterval(() => {
+                frameCount++;
+                const currentTime = performance.now();
+                
+                if (currentTime - lastTime >= 1000) {
+                    const fps = Math.round((frameCount * 1000) / (currentTime - lastTime));
+                    document.getElementById('fps-value').textContent = fps;
+                    frameCount = 0;
+                    lastTime = currentTime;
+                }
+            }, 16);
+
+            // Memory monitoring
+            memoryInterval = setInterval(() => {
+                if (performance.memory) {
+                    const memory = performance.memory;
+                    const usedMB = Math.round(memory.usedJSHeapSize / 1024 / 1024);
+                    const totalMB = Math.round(memory.totalJSHeapSize / 1024 / 1024);
+                    document.getElementById('memory-value').textContent = `${usedMB}MB`;
+                }
+            }, 1000);
+
+            logToSection('performance-log', '✅ Performance monitoring started', 'success');
+        }
+
+        function stopPerformanceMonitoring() {
+            if (!performanceMonitoring) {
+                logToSection('performance-log', 'Performance monitoring not running', 'warning');
+                return;
+            }
+
+            logToSection('performance-log', '⏹️ Stopping performance monitoring...', 'info');
+            performanceMonitoring = false;
+
+            if (fpsInterval) {
+                clearInterval(fpsInterval);
+                fpsInterval = null;
+            }
+
+            if (memoryInterval) {
+                clearInterval(memoryInterval);
+                memoryInterval = null;
+            }
+
+            document.getElementById('fps-value').textContent = '--';
+            document.getElementById('memory-value').textContent = '--';
+
+            logToSection('performance-log', '✅ Performance monitoring stopped', 'success');
+        }
+
+        // Biome cards functions
+        function loadBiomeCards() {
+            logToSection('biome-log', '🔄 Loading biome cards...', 'info');
+            const startTime = performance.now();
+
+            try {
+                // Simulate biome loading
+                if (window.tileEditor && window.tileEditor.loadBiomeCards) {
+                    window.tileEditor.loadBiomeCards();
+                    const loadTime = Math.round(performance.now() - startTime);
+                    document.getElementById('load-time').textContent = `${loadTime}ms`;
+                    logToSection('biome-log', `✅ Biome cards loaded in ${loadTime}ms`, 'success');
+                } else {
+                    logToSection('biome-log', '❌ loadBiomeCards function not found', 'error');
+                }
+            } catch (error) {
+                logToSection('biome-log', `❌ Error loading biome cards: ${error.message}`, 'error');
+            }
+        }
+
+        function optimizeBiomeLoading() {
+            logToSection('biome-log', '⚡ Optimizing biome loading...', 'info');
+            
+            // Suggest optimizations
+            logToSection('biome-log', '💡 Suggestions:', 'info');
+            logToSection('biome-log', '- Use lazy loading for images', 'info');
+            logToSection('biome-log', '- Implement image caching', 'info');
+            logToSection('biome-log', '- Reduce image sizes', 'info');
+            logToSection('biome-log', '- Use WebP format', 'info');
+            
+            logToSection('biome-log', '✅ Optimization suggestions provided', 'success');
+        }
+
+        function clearBiomeCache() {
+            logToSection('biome-log', '🗑️ Clearing biome cache...', 'info');
+            
+            try {
+                // Clear image cache
+                if (window.tileEditor && window.tileEditor.clearImageCache) {
+                    window.tileEditor.clearImageCache();
+                    logToSection('biome-log', '✅ Image cache cleared', 'success');
+                } else {
+                    logToSection('biome-log', '⚠️ clearImageCache function not found', 'warning');
+                }
+                
+                // Clear localStorage cache
+                const keys = Object.keys(localStorage);
+                const biomeKeys = keys.filter(key => key.includes('biome') || key.includes('tile'));
+                biomeKeys.forEach(key => localStorage.removeItem(key));
+                
+                logToSection('biome-log', `✅ Cleared ${biomeKeys.length} cache entries`, 'success');
+            } catch (error) {
+                logToSection('biome-log', `❌ Error clearing cache: ${error.message}`, 'error');
+            }
+        }
+
+        // Auto debug functions
+        function runQuickDebug() {
+            logToSection('auto-debug-log', '⚡ Running quick debug...', 'info');
+            
+            // Quick checks
+            checkSystemStatus();
+            checkTileEditor();
+            checkBiomeData();
+            
+            logToSection('auto-debug-log', '✅ Quick debug completed', 'success');
+        }
+
+        function runComprehensiveDebug() {
+            logToSection('auto-debug-log', '🔍 Running comprehensive debug...', 'info');
+            
+            // Comprehensive checks
+            runQuickDebug();
+            startPerformanceMonitoring();
+            checkServerStatus();
+            
+            logToSection('auto-debug-log', '✅ Comprehensive debug completed', 'success');
+        }
+
+        function toggleAutoRefresh() {
+            autoRefresh = !autoRefresh;
+            
+            if (autoRefresh) {
+                logToSection('auto-debug-log', '🔄 Auto refresh enabled', 'info');
+                autoRefreshInterval = setInterval(() => {
+                    runQuickDebug();
+                }, 10000); // Every 10 seconds
+            } else {
+                logToSection('auto-debug-log', '⏹️ Auto refresh disabled', 'info');
+                if (autoRefreshInterval) {
+                    clearInterval(autoRefreshInterval);
+                    autoRefreshInterval = null;
+                }
+            }
+        }
+
+        // Server functions
+        function checkServerStatus() {
+            logToSection('server-log', '🔄 Checking server status...', 'info');
+            
+            fetch('/api/status')
+                .then(response => response.json())
+                .then(data => {
+                    logToSection('server-log', `✅ Server status: ${data.status}`, 'success');
+                    logToSection('server-log', `📊 Active connections: ${data.connections || 0}`, 'info');
+                })
+                .catch(error => {
+                    logToSection('server-log', `❌ Server check failed: ${error.message}`, 'error');
+                });
+        }
+
+        function startServerMonitoring() {
+            if (serverMonitoring) {
+                logToSection('server-log', 'Server monitoring already running', 'warning');
+                return;
+            }
+
+            logToSection('server-log', '🚀 Starting server monitoring...', 'info');
+            serverMonitoring = true;
+
+            serverInterval = setInterval(() => {
+                checkServerStatus();
+            }, 5000); // Every 5 seconds
+
+            logToSection('server-log', '✅ Server monitoring started', 'success');
+        }
+
+        function stopServerMonitoring() {
+            if (!serverMonitoring) {
+                logToSection('server-log', 'Server monitoring not running', 'warning');
+                return;
+            }
+
+            logToSection('server-log', '⏹️ Stopping server monitoring...', 'info');
+            serverMonitoring = false;
+
+            if (serverInterval) {
+                clearInterval(serverInterval);
+                serverInterval = null;
+            }
+
+            logToSection('server-log', '✅ Server monitoring stopped', 'success');
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('[DebugFlyin] Debug fly-in card loaded');
+            
+            // Add to window for external access
+            window.debugFlyin = {
+                toggle: toggleDebugFlyin,
+                open: () => { if (!debugFlyinOpen) toggleDebugFlyin(); },
+                close: () => { if (debugFlyinOpen) toggleDebugFlyin(); },
+                log: logToSection
+            };
+        });
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', function() {
+            if (fpsInterval) clearInterval(fpsInterval);
+            if (memoryInterval) clearInterval(memoryInterval);
+            if (serverInterval) clearInterval(serverInterval);
+            if (autoRefreshInterval) clearInterval(autoRefreshInterval);
+        });
+    </script>
+</body>
+</html>

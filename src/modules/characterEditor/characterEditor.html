@@ -1,0 +1,103 @@
+<!-- Character Editor Module Content -->
+<div class="character-editor">
+    <h2>👤 Character Editor</h2>
+    
+    <!-- Toolbar -->
+    <div class="toolbar">
+        <button id="refreshCharactersBtn" class="btn btn-success">🔄 Neu Laden</button>
+        <button id="addCharacterBtn" class="btn btn-primary">➕ Neuer Charakter</button>
+        <button id="editCharacterBtn" class="btn btn-secondary">✏️ Bearbeiten</button>
+        <button id="deleteCharacterBtn" class="btn btn-danger">🗑️ Löschen</button>
+        <button id="exportCharactersBtn" class="btn btn-gray">📤 Export</button>
+        <button id="importCharactersBtn" class="btn btn-gray">📥 Import</button>
+    </div>
+    
+    <!-- Editor Content -->
+    <div class="editor-content">
+        <!-- Characters List -->
+        <div class="characters-list">
+            <h3>📋 Charaktere</h3>
+            <div id="charactersList">
+                <!-- Characters will be loaded here -->
+            </div>
+        </div>
+        
+        <!-- Character Form -->
+        <div class="character-form">
+            <h3>✏️ Charakter bearbeiten</h3>
+            <form id="characterForm">
+                <div class="form-group">
+                    <label for="characterName">Name:</label>
+                    <input type="text" id="characterName" name="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="characterRace">Rasse:</label>
+                    <select id="characterRace" name="race" required>
+                        <option value="">Rasse wählen</option>
+                        <option value="human">Mensch</option>
+                        <option value="elf">Elf</option>
+                        <option value="dwarf">Zwerg</option>
+                        <option value="orc">Orc</option>
+                        <option value="goblin">Goblin</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="characterClass">Klasse:</label>
+                    <select id="characterClass" name="class" required>
+                        <option value="">Klasse wählen</option>
+                        <option value="warrior">Krieger</option>
+                        <option value="mage">Magier</option>
+                        <option value="archer">Bogenschütze</option>
+                        <option value="rogue">Schurke</option>
+                        <option value="cleric">Kleriker</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="characterLevel">Level:</label>
+                    <input type="number" id="characterLevel" name="level" min="1" max="100" value="1" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="characterHealth">Leben:</label>
+                    <input type="number" id="characterHealth" name="health" min="1" value="100" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="characterMana">Mana:</label>
+                    <input type="number" id="characterMana" name="mana" min="0" value="50" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="characterStrength">Stärke:</label>
+                    <input type="number" id="characterStrength" name="strength" min="1" max="100" value="10" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="characterDexterity">Geschicklichkeit:</label>
+                    <input type="number" id="characterDexterity" name="dexterity" min="1" max="100" value="10" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="characterIntelligence">Intelligenz:</label>
+                    <input type="number" id="characterIntelligence" name="intelligence" min="1" max="100" value="10" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="characterDescription">Beschreibung:</label>
+                    <textarea id="characterDescription" name="description" rows="4"></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">💾 Speichern</button>
+                    <button type="button" id="resetFormBtn" class="btn btn-secondary">🔄 Zurücksetzen</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Hidden file input für Import -->
+    <input type="file" id="importCharacterFileInput" accept=".json" style="display: none;">
+</div>

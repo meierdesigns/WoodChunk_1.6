@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biome Type Test - WoodChunk 1.5</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f0f0f0;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .biome-test {
+            border: 2px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+        .success { border-color: #28a745; }
+        .error { border-color: #dc3545; }
+        .info { border-color: #17a2b8; }
+        .filter-tabs {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+        .filter-tab {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            background: #f8f9fa;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .filter-tab.active {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Biome Type Test - WoodChunk 1.5</h1>
+    
+    <div class="test-container">
+        <h2>Buildings Biome Test</h2>
+        <div class="biome-test info" id="buildingsTest">
+            <h3>🏗️ Buildings Biome</h3>
+            <p>Typ: <span id="buildingsType">Lade...</span></p>
+            <p>Erwartete Filter-Tabs: Mining, Tower, Building, Settlement, Castle, Village, Temple, Ritual</p>
+            <div class="filter-tabs" id="buildingsFilterTabs">
+                <div class="filter-tab active" data-filter="all">Alle</div>
+                <!-- Dynamic filter tabs will be generated here -->
+            </div>
+        </div>
+    </div>
+
+    <div class="test-container">
+        <h2>Forest Biome Test</h2>
+        <div class="biome-test info" id="forestTest">
+            <h3>🌲 Forest Biome</h3>
+            <p>Typ: <span id="forestType">Lade...</span></p>
+            <p>Erwartete Filter-Tabs: Grass, Dirt, Stone, Water, Sand, Snow, Forest, Mountain</p>
+            <div class="filter-tabs" id="forestFilterTabs">
+                <div class="filter-tab active" data-filter="all">Alle</div>
+                <!-- Dynamic filter tabs will be generated here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function testBiomeType(biomeName, containerId, typeSpanId, filterTabsId) {
+            try {
+                console.log(`Testing biome: ${biomeName}`);
+                
+                // Load biome data
+                const response = await fetch(`assets/biomes/${biomeName}/${biomeName}.js`);
+                if (response.ok) {
+                    const jsContent = await response.text();
+                    
+                    // Parse biome data
+                    const dataMatch = jsContent.match(/window\.BIOME_DATA\s*=\s*({[\s\S]*});/);
+                    if (dataMatch) {
+                        const biomeData = JSON.parse(dataMatch[1]);
+                        
+                        // Update type display
+                        const typeSpan = document.getElementById(typeSpanId);
+                        if (typeSpan) {
+                            typeSpan.textContent = biomeData.type || 'terrain';
+                            typeSpan.style.fontWeight = 'bold';
+                            typeSpan.style.color = biomeData.type === 'entities' ? '#28a745' : '#17a2b8';
+                        }
+                        
+                        // Generate filter tabs
+                        generateFilterTabs(biomeData.type || 'terrain', filterTabsId);
+                        
+                        // Update container style
+                        const container = document.getElementById(containerId);
+                        if (container) {
+                            container.className = 'biome-test success';
+                        }
+                        
+                        console.log(`✅ ${biomeName} biome loaded successfully:`, biomeData);
+                    }
+                }
+            } catch (error) {
+                console.error(`❌ Failed to load ${biomeName} biome:`, error);
+                const container = document.getElementById(containerId);
+                if (container) {
+                    container.className = 'biome-test error';
+                }
+            }
+        }
+
+        function generateFilterTabs(biomeType, containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            // Clear existing filter tabs (except "Alle")
+            const allButton = container.querySelector('[data-filter="all"]');
+            container.innerHTML = '';
+            if (allButton) {
+                container.appendChild(allButton);
+            }
+
+            // Define filter tabs based on biome type
+            let filterTabs = [];
+            
+            if (biomeType === 'entities' || biomeType === 'buildings') {
+                filterTabs = [
+                    { filter: 'mining_site', label: '⛏️ Mining' },
+                    { filter: 'tower', label: '🗼 Tower' },
+                    { filter: 'building', label: '🏢 Building' },
+                    { filter: 'settlement', label: '🏘️ Settlement' },
+                    { filter: 'castle', label: '🏰 Castle' },
+                    { filter: 'village', label: '🏘️ Village' },
+                    { filter: 'temple', label: '⛪ Temple' },
+                    { filter: 'ritual_site', label: '🔮 Ritual' }
+                ];
+            } else {
+                // Default terrain filters
+                filterTabs = [
+                    { filter: 'grass', label: '🌱 Grass' },
+                    { filter: 'dirt', label: '🟫 Dirt' },
+                    { filter: 'stone', label: '🪨 Stone' },
+                    { filter: 'water', label: '💧 Water' },
+                    { filter: 'sand', label: '🏖️ Sand' },
+                    { filter: 'snow', label: '❄️ Snow' },
+                    { filter: 'forest', label: '🌲 Forest' },
+                    { filter: 'mountain', label: '⛰️ Mountain' }
+                ];
+            }
+
+            // Create filter tab buttons
+            filterTabs.forEach(tab => {
+                const button = document.createElement('div');
+                button.className = 'filter-tab';
+                button.dataset.filter = tab.filter;
+                button.textContent = tab.label;
+                container.appendChild(button);
+            });
+        }
+
+        // Start tests when page loads
+        window.addEventListener('load', () => {
+            setTimeout(() => testBiomeType('Buildings', 'buildingsTest', 'buildingsType', 'buildingsFilterTabs'), 500);
+            setTimeout(() => testBiomeType('Forest', 'forestTest', 'forestType', 'forestFilterTabs'), 1000);
+        });
+    </script>
+</body>
+</html>

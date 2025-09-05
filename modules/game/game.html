@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WoodChunk 1.5 - Game</title>
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <link rel="stylesheet" href="styles.css?v=v1">
+    <style>
+        /* Cache busting for Buildings images */
+        img[src*="Buildings"], img[src*="slice_"], img[src*="tile_"] {
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            image-rendering: pixelated;
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- Header Navigation -->
+        <nav class="app-navigation" id="appNavigation">
+            <a href="/" class="nav-btn" data-view="menu" data-icon="🏠">Menu</a>
+            <a href="/game" class="nav-btn active" data-view="game" data-icon="🎮">Game</a>
+            <a href="/itemEditor" class="nav-btn" data-view="itemEditor" data-icon="🔧">Item</a>
+            <a href="/peopleEditor" class="nav-btn" data-view="peopleEditor" data-icon="👥">People</a>
+            <a href="/characterEditor" class="nav-btn" data-view="characterEditor" data-icon="⚔️">Character</a>
+            <a href="/hexMapEditor" class="nav-btn" data-view="hexMapEditor" data-icon="🗺️">HexMap</a>
+            <a href="/abilitiesEditor" class="nav-btn" data-view="abilitiesEditor" data-icon="✨">Abilities</a>
+            <a href="/tileEditor" class="nav-btn" data-view="tileEditor" data-icon="🧩">Tiles</a>
+            <a href="/settings" class="nav-btn" data-view="settings" data-icon="⚙️">Settings</a>
+        </nav>
+        
+        <div class="main-content">
+            <div class="game-container">
+                <h1>🎮 WoodChunk Game</h1>
+                <p>Das Hauptspiel wird hier geladen...</p>
+                <div id="gameArea" class="game-area">
+                    <div class="loading">Lade Spiel...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="modules/core/AppCore.js?v=v1"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('[Game] Initializing game...');
+            // Game initialization will be implemented
+        });
+    </script>
+</body>
+</html>

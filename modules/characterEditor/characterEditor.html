@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Character Editor - WoodChunk 1.5</title>
+    <link rel="icon" type="image/x-icon" href="../../assets/favicon.ico">
+    <link rel="stylesheet" href="../../modules/core/styles.css?v=v1">
+    <link rel="stylesheet" href="characterEditor.css?v=v1">
+    <style>
+        /* Cache busting for Buildings images */
+        img[src*="Buildings"], img[src*="slice_"], img[src*="tile_"] {
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            image-rendering: pixelated;
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- Toast Container -->
+        <div id="toastContainer" class="toast-container"></div>
+        
+        <!-- Header Navigation -->
+        <nav class="app-navigation" id="appNavigation">
+            <a href="/" class="nav-btn" data-view="menu" data-icon="🏠">Menu</a>
+            <a href="/modules/itemEditor/itemEditor.html" class="nav-btn" data-view="itemEditor" data-icon="🛡️">Item</a>
+            <a href="/modules/peopleEditor/index.html" class="nav-btn" data-view="peopleEditor" data-icon="👥">People</a>
+            <a href="/modules/characterEditor/characterEditor.html" class="nav-btn active" data-view="characterEditor" data-icon="⚔️">Character</a>
+            <a href="/modules/hexMapEditor/hexMapEditor.html" class="nav-btn" data-view="hexMapEditor" data-icon="🗺️">HexMap</a>
+            <a href="/modules/abilitiesEditor/abilitiesEditor.html" class="nav-btn" data-view="abilitiesEditor" data-icon="✨">Abilities</a>
+            <a href="/modules/tileEditor/tileEditor.html" class="nav-btn" data-view="tileEditor" data-icon="🧩">Tiles</a>
+        </nav>
+        
+        <main class="app-content" id="appContent">
+            <div class="editor">
+                <div class="editor-header">
+                    <h2>⚔️ Character Editor</h2>
+                    <div class="header-controls">
+                        <button type="button" id="refreshCharactersBtn" class="btn btn-success btn-small">🔄 Neu Laden</button>
+                        <button type="button" id="addCharacterBtn" class="btn btn-primary btn-small">➕ Neuer Charakter</button>
+                        <span class="loading-indicator">🔄 Lade Module...</span>
+                    </div>
+                </div>
+                
+                <div id="characterEditorContainer">
+                    <!-- Character Editor Module Content -->
+                    <div class="character-editor">
+                        <!-- Toolbar -->
+                        <div class="toolbar">
+                            <button id="editCharacterBtn" class="btn btn-secondary">✏️ Bearbeiten</button>
+                            <button id="deleteCharacterBtn" class="btn btn-danger">🗑️ Löschen</button>
+                            <button id="exportCharactersBtn" class="btn btn-gray">📤 Export</button>
+                            <button id="importCharactersBtn" class="btn btn-gray">📥 Import</button>
+                        </div>
+                        
+                        <!-- Editor Content -->
+                        <div class="editor-content">
+                            <!-- Characters List -->
+                            <div class="characters-list">
+                                <h3>📋 Charaktere</h3>
+                                <div id="charactersList">
+                                    <!-- Characters will be loaded here -->
+                                </div>
+                            </div>
+                            
+                            <!-- Character Form -->
+                            <div class="character-form">
+                                <h3>✏️ Charakter bearbeiten</h3>
+                                <form id="characterForm">
+                                    <div class="form-group">
+                                        <label for="characterName">Name:</label>
+                                        <input type="text" id="characterName" name="name" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="characterRace">Rasse:</label>
+                                        <select id="characterRace" name="race" required>
+                                            <option value="">Rasse wählen</option>
+                                            <option value="human">Mensch</option>
+                                            <option value="elf">Elf</option>
+                                            <option value="dwarf">Zwerg</option>
+                                            <option value="orc">Orc</option>
+                                            <option value="goblin">Goblin</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="characterClass">Klasse:</label>
+                                        <select id="characterClass" name="class" required>
+                                            <option value="">Klasse wählen</option>
+                                            <option value="warrior">Krieger</option>
+                                            <option value="mage">Magier</option>
+                                            <option value="archer">Bogenschütze</option>
+                                            <option value="rogue">Schurke</option>
+                                            <option value="cleric">Kleriker</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="characterLevel">Level:</label>
+                                        <input type="number" id="characterLevel" name="level" min="1" max="100" value="1" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="characterHealth">Leben:</label>
+                                        <input type="number" id="characterHealth" name="health" min="1" value="100" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="characterMana">Mana:</label>
+                                        <input type="number" id="characterMana" name="mana" min="0" value="50" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="characterStrength">Stärke:</label>
+                                        <input type="number" id="characterStrength" name="strength" min="1" max="100" value="10" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="characterDexterity">Geschicklichkeit:</label>
+                                        <input type="number" id="characterDexterity" name="dexterity" min="1" max="100" value="10" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="characterIntelligence">Intelligenz:</label>
+                                        <input type="number" id="characterIntelligence" name="intelligence" min="1" max="100" value="10" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="characterDescription">Beschreibung:</label>
+                                        <textarea id="characterDescription" name="description" rows="4"></textarea>
+                                    </div>
+                                    
+                                    <div class="form-actions">
+                                        <button type="submit" class="btn btn-primary">💾 Speichern</button>
+                                        <button type="button" id="resetFormBtn" class="btn btn-secondary">🔄 Zurücksetzen</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Load modules in correct order -->
+    <script src="../../modules/core/ModuleLoader.js?v=v1"></script>
+    <script src="characterEditor.js?v=v1"></script>
+    
+    <!-- Error handling for missing CharacterEditor -->
+    <script>
+        // Check if CharacterEditor is available immediately (no delay)
+        if (typeof window.characterEditor === 'undefined' || !window.characterEditor) {
+            console.error('[CharacterEditor] CharacterEditor not available');
+            
+            // Show error message in the container
+            const container = document.getElementById('characterEditorContainer');
+            if (container) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 50px; color: #666;">
+                        <h3>⚔️ Character Editor</h3>
+                        <p>Character-Editor wird geladen...</p>
+                        <p><small>Falls das Problem weiterhin besteht, laden Sie die Seite neu.</small></p>
+                        <button onclick="location.reload()" style="margin-top: 20px; padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                            🔄 Seite neu laden
+                        </button>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

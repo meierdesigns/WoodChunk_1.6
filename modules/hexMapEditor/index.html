@@ -1,0 +1,1614 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modularer Map Editor</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+        .sidebar {
+            width: 360px;
+            background: #2a2a2a;
+            border-right: 1px solid #444;
+            overflow: visible;
+            flex-shrink: 0;
+            overflow-x: hidden;
+        }
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            position: relative;
+        }
+        .toolbar {
+            height: 50px;
+            background: #333;
+            border-bottom: 1px solid #444;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            gap: 15px;
+            flex-shrink: 0;
+        }
+        
+
+        
+        .layer-tabs-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            margin: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .layer-tab {
+            padding: 12px 16px;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            width: 100%;
+            text-align: left;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        
+        .layer-tab:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(4px);
+        }
+        
+        .layer-tab.active {
+            background: #4CAF50;
+            color: white;
+            box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+            transform: translateX(4px);
+        }
+        
+        .layer-tab.active:hover {
+            background: #45a049;
+            transform: translateX(4px);
+        }
+        
+        .toolbar-separator {
+            width: 1px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.2);
+            margin: 0 8px;
+        }
+        .map-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            min-height: 0;
+        }
+        #map-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+        
+        /* Pixel-perfekte Bilddarstellung für alle Bilder */
+        img {
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+        
+        /* Cache busting for Buildings images */
+        img[src*="Buildings"], img[src*="slice_"], img[src*="tile_"] {
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            image-rendering: pixelated;
+        }
+        
+        /* Sidebar Module Styling */
+        .module-container {
+            border-bottom: 1px solid #444;
+        }
+        .module-header {
+            padding: 12px 16px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #333;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+        .module-header:hover {
+            background: #3a3a3a;
+        }
+        .module-header:active {
+            background: #404040;
+        }
+        .module-title {
+            font-weight: bold;
+            color: #4CAF50;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .module-icon {
+            font-size: 16px;
+            opacity: 0.8;
+        }
+        .module-toggle {
+            color: #4CAF50;
+            font-size: 16px;
+            transition: transform 0.2s ease;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .module-toggle.expanded {
+            transform: rotate(90deg);
+        }
+        .module-content {
+            padding: 8px;
+            display: none;
+            background: #2a2a2a;
+            border-top: 1px solid #444;
+        }
+        .module-content.expanded {
+            display: block;
+        }
+        
+        /* Button Styling */
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 4px;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+        button:hover {
+            background: #45a049;
+            transform: translateY(-1px);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        button.secondary {
+            background: #666;
+        }
+        button.secondary:hover {
+            background: #777;
+        }
+        button.danger {
+            background: #f44336;
+        }
+        button.danger:hover {
+            background: #d32f2f;
+        }
+        button.warning {
+            background: #FF9800;
+        }
+        button.warning:hover {
+            background: #F57C00;
+        }
+        
+        /* Input Styling */
+        input, select {
+            background: #444;
+            color: white;
+            border: 1px solid #666;
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin: 4px;
+            font-size: 12px;
+            transition: border-color 0.2s ease;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+        .color-picker {
+            width: 40px;
+            height: 30px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        /* Biome Categories Styling */
+        .biome-category-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            padding: 8px;
+            margin-bottom: 4px;
+            cursor: grab;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            max-width: 200px;
+        }
+        .biome-category-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        .biome-category-item.dragging {
+            opacity: 0.5;
+            transform: rotate(2deg);
+        }
+        .biome-category-item.drag-over {
+            border-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.1);
+        }
+        
+        /* Ausgewähltes Biome hervorheben */
+        .biome-category-item.selected-biome {
+            border-color: #4CAF50 !important;
+            background: rgba(76, 175, 80, 0.15) !important;
+            box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
+        }
+        
+        .biome-category-item.selected-biome:hover {
+            background: rgba(76, 175, 80, 0.2) !important;
+        }
+        .category-drag-handle {
+            cursor: grab;
+            color: #888;
+            font-size: 18px;
+            font-weight: bold;
+            user-select: none;
+            margin-right: 12px;
+            min-width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.2s ease;
+        }
+        .category-drag-handle:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+            color: #fff;
+            transform: scale(1.1);
+        }
+        .category-drag-handle:active {
+            cursor: grabbing;
+            transform: scale(0.95);
+        }
+        
+        /* Sort Controls */
+        .sort-controls {
+            display: flex;
+            gap: 8px;
+            margin: 12px 0;
+            flex-wrap: wrap;
+        }
+        .sort-btn {
+            padding: 6px 10px;
+            background: #555;
+            border: 1px solid #666;
+            font-size: 11px;
+        }
+        .sort-btn.active {
+            background: #4CAF50;
+            border-color: #4CAF50;
+        }
+        
+        /* Section Headers */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 8px 0 8px 0;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #444;
+        }
+        .section-title {
+            color: #ccc;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .section-count {
+            background: #666;
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        
+        .section-controls {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+        
+        .sort-btn {
+            background: #555;
+            color: #fff;
+            border: 1px solid #666;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 10px;
+            transition: all 0.2s ease;
+        }
+        
+        .sort-btn:hover {
+            background: #666;
+        }
+        
+        .sort-btn.active {
+            background: #4CAF50;
+            border-color: #4CAF50;
+        }
+        
+        /* Toolbar Buttons */
+        .toolbar button {
+            background: #555;
+            border: 1px solid #666;
+        }
+        .toolbar button:hover {
+            background: #666;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="layer-tabs-sidebar">
+                <button class="layer-tab active" data-layer="terrain">🌍 Terrain</button>
+                <button class="layer-tab" data-layer="streets">🛣️ Straßen&Siedlungen</button>
+            </div>
+            
+            <!-- Werkzeuge -->
+            <div class="module-container" id="tools-module">
+                <div class="module-header" onclick="toggleModule('tools')">
+                    <div class="module-title">
+                        <span class="module-icon">🔧</span>
+                        Werkzeuge
+                    </div>
+                    <div class="module-toggle" id="tools-toggle">▶</div>
+                </div>
+                <div class="module-content" id="tools-content">
+                    <!-- Wird dynamisch gefüllt -->
+                </div>
+            </div>
+            
+            <!-- Biome Management -->
+            <div class="module-container" id="biome-module">
+                <div class="module-header" onclick="toggleModule('biome')">
+                    <div class="module-title">
+                        <span class="module-icon">🌍</span>
+                        Biome
+                    </div>
+                    <div class="module-toggle" id="biome-toggle">▶</div>
+                </div>
+                <div class="module-content" id="biome-content">
+                    <!-- Biome Categories -->
+                    <div class="section-header">
+                        <div class="section-title">Biome</div>
+                        <div class="section-controls">
+                            <button id="sortBiomesByName" class="sort-btn" title="Nach Name sortieren">Name</button>
+                            <button id="sortBiomesByType" class="sort-btn" title="Nach Typ sortieren">Typ</button>
+                            <button id="sortBiomesByColor" class="sort-btn" title="Nach Farbe sortieren">Farbe</button>
+                            <button id="biome-refresh-btn" class="secondary" title="Biome aktualisieren" style="padding: 2px 6px; font-size: 10px; height: 20px; margin-left: 8px;">🔄</button>
+                        </div>
+                        <span id="biome-categories-count" class="section-count">0</span>
+                    </div>
+                    
+                    <div id="biome-categories-list" style="max-height: none; overflow: visible; margin-bottom: 8px; width: 100%; min-width: 100%; max-width: 100%; box-sizing: border-box;"></div>
+                </div>
+            </div>
+            
+            <!-- Einstellungen -->
+            <div class="module-container" id="settings-module">
+                <div class="module-header" onclick="toggleModule('settings')">
+                    <div class="module-title">
+                        <span class="module-icon">⚙️</span>
+                        Einstellungen
+                    </div>
+                    <div class="module-toggle" id="settings-toggle">▶</div>
+                </div>
+                <div class="module-content" id="settings-content">
+                    <!-- Wird dynamisch gefüllt -->
+                </div>
+            </div>
+            
+
+        </div>
+        
+        <div class="main-content" style="position: relative;">
+
+            
+            <div class="toolbar">
+                            <button id="save-btn">💾 Speichern</button>
+            <button id="load-btn">📂 Laden</button>
+            <button id="update-tiles-btn" class="warning" title="Alle Tiles mit ausgewähltem Tile aktualisieren">🔄 Tiles aktualisieren</button>
+            <button id="clear-btn" class="danger" title="Alle Ebenen löschen">🗑️ Alles löschen</button>
+                <button id="clear-layer-btn" class="danger" title="Aktuelle Ebene löschen">🗑️ Ebene löschen</button>
+                <button id="delete-mode-btn" title="Lösch-Modus (D)">🗑️ Lösch-Modus</button>
+            </div>
+            
+            <!-- Combined Controls Bar - Horizontal Layout -->
+            <div class="combined-controls" id="combined-controls" style="display: flex;">
+                <!-- Debug Controls (Left) -->
+                <div class="debug-container">
+                    <button id="debug-full" class="debug-btn" title="Vollständige Debug-Analyse">🔍 Debug</button>
+                    <button id="debug-images" class="debug-btn" title="Debug Image Loading">🖼️ Images</button>
+                    <button id="debug-tiles" class="debug-btn" title="Debug Tile Rendering">🧩 Tiles</button>
+                    <button id="debug-export" class="debug-btn" title="Export Debug Report">📄 Export</button>
+                    <button id="debug-toggle" class="debug-btn" title="Toggle Debug Mode">🐛 Toggle</button>
+                    <button id="debug-performance" class="debug-btn" title="Performance-Analyse beim nächsten Refresh">⚡ Performance</button>
+                    <button id="debug-keep-open" class="debug-btn" title="Debug-Fenster nach Refresh offen halten">🔒 Keep Open</button>
+                </div>
+                
+                <!-- Brush Size Controls (Right) -->
+                <div class="brush-size-container">
+                    <label for="brush-size-slider">Pinselgröße: <span id="brush-size-display">0</span></label>
+                    <input type="range" id="brush-size-slider" min="0" max="5" value="0" step="1" 
+                           style="width: 150px; margin: 0 10px;">
+                    <button id="brush-size-reset" class="secondary" title="Pinselgröße zurücksetzen">🔄</button>
+                </div>
+            </div>
+            
+            <script>
+            // Direct brush size controls setup
+            document.addEventListener('DOMContentLoaded', () => {
+                const combinedControls = document.getElementById('combined-controls');
+                const brushSizeSlider = document.getElementById('brush-size-slider');
+                const brushSizeDisplay = document.getElementById('brush-size-display');
+                const brushSizeReset = document.getElementById('brush-size-reset');
+                
+                console.log('[Direct] Combined controls found:', {
+                    controls: !!combinedControls,
+                    slider: !!brushSizeSlider,
+                    display: !!brushSizeDisplay,
+                    reset: !!brushSizeReset,
+                    controlsDisplay: combinedControls?.style?.display,
+                    controlsVisibility: combinedControls?.style?.visibility,
+                    controlsPosition: combinedControls?.style?.position
+                });
+                
+                // Show/hide based on layer
+                const updateVisibility = () => {
+                    const currentLayer = window.hexMapEditor?.core?.getCurrentLayer() || 'terrain';
+                    console.log('[Direct] Current layer:', currentLayer);
+                    if (currentLayer === 'terrain') {
+                        combinedControls.style.display = 'flex';
+                        // Enable brush size controls for terrain
+                        if (brushSizeSlider) brushSizeSlider.disabled = false;
+                        if (brushSizeReset) brushSizeReset.disabled = false;
+                    } else {
+                        // For streets layer, show controls but disable brush size
+                        combinedControls.style.display = 'flex';
+                        if (brushSizeSlider) brushSizeSlider.disabled = true;
+                        if (brushSizeReset) brushSizeReset.disabled = true;
+                    }
+                };
+                
+                // Setup slider
+                if (brushSizeSlider && brushSizeDisplay) {
+                    brushSizeSlider.addEventListener('input', (e) => {
+                        const size = parseInt(e.target.value);
+                        console.log('[Direct] Slider changed to:', size);
+                        brushSizeDisplay.textContent = size;
+                        
+                        if (window.hexMapEditor && window.hexMapEditor.core) {
+                            window.hexMapEditor.core.settings.brushSize = size;
+                            window.hexMapEditor.core.notifyObservers('settingsChanged', { brushSize: size });
+                        }
+                    });
+                }
+                
+                // Setup reset button
+                if (brushSizeReset) {
+                    brushSizeReset.addEventListener('click', () => {
+                        console.log('[Direct] Reset clicked');
+                        brushSizeSlider.value = 0;
+                        brushSizeDisplay.textContent = '0';
+                        
+                        if (window.hexMapEditor && window.hexMapEditor.core) {
+                            window.hexMapEditor.core.settings.brushSize = 0;
+                            window.hexMapEditor.core.notifyObservers('settingsChanged', { brushSize: 0 });
+                        }
+                    });
+                }
+                
+                // Initial visibility - check immediately and after a short delay
+                updateVisibility();
+                setTimeout(updateVisibility, 100);
+                
+                // Fallback: ensure controls are visible for terrain layer
+                setTimeout(() => {
+                    const currentLayer = window.hexMapEditor?.core?.getCurrentLayer() || 'terrain';
+                    if (currentLayer === 'terrain' && combinedControls.style.display === 'none') {
+                        console.log('[Direct] Fallback: showing controls for terrain layer');
+                        combinedControls.style.display = 'flex';
+                        if (brushSizeSlider) brushSizeSlider.disabled = false;
+                        if (brushSizeReset) brushSizeReset.disabled = false;
+                    }
+                }, 500);
+                
+                // Update visibility when layer changes
+                if (window.hexMapEditor?.core) {
+                    window.hexMapEditor.core.addObserver({
+                        onEvent: (event, data) => {
+                            if (event === 'layerChanged') {
+                                console.log('[Direct] Layer changed event received:', data);
+                                updateVisibility();
+                            }
+                        }
+                    });
+                }
+
+                // Listen for building images refresh events
+                document.addEventListener('buildingImagesRefreshed', async (event) => {
+                    console.log('[HexMapEditor] Received building images refresh event:', event.detail);
+                    if (window.hexMapEditor && window.hexMapEditor.biomeData) {
+                        await window.hexMapEditor.biomeData.loadBiomeData('Buildings');
+                        console.log('[HexMapEditor] Buildings biome data refreshed');
+                    }
+                });
+        
+        // Debug Controls Setup
+        const debugControls = document.getElementById('debug-controls');
+        const debugFull = document.getElementById('debug-full');
+        const debugImages = document.getElementById('debug-images');
+        const debugTiles = document.getElementById('debug-tiles');
+        const debugExport = document.getElementById('debug-export');
+        const debugToggle = document.getElementById('debug-toggle');
+        
+        // Show debug controls by default
+        if (debugControls) {
+            debugControls.style.display = 'block';
+        }
+        
+        // Debug button event listeners
+        if (debugFull) {
+            debugFull.addEventListener('click', () => {
+                console.log('[Debug] Running full debug analysis...');
+                if (window.debugHexMapEditor) {
+                    window.debugHexMapEditor();
+                } else {
+                    console.error('[Debug] debugHexMapEditor function not available');
+                }
+            });
+        }
+        
+        if (debugImages) {
+            debugImages.addEventListener('click', () => {
+                console.log('[Debug] Running image loading debug...');
+                if (window.debugImageLoading) {
+                    window.debugImageLoading();
+                } else {
+                    console.error('[Debug] debugImageLoading function not available');
+                }
+            });
+        }
+        
+        if (debugTiles) {
+            debugTiles.addEventListener('click', () => {
+                console.log('[Debug] Running tile rendering debug...');
+                if (window.debugTileRendering) {
+                    window.debugTileRendering();
+                } else {
+                    console.error('[Debug] debugTileRendering function not available');
+                }
+            });
+        }
+        
+        if (debugExport) {
+            debugExport.addEventListener('click', () => {
+                console.log('[Debug] Exporting debug report...');
+                if (window.exportDebugReport) {
+                    window.exportDebugReport();
+                } else {
+                    console.error('[Debug] exportDebugReport function not available');
+                }
+            });
+        }
+        
+        // Erweitere exportDebugReport um Performance-Analyse
+        window.exportDebugReport = () => {
+            let report = '=== DEBUG REPORT ===\n';
+            report += `Generated: ${new Date().toLocaleString()}\n\n`;
+            
+            // Performance-Analyse hinzufügen
+            if (window.getPerformanceReport) {
+                report += window.getPerformanceReport();
+            }
+            
+            // Erstelle Download
+            const blob = new Blob([report], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `debug-report-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            console.log('[Debug] Debug report exported');
+        };
+        
+        // Debug-Fenster nach Refresh wieder öffnen
+        window.keepDebugOpen = () => {
+            localStorage.setItem('debug_window_open', 'true');
+            console.log('[Debug] Debug window will be kept open after refresh');
+        };
+        
+        window.closeDebugOnRefresh = () => {
+            localStorage.removeItem('debug_window_open');
+            console.log('[Debug] Debug window will be closed after refresh');
+        };
+        
+        // Prüfe beim Laden, ob Debug-Fenster geöffnet werden soll
+        const shouldOpenDebug = localStorage.getItem('debug_window_open') === 'true';
+        if (shouldOpenDebug) {
+            // Warte kurz, bis alle Module geladen sind
+            setTimeout(() => {
+                if (window.hexMapEditor && window.hexMapEditor.core) {
+                    window.hexMapEditor.core.settings.debugMode = true;
+                    console.log('[Debug] Debug window automatically opened after refresh');
+                }
+            }, 1000);
+        }
+        
+        if (debugToggle) {
+            debugToggle.addEventListener('click', () => {
+                console.log('[Debug] Toggling debug mode...');
+                if (window.hexMapEditor && window.hexMapEditor.core) {
+                    const currentDebugMode = window.hexMapEditor.core.settings.debugMode || false;
+                    window.hexMapEditor.core.settings.debugMode = !currentDebugMode;
+                    console.log('[Debug] Debug mode:', !currentDebugMode);
+                    
+                    // Speichere Debug-Status für Refresh
+                    if (!currentDebugMode) {
+                        window.keepDebugOpen();
+                    } else {
+                        window.closeDebugOnRefresh();
+                    }
+                    
+                    // Update button text
+                    debugToggle.textContent = window.hexMapEditor.core.settings.debugMode ? '🐛 ON' : '🐛 OFF';
+                }
+            });
+        }
+        
+        const debugPerformance = document.getElementById('debug-performance');
+        if (debugPerformance) {
+            debugPerformance.addEventListener('click', () => {
+                console.log('[Debug] Starting performance analysis for next refresh...');
+                if (window.startPerformanceAnalysis) {
+                    window.startPerformanceAnalysis();
+                } else {
+                    console.error('[Debug] Performance analysis function not available');
+                }
+            });
+        }
+        
+        const debugKeepOpen = document.getElementById('debug-keep-open');
+        if (debugKeepOpen) {
+            debugKeepOpen.addEventListener('click', () => {
+                console.log('[Debug] Toggling debug keep open mode...');
+                const isCurrentlyKeptOpen = localStorage.getItem('debug_window_open') === 'true';
+                
+                if (isCurrentlyKeptOpen) {
+                    window.closeDebugOnRefresh();
+                    debugKeepOpen.textContent = '🔒 Keep Open';
+                    debugKeepOpen.title = 'Debug-Fenster nach Refresh offen halten';
+                } else {
+                    window.keepDebugOpen();
+                    debugKeepOpen.textContent = '🔓 Close After';
+                    debugKeepOpen.title = 'Debug-Fenster nach Refresh schließen';
+                }
+            });
+            
+            // Initialisiere Button-Text basierend auf gespeichertem Status
+            const isKeptOpen = localStorage.getItem('debug_window_open') === 'true';
+            if (isKeptOpen) {
+                debugKeepOpen.textContent = '🔓 Close After';
+                debugKeepOpen.title = 'Debug-Fenster nach Refresh schließen';
+            }
+        }
+            });
+            </script>
+            <div class="map-container" id="map-container">
+                <canvas id="map-canvas"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* Combined Controls Styles - Horizontal Layout */
+        .combined-controls {
+            position: absolute;
+            top: 70px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            max-width: calc(100vw - 40px);
+        }
+        
+        /* Brush Size Controls Styles - Absolute Overlay */
+        .brush-size-controls {
+            position: absolute;
+            top: 70px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            min-width: 250px;
+            backdrop-filter: blur(10px);
+        }
+        
+        /* Debug Controls Styles - Absolute Overlay */
+        .debug-controls {
+            position: absolute;
+            top: 130px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+        
+        .debug-container {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .debug-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .debug-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .debug-btn:active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .brush-size-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            min-width: 0;
+        }
+        
+        .brush-size-container label {
+            white-space: nowrap;
+            font-weight: 600;
+        }
+        
+        .brush-size-container input[type="range"] {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            height: 6px;
+            outline: none;
+        }
+        
+        .brush-size-container input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #007bff;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .brush-size-container input[type="range"]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background: #007bff;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .brush-size-container button {
+            background: linear-gradient(135deg, #6c757d, #495057);
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .brush-size-container button:hover {
+            background: linear-gradient(135deg, #5a6268, #343a40);
+            transform: scale(1.05);
+        }
+        
+        /* Disabled state for brush controls */
+        .brush-size-container input[type="range"]:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .brush-size-container button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: linear-gradient(135deg, #6c757d, #495057) !important;
+        }
+        
+        .brush-size-container button:disabled:hover {
+            transform: none;
+        }
+        
+        /* Responsive adjustments for small screens */
+        @media (max-width: 768px) {
+            .combined-controls {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+                padding: 10px;
+            }
+            
+            .debug-container {
+                justify-content: flex-start;
+            }
+            
+            .brush-size-container {
+                justify-content: flex-start;
+            }
+        }
+        
+        /* Maps Module Styles */
+        .maps-section {
+            margin-top: 16px;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .maps-controls {
+            margin-bottom: 12px;
+        }
+        
+        .map-name-input {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+            align-items: center;
+        }
+        
+        .map-name-input input {
+            flex: 1;
+            padding: 6px 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            background: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            font-size: 12px;
+            box-sizing: border-box;
+        }
+        
+        .map-name-input input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .map-name-input button {
+            padding: 6px 12px;
+            font-size: 11px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        
+        .map-name-input button:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .maps-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .maps-actions button {
+            flex: 1;
+            padding: 6px 8px;
+            font-size: 11px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-sizing: border-box;
+        }
+        
+        .maps-actions button:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Lösch-Modus Button Styles */
+        #delete-mode-btn.active {
+            background: rgba(255, 0, 0, 0.3) !important;
+            border-color: rgba(255, 0, 0, 0.5) !important;
+            color: #ff6b6b !important;
+            box-shadow: 0 0 8px rgba(255, 0, 0, 0.3);
+        }
+        
+        #delete-mode-btn.active:hover {
+            background: rgba(255, 0, 0, 0.4) !important;
+            border-color: rgba(255, 0, 0, 0.6) !important;
+        }
+        
+        .saved-maps-list {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 12px;
+        }
+        
+        .saved-map-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding: 8px;
+            margin-bottom: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .map-info {
+            width: 100%;
+        }
+        
+        .map-name {
+            font-weight: 500;
+            color: #fff;
+            font-size: 12px;
+            margin-bottom: 4px;
+            word-break: break-word;
+        }
+        
+        .map-details {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .map-actions {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+        }
+        
+        .map-actions button {
+            padding: 6px 8px;
+            font-size: 11px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 60px;
+        }
+        
+        .map-actions button:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .no-maps-message {
+            text-align: center;
+            padding: 20px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .no-maps-message p {
+            margin: 0 0 8px 0;
+            font-size: 14px;
+        }
+        
+        .no-maps-message small {
+            font-size: 11px;
+            opacity: 0.7;
+        }
+        
+        .maps-info {
+            text-align: center;
+            padding: 8px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 11px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 8px;
+        }
+        
+        /* Maps Modal Styles */
+        .maps-modal {
+            position: fixed !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            width: 600px;
+            height: 500px;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 10000;
+            display: none;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .maps-modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 9999;
+            backdrop-filter: blur(2px);
+            pointer-events: auto;
+        }
+        
+        .maps-modal-content {
+            background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+            border-radius: 14px;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .maps-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #3a3a3a, #2a2a2a);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: grab;
+            user-select: none;
+        }
+        
+        .maps-modal-header:active {
+            cursor: grabbing;
+        }
+        
+        .maps-modal-header h2 {
+            margin: 0;
+            color: #fff;
+            font-size: 20px;
+        }
+        
+        .maps-modal-close {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+        
+        .maps-modal-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .maps-modal-body {
+            padding: 20px;
+            height: calc(100% - 80px);
+            overflow-y: auto;
+        }
+        
+        .maps-controls {
+            margin-bottom: 20px;
+        }
+        
+        .map-name-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+        
+        .map-name-input input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 6px;
+            background: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        
+        .map-name-input input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .maps-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .maps-actions button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            cursor: pointer;
+            font-size: 13px;
+            transition: background 0.2s;
+            box-sizing: border-box;
+        }
+        
+        .maps-actions button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .saved-maps-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 5px;
+        }
+        
+        .map-list-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s ease;
+            font-size: 13px;
+        }
+        
+        .map-list-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateX(2px);
+        }
+        
+        .map-item-icon {
+            font-size: 14px;
+            opacity: 0.8;
+            flex-shrink: 0;
+        }
+        
+        .map-item-name {
+            font-weight: 600;
+            color: #fff;
+            word-break: break-word;
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .map-item-tiles {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            opacity: 0.7;
+            flex-shrink: 0;
+        }
+        
+        .map-item-date {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            opacity: 0.7;
+            flex-shrink: 0;
+        }
+        
+        .map-item-actions {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        
+        .map-item-actions button {
+            padding: 3px 5px;
+            font-size: 11px;
+            border-radius: 3px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .map-item-actions button:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .no-maps-message {
+            text-align: center;
+            padding: 30px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .no-maps-message p {
+            margin: 0 0 8px 0;
+            font-size: 16px;
+        }
+        
+        .no-maps-message small {
+            font-size: 13px;
+        }
+        
+        /* Maps Header Button */
+        #open-maps-btn {
+            background: linear-gradient(135deg, #4a90e2, #357abd);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        #open-maps-btn:hover {
+            background: linear-gradient(135deg, #357abd, #2d5aa0);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .maps-header-button-container {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+    </style>
+
+    <script>
+        // Verbesserte Module-Verwaltung
+        function toggleModule(moduleName) {
+            const content = document.getElementById(moduleName + '-content');
+            const toggle = document.getElementById(moduleName + '-toggle');
+            
+            if (content.classList.contains('expanded')) {
+                content.classList.remove('expanded');
+                toggle.classList.remove('expanded');
+                localStorage.setItem('module_' + moduleName + '_expanded', 'false');
+            } else {
+                content.classList.add('expanded');
+                toggle.classList.add('expanded');
+                localStorage.setItem('module_' + moduleName + '_expanded', 'true');
+            }
+        }
+        
+        // Module-Status aus localStorage laden
+        function loadModuleStates() {
+            const modules = ['tools', 'biome', 'settings'];
+            
+            modules.forEach(moduleName => {
+                const isExpanded = localStorage.getItem('module_' + moduleName + '_expanded');
+                
+                // Standardmäßig alle Module aufklappen, außer wenn explizit false gespeichert
+                if (isExpanded !== 'false') {
+                    toggleModule(moduleName);
+                }
+            });
+        }
+        
+        // Beim Laden der Seite Module-Status wiederherstellen
+        document.addEventListener('DOMContentLoaded', function() {
+            loadModuleStates();
+        });
+    </script>
+
+    <!-- Alle Module direkt eingebunden -->
+    <script src="./core/types.js?v=1.0.1"></script>
+    <script src="./core/core.js?v=1.0.1"></script>
+    <script src="./core/renderer.js?v=1.0.1"></script>
+    <script src="./core/surrounding.js?v=1.0.1"></script>
+    <script src="./ui/fps.js?v=1.0.1"></script>
+    <script src="./utils/ToastManager.js?v=1.0.1"></script>
+    <script src="./utils/StorageUtils.js?v=1.0.1"></script>
+    <script src="./utils/DOMUtils.js?v=1.0.1"></script>
+    <script src="./utils/BiomeUtils.js?v=1.0.1"></script>
+    <script src="./modules/SettingsModule.js?v=1.0.1"></script>
+    <script src="./modules/ToolsModule.js?v=1.0.1"></script>
+    <!-- Biome Tile Selector Module -->
+    <script src="./modules/BiomeTileSelector.js?v=1.0.1"></script>
+    
+    <script src="./modules/BiomeModule.js?v=1.0.1"></script>
+    <script src="./modules/MapsModule.js?v=1.0.1"></script>
+    <script src="./modules/BiomeCore.js?v=1.0.1"></script>
+    <script src="./modules/BiomeUI.js?v=1.0.1"></script>
+    <script src="./modules/BiomeData.js?v=1.0.1"></script>
+    <script src="../../../assets/biomes/Buildings/tiles/tilesList.js?v=v1"></script>
+    
+    <!-- TileMapper -->
+    <script src="./modules/TileMapper.js?v=b5cc2f62"></script>
+    
+    <!-- Stoppe TileEditor Initialisierung -->
+    <script>
+        // Stoppe die TileEditor-Initialisierung komplett
+        window.DISABLE_TILE_EDITOR = true;
+        
+        // Überschreibe die initializeTileEditor Funktion falls sie existiert
+        if (typeof window.initializeTileEditor === 'function') {
+            window.initializeTileEditor = function() {
+                console.log('[TileEditor] Initialization disabled for HexMapEditor');
+                return;
+            };
+        }
+        
+        // Verhindere das Laden des TileEditors durch das Überschreiben der Klasse
+        window.TileEditor = class {
+            constructor() {
+                console.log('[TileEditor] TileEditor disabled for HexMapEditor');
+            }
+            
+            static get disabled() { return true; }
+        };
+        
+        // Überschreibe die index.js Funktionen
+        window.initializeTileEditor = function() {
+            console.log('[TileEditor] initializeTileEditor disabled for HexMapEditor');
+            return;
+        };
+        
+        // Überschreibe setTimeout um TileEditor-Aufrufe zu blockieren
+        const originalSetTimeout = window.setTimeout;
+        window.setTimeout = function(callback, delay, ...args) {
+            if (typeof callback === 'function' && callback.toString().includes('initializeTileEditor')) {
+                console.log('[TileEditor] Blocked setTimeout call to initializeTileEditor');
+                return;
+            }
+            return originalSetTimeout(callback, delay, ...args);
+        };
+        
+        // Überschreibe fetch um TileEditor-Scripts zu blockieren
+        const originalFetch = window.fetch;
+        window.fetch = function(url, options) {
+            if (typeof url === 'string' && url.includes('tileEditor')) {
+                console.log('[TileEditor] Blocked fetch to:', url);
+                return Promise.resolve(new Response('', { status: 404 }));
+            }
+            return originalFetch(url, options);
+        };
+        
+        // Überschreibe document.createElement um Script-Tags zu blockieren
+        const originalCreateElement = document.createElement;
+        document.createElement = function(tagName) {
+            const element = originalCreateElement.call(document, tagName);
+            if (tagName.toLowerCase() === 'script') {
+                const originalSetAttribute = element.setAttribute;
+                element.setAttribute = function(name, value) {
+                    if (name === 'src' && value.includes('tileEditor')) {
+                        console.log('[TileEditor] Blocked script src:', value);
+                        return;
+                    }
+                    return originalSetAttribute.call(this, name, value);
+                };
+            }
+            return element;
+        };
+        
+        // Überschreibe document.head.appendChild um Script-Tags zu blockieren
+        const originalAppendChild = document.head.appendChild;
+        document.head.appendChild = function(child) {
+            if (child.tagName === 'SCRIPT' && child.src && child.src.includes('tileEditor')) {
+                console.log('[TileEditor] Blocked script append:', child.src);
+                return child;
+            }
+            return originalAppendChild.call(this, child);
+        };
+        
+        // Überschreibe console.log um TileEditor-Logs zu blockieren
+        const originalConsoleLog = console.log;
+        console.log = function(...args) {
+            if (args.some(arg => typeof arg === 'string' && arg.includes('[TileEditor'))) {
+                return;
+            }
+            return originalConsoleLog.apply(console, args);
+        };
+        
+        // Überschreibe console.error um TileEditor-Fehler zu blockieren
+        const originalConsoleError = console.error;
+        console.error = function(...args) {
+            if (args.some(arg => typeof arg === 'string' && arg.includes('[TileEditor'))) {
+                return;
+            }
+            return originalConsoleError.apply(console, args);
+        };
+        
+        // Überschreibe console.warn um TileEditor-Warnungen zu blockieren
+        const originalConsoleWarn = console.warn;
+        console.warn = function(...args) {
+            if (args.some(arg => typeof arg === 'string' && arg.includes('[TileEditor'))) {
+                return;
+            }
+            return originalConsoleWarn.apply(console, args);
+        };
+        
+        // Überschreibe console.info um TileEditor-Infos zu blockieren
+        const originalConsoleInfo = console.info;
+        console.info = function(...args) {
+            if (args.some(arg => typeof arg === 'string' && arg.includes('[TileEditor'))) {
+                return;
+            }
+            return originalConsoleInfo.apply(console, args);
+        };
+        
+        // Überschreibe document.write um TileEditor-Scripts zu blockieren
+        const originalDocumentWrite = document.write;
+        document.write = function(...args) {
+            const content = args.join('');
+            if (content.includes('tileEditor')) {
+                console.log('[TileEditor] Blocked document.write with tileEditor content');
+                return;
+            }
+            return originalDocumentWrite.apply(document, args);
+        };
+        
+        // Überschreibe document.writeln um TileEditor-Scripts zu blockieren
+        const originalDocumentWriteln = document.writeln;
+        document.writeln = function(...args) {
+            const content = args.join('');
+            if (content.includes('tileEditor')) {
+                console.log('[TileEditor] Blocked document.writeln with tileEditor content');
+                return;
+            }
+            return originalDocumentWriteln.apply(document, args);
+        };
+        
+        // Überschreibe eval um TileEditor-Code zu blockieren
+        const originalEval = window.eval;
+        window.eval = function(code) {
+            if (typeof code === 'string' && code.includes('tileEditor')) {
+                console.log('[TileEditor] Blocked eval with tileEditor code');
+                return;
+            }
+            return originalEval.call(window, code);
+        };
+        
+        // Überschreibe Function constructor um TileEditor-Code zu blockieren
+        const originalFunction = window.Function;
+        window.Function = function(...args) {
+            const code = args[args.length - 1];
+            if (typeof code === 'string' && code.includes('tileEditor')) {
+                console.log('[TileEditor] Blocked Function constructor with tileEditor code');
+                return function() {};
+            }
+            return originalFunction.apply(window, args);
+        };
+        
+        console.log('[TileEditor] Comprehensive TileEditor blocking initialized');
+    </script>
+    
+    <script src="./ui/ui.js?v=1.0.1"></script>
+    <script src="./ui/main.js?v=1.0.1"></script>
+    
+    <!-- Debug System -->
+    <script src="./ui/debug.js?v=1.0.1"></script>
+    
+    <!-- Debugger Module -->
+    <!-- <script src="../../core/Debugger.js?v=v1"></script> -->
+    
+    <!-- BiomeTileSelector Debugger -->
+    
+</body>
+</html>

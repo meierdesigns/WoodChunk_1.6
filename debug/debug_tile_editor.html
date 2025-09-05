@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TileEditor Debug Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .debug-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .debug-header { font-weight: bold; color: #333; margin-bottom: 10px; }
+        .test-btn { padding: 8px 15px; margin: 5px; border: none; border-radius: 3px; cursor: pointer; }
+        .test-success { background: #4CAF50; color: white; }
+        .test-error { background: #f44336; color: white; }
+        .test-warning { background: #ff9800; color: white; }
+        .test-info { background: #2196F3; color: white; }
+        .results { margin-top: 10px; padding: 10px; background: #f5f5f5; border-radius: 3px; }
+        .debug-log { height: 300px; overflow-y: auto; background: #000; color: #0f0; padding: 10px; font-family: monospace; }
+        
+        /* Cache busting for Buildings images */
+        img[src*="Buildings"], img[src*="slice_"], img[src*="tile_"] {
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            image-rendering: pixelated;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 TileEditor Debug & Test Suite</h1>
+    
+    <div class="debug-section">
+        <div class="debug-header">1. Module Loading Tests</div>
+        <button class="test-btn test-info" onclick="testModuleLoading()">Test Module Loading</button>
+        <button class="test-btn test-info" onclick="testTileEditorInstance()">Test TileEditor Instance</button>
+        <button class="test-btn test-info" onclick="testManagerInstances()">Test Manager Instances</button>
+        <div id="moduleResults" class="results"></div>
+    </div>
+    
+    <div class="debug-section">
+        <div class="debug-header">2. Event Listeners Tests</div>
+        <button class="test-btn test-info" onclick="testEventListeners()">Test Event Listeners</button>
+        <button class="test-btn test-info" onclick="testBiomeToggle()">Test Biome Settings Toggle</button>
+        <button class="test-btn test-info" onclick="testTabSwitching()">Test Tab Switching</button>
+        <div id="eventResults" class="results"></div>
+    </div>
+    
+    <div class="debug-section">
+        <div class="debug-header">3. Modal Functionality Tests</div>
+        <button class="test-btn test-info" onclick="testModalOpen()">Test Modal Opening</button>
+        <button class="test-btn test-info" onclick="testModalClose()">Test Modal Closing</button>
+        <button class="test-btn test-info" onclick="testBiomeDataLoading()">Test Biome Data Loading</button>
+        <div id="modalResults" class="results"></div>
+    </div>
+    
+    <div class="debug-section">
+        <div class="debug-header">4. Data & Cache Tests</div>
+        <button class="test-btn test-info" onclick="testDataSources()">Test Data Sources</button>
+        <button class="test-btn test-info" onclick="testCacheManager()">Test Cache Manager</button>
+        <button class="test-btn test-info" onclick="testTileLoading()">Test Tile Loading</button>
+        <div id="dataResults" class="results"></div>
+    </div>
+    
+    <div class="debug-section">
+        <div class="debug-header">5. Complete Integration Test</div>
+        <button class="test-btn test-success" onclick="runCompleteTest()">🚀 Run Complete Test Suite</button>
+        <button class="test-btn test-warning" onclick="clearDebugLog()">Clear Debug Log</button>
+        <div id="integrationResults" class="results"></div>
+    </div>
+    
+    <div class="debug-section">
+        <div class="debug-header">Debug Console Log</div>
+        <div id="debugLog" class="debug-log"></div>
+    </div>
+
+    <script>
+        // Redirect console output to our debug log
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        
+        function appendToDebugLog(message, type = 'log') {
+            const debugLog = document.getElementById('debugLog');
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'error' ? '#f44' : type === 'warn' ? '#fa0' : '#0f0';
+            debugLog.innerHTML += `<div style="color: ${color}">[${timestamp}] ${message}</div>`;
+            debugLog.scrollTop = debugLog.scrollHeight;
+        }
+        
+        console.log = function(...args) {
+            appendToDebugLog(args.join(' '), 'log');
+            originalLog.apply(console, args);
+        };
+        
+        console.error = function(...args) {
+            appendToDebugLog(args.join(' '), 'error');
+            originalError.apply(console, args);
+        };
+        
+        console.warn = function(...args) {
+            appendToDebugLog(args.join(' '), 'warn');
+            originalWarn.apply(console, args);
+        };
+        
+        function clearDebugLog() {
+            document.getElementById('debugLog').innerHTML = '';
+        }
+        
+        // Test functions
+        function testModuleLoading() {
+            const results = document.getElementById('moduleResults');
+            let report = '<h4>Module Loading Test Results:</h4>';
+            
+            // Test TileEditor class
+            if (typeof TileEditor !== 'undefined') {
+                report += '✅ TileEditor class loaded<br>';
+            } else {
+                report += '❌ TileEditor class NOT loaded<br>';
+            }
+            
+            // Test other classes
+            const classes = ['ModalManager', 'CacheManager', 'TileDataManager', 'UIManager', 'ImageUploadManager', 'ToastManager'];
+            classes.forEach(className => {
+                if (typeof window[className] !== 'undefined') {
+                    report += `✅ ${className} class loaded<br>`;
+                } else {
+                    report += `❌ ${className} class NOT loaded<br>`;
+                }
+            });
+            
+            results.innerHTML = report;
+            console.log('Module loading test completed');
+        }
+        
+        function testTileEditorInstance() {
+            const results = document.getElementById('moduleResults');
+            let report = '<h4>TileEditor Instance Test Results:</h4>';
+            
+            if (window.tileEditor) {
+                report += '✅ window.tileEditor instance exists<br>';
+                report += `✅ isInitialized: ${window.tileEditor.isInitialized}<br>`;
+                report += `✅ categories.length: ${window.tileEditor.categories?.length || 0}<br>`;
+                report += `✅ tiles.length: ${window.tileEditor.tiles?.length || 0}<br>`;
+                
+                if (window.tileEditor.modalManager) {
+                    report += '✅ modalManager attached<br>';
+                } else {
+                    report += '❌ modalManager NOT attached<br>';
+                }
+                
+                if (window.tileEditor.uiManager) {
+                    report += '✅ uiManager attached<br>';
+                } else {
+                    report += '❌ uiManager NOT attached<br>';
+                }
+            } else {
+                report += '❌ window.tileEditor instance NOT found<br>';
+            }
+            
+            results.innerHTML += report;
+            console.log('TileEditor instance test completed');
+        }
+        
+        function testManagerInstances() {
+            const results = document.getElementById('moduleResults');
+            let report = '<h4>Manager Instances Test Results:</h4>';
+            
+            if (window.tileEditor?.modalManager) {
+                const mm = window.tileEditor.modalManager;
+                report += '✅ ModalManager instance exists<br>';
+                report += `✅ CacheManager: ${mm.cacheManager ? 'Yes' : 'No'}<br>`;
+                report += `✅ TileDataManager: ${mm.tileDataManager ? 'Yes' : 'No'}<br>`;
+                report += `✅ UIManager: ${mm.uiManager ? 'Yes' : 'No'}<br>`;
+                report += `✅ ImageUploadManager: ${mm.imageUploadManager ? 'Yes' : 'No'}<br>`;
+            } else {
+                report += '❌ No ModalManager instance found<br>';
+            }
+            
+            results.innerHTML += report;
+            console.log('Manager instances test completed');
+        }
+        
+        function testEventListeners() {
+            const results = document.getElementById('eventResults');
+            let report = '<h4>Event Listeners Test Results:</h4>';
+            
+            // Test biome settings toggle elements
+            const toggleBtn = document.getElementById('toggleBiomeSettings');
+            const settingsContent = document.getElementById('biomeSettingsContent');
+            
+            if (toggleBtn) {
+                report += '✅ toggleBiomeSettings element found<br>';
+            } else {
+                report += '❌ toggleBiomeSettings element NOT found<br>';
+            }
+            
+            if (settingsContent) {
+                report += '✅ biomeSettingsContent element found<br>';
+                report += `✅ Has collapsed class: ${settingsContent.classList.contains('collapsed')}<br>`;
+            } else {
+                report += '❌ biomeSettingsContent element NOT found<br>';
+            }
+            
+            // Test tab buttons
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const tabPanels = document.querySelectorAll('.tab-panel');
+            
+            report += `✅ Tab buttons found: ${tabButtons.length}<br>`;
+            report += `✅ Tab panels found: ${tabPanels.length}<br>`;
+            
+            // Test modal elements
+            const biomeModal = document.getElementById('biomeModal');
+            const closeHeaderBtn = document.getElementById('closeBiomeModalHeaderBtn');
+            const closeActionBtn = document.getElementById('closeBiomeModalActionBtn');
+            
+            report += `✅ Biome modal: ${biomeModal ? 'Found' : 'NOT found'}<br>`;
+            report += `✅ Close header btn: ${closeHeaderBtn ? 'Found' : 'NOT found'}<br>`;
+            report += `✅ Close action btn: ${closeActionBtn ? 'Found' : 'NOT found'}<br>`;
+            
+            results.innerHTML = report;
+            console.log('Event listeners test completed');
+        }
+        
+        function testBiomeToggle() {
+            const results = document.getElementById('eventResults');
+            let report = '<h4>Biome Settings Toggle Test:</h4>';
+            
+            const toggleBtn = document.getElementById('toggleBiomeSettings');
+            const settingsContent = document.getElementById('biomeSettingsContent');
+            
+            if (toggleBtn && settingsContent) {
+                // Simulate click
+                console.log('Testing biome settings toggle...');
+                toggleBtn.click();
+                
+                setTimeout(() => {
+                    const isExpanded = !settingsContent.classList.contains('collapsed');
+                    report += `✅ Toggle test: ${isExpanded ? 'Expanded' : 'Still collapsed'}<br>`;
+                    report += `✅ Button text: ${toggleBtn.textContent}<br>`;
+                    
+                    // Toggle back
+                    toggleBtn.click();
+                    setTimeout(() => {
+                        const isCollapsed = settingsContent.classList.contains('collapsed');
+                        report += `✅ Toggle back test: ${isCollapsed ? 'Collapsed' : 'Still expanded'}<br>`;
+                        results.innerHTML += report;
+                    }, 100);
+                }, 100);
+            } else {
+                report += '❌ Toggle elements not available for testing<br>';
+                results.innerHTML += report;
+            }
+        }
+        
+        function testTabSwitching() {
+            const results = document.getElementById('eventResults');
+            let report = '<h4>Tab Switching Test:</h4>';
+            
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            
+            if (tabButtons.length > 0) {
+                console.log('Testing tab switching...');
+                
+                tabButtons.forEach((button, index) => {
+                    const targetTab = button.getAttribute('data-tab');
+                    report += `✅ Tab ${index + 1}: ${targetTab}<br>`;
+                    
+                    // Test click
+                    button.click();
+                    const isActive = button.classList.contains('active');
+                    report += `✅ Click test: ${isActive ? 'Active' : 'Not active'}<br>`;
+                });
+            } else {
+                report += '❌ No tab buttons found for testing<br>';
+            }
+            
+            results.innerHTML += report;
+        }
+        
+        function testModalOpen() {
+            const results = document.getElementById('modalResults');
+            let report = '<h4>Modal Opening Test:</h4>';
+            
+            if (window.tileEditor && window.tileEditor.openBiomeModal) {
+                console.log('Testing modal opening...');
+                
+                // Test with first category if available
+                if (window.tileEditor.categories && window.tileEditor.categories.length > 0) {
+                    const firstCategory = window.tileEditor.categories[0];
+                    report += `✅ Testing with category: ${firstCategory.name}<br>`;
+                    
+                    try {
+                        window.tileEditor.openBiomeModal(firstCategory.id);
+                        report += '✅ openBiomeModal called successfully<br>';
+                        
+                        setTimeout(() => {
+                            const modal = document.getElementById('biomeModal');
+                            const isVisible = modal && modal.style.display === 'block';
+                            report += `✅ Modal visible: ${isVisible}<br>`;
+                            results.innerHTML += report;
+                        }, 500);
+                    } catch (error) {
+                        report += `❌ Error opening modal: ${error.message}<br>`;
+                        results.innerHTML += report;
+                    }
+                } else {
+                    report += '❌ No categories available for testing<br>';
+                    results.innerHTML += report;
+                }
+            } else {
+                report += '❌ openBiomeModal function not available<br>';
+                results.innerHTML += report;
+            }
+        }
+        
+        function testModalClose() {
+            const results = document.getElementById('modalResults');
+            let report = '<h4>Modal Closing Test:</h4>';
+            
+            if (window.tileEditor && window.tileEditor.closeBiomeModal) {
+                console.log('Testing modal closing...');
+                
+                try {
+                    window.tileEditor.closeBiomeModal();
+                    report += '✅ closeBiomeModal called successfully<br>';
+                    
+                    setTimeout(() => {
+                        const modal = document.getElementById('biomeModal');
+                        const isHidden = modal && modal.style.display === 'none';
+                        report += `✅ Modal hidden: ${isHidden}<br>`;
+                        results.innerHTML += report;
+                    }, 100);
+                } catch (error) {
+                    report += `❌ Error closing modal: ${error.message}<br>`;
+                    results.innerHTML += report;
+                }
+            } else {
+                report += '❌ closeBiomeModal function not available<br>';
+                results.innerHTML += report;
+            }
+        }
+        
+        function testBiomeDataLoading() {
+            const results = document.getElementById('modalResults');
+            let report = '<h4>Biome Data Loading Test:</h4>';
+            
+            if (window.tileEditor && window.tileEditor.modalManager) {
+                console.log('Testing biome data loading...');
+                
+                if (window.tileEditor.categories && window.tileEditor.categories.length > 0) {
+                    const firstCategory = window.tileEditor.categories[0];
+                    report += `✅ Testing with category: ${firstCategory.name}<br>`;
+                    
+                    try {
+                        window.tileEditor.modalManager.loadBiomeTiles(firstCategory);
+                        report += '✅ loadBiomeTiles called successfully<br>';
+                    } catch (error) {
+                        report += `❌ Error loading biome tiles: ${error.message}<br>`;
+                    }
+                } else {
+                    report += '❌ No categories available for testing<br>';
+                }
+            } else {
+                report += '❌ ModalManager not available<br>';
+            }
+            
+            results.innerHTML += report;
+        }
+        
+        function testDataSources() {
+            const results = document.getElementById('dataResults');
+            let report = '<h4>Data Sources Test:</h4>';
+            
+            // Test localStorage
+            const storedTiles = localStorage.getItem('tiles');
+            const storedCategories = localStorage.getItem('categories');
+            
+            report += `✅ localStorage tiles: ${storedTiles ? 'Found' : 'Empty'}<br>`;
+            report += `✅ localStorage categories: ${storedCategories ? 'Found' : 'Empty'}<br>`;
+            
+            // Test global data
+            if (window.tileEditor) {
+                report += `✅ TileEditor categories: ${window.tileEditor.categories?.length || 0}<br>`;
+                report += `✅ TileEditor tiles: ${window.tileEditor.tiles?.length || 0}<br>`;
+            }
+            
+            results.innerHTML = report;
+            console.log('Data sources test completed');
+        }
+        
+        function testCacheManager() {
+            const results = document.getElementById('dataResults');
+            let report = '<h4>Cache Manager Test:</h4>';
+            
+            if (window.tileEditor?.modalManager?.cacheManager) {
+                const cm = window.tileEditor.modalManager.cacheManager;
+                report += '✅ CacheManager instance found<br>';
+                
+                try {
+                    // Test cache operations
+                    cm.setCachedData('test_key', { test: 'data' });
+                    const cached = cm.getCachedData('test_key');
+                    report += `✅ Cache set/get test: ${cached ? 'Success' : 'Failed'}<br>`;
+                    
+                    const cacheSize = cm.getCacheSize ? cm.getCacheSize() : 'N/A';
+                    report += `✅ Cache size: ${cacheSize}<br>`;
+                } catch (error) {
+                    report += `❌ Cache test error: ${error.message}<br>`;
+                }
+            } else {
+                report += '❌ CacheManager not available<br>';
+            }
+            
+            results.innerHTML += report;
+        }
+        
+        function testTileLoading() {
+            const results = document.getElementById('dataResults');
+            let report = '<h4>Tile Loading Test:</h4>';
+            
+            if (window.tileEditor?.modalManager?.tileDataManager) {
+                const tdm = window.tileEditor.modalManager.tileDataManager;
+                report += '✅ TileDataManager instance found<br>';
+                
+                // Test with first category
+                if (window.tileEditor.categories && window.tileEditor.categories.length > 0) {
+                    const firstCategory = window.tileEditor.categories[0];
+                    report += `✅ Testing tile loading for: ${firstCategory.name}<br>`;
+                    
+                    try {
+                        tdm.loadTilesFromFile(firstCategory.name).then(fileTiles => {
+                            report += `✅ File tiles loaded: ${fileTiles?.length || 0}<br>`;
+                            
+                            const storageTiles = tdm.loadTilesFromStorage(firstCategory.name);
+                            report += `✅ Storage tiles loaded: ${storageTiles?.length || 0}<br>`;
+                            
+                            const globalTiles = tdm.loadTilesFromGlobal(firstCategory.name);
+                            report += `✅ Global tiles loaded: ${globalTiles?.length || 0}<br>`;
+                            
+                            results.innerHTML += report;
+                        });
+                    } catch (error) {
+                        report += `❌ Tile loading error: ${error.message}<br>`;
+                        results.innerHTML += report;
+                    }
+                } else {
+                    report += '❌ No categories for tile loading test<br>';
+                    results.innerHTML += report;
+                }
+            } else {
+                report += '❌ TileDataManager not available<br>';
+                results.innerHTML += report;
+            }
+        }
+        
+        function runCompleteTest() {
+            console.log('🚀 Starting complete test suite...');
+            const results = document.getElementById('integrationResults');
+            results.innerHTML = '<h4>Running Complete Test Suite...</h4>Please wait while all tests are executed.<br><br>';
+            
+            // Run all tests in sequence
+            setTimeout(() => testModuleLoading(), 100);
+            setTimeout(() => testTileEditorInstance(), 200);
+            setTimeout(() => testManagerInstances(), 300);
+            setTimeout(() => testEventListeners(), 400);
+            setTimeout(() => testBiomeToggle(), 500);
+            setTimeout(() => testTabSwitching(), 600);
+            setTimeout(() => testModalOpen(), 700);
+            setTimeout(() => testDataSources(), 800);
+            setTimeout(() => testCacheManager(), 900);
+            setTimeout(() => testTileLoading(), 1000);
+            
+            setTimeout(() => {
+                results.innerHTML += '✅ <strong>Complete test suite finished!</strong><br>';
+                results.innerHTML += 'Check individual sections above for detailed results.<br>';
+                console.log('🎉 Complete test suite finished!');
+            }, 1200);
+        }
+        
+        // Auto-run basic tests when page loads
+        window.addEventListener('load', () => {
+            console.log('🔧 TileEditor Debug Suite loaded');
+            setTimeout(() => {
+                testModuleLoading();
+                testTileEditorInstance();
+            }, 2000);
+        });
+    </script>
+    
+    <!-- Load the TileEditor modules -->
+    <script src="modules/core/Debugger.js?v=v1"></script>
+    <script src="modules/tileEditor/utils/ToastManager.js?v=v1"></script>
+    <script src="modules/tileEditor/core/TileEditor.js?v=v1"></script>
+    <script src="modules/tileEditor/modals/CacheManager.js?v=v1"></script>
+    <script src="modules/tileEditor/modals/TileDataManager.js?v=v1"></script>
+    <script src="modules/tileEditor/modals/UIManager.js?v=v1"></script>
+    <script src="modules/tileEditor/modals/ImageUploadManager.js?v=v1"></script>
+    <script src="modules/tileEditor/modals/ModalManager.js?v=v1"></script>
+    <script src="modules/tileEditor/data/DataManager.js?v=v1"></script>
+    <script src="modules/tileEditor/index.js?v=v1"></script>
+</body>
+</html>

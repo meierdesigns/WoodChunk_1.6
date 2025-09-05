@@ -1,0 +1,113 @@
+<!-- Item Editor Module Content -->
+<div class="item-editor">
+    <h2>⚔️ Item Editor</h2>
+    
+    <!-- Toolbar -->
+    <div class="toolbar">
+        <button id="refreshItemsBtn" class="btn btn-success">🔄 Neu Laden</button>
+        <button id="addItemBtn" class="btn btn-primary">➕ Neues Item</button>
+        <button id="editItemBtn" class="btn btn-secondary">✏️ Bearbeiten</button>
+        <button id="deleteItemBtn" class="btn btn-danger">🗑️ Löschen</button>
+        <button id="exportItemsBtn" class="btn btn-gray">📤 Export</button>
+        <button id="importItemsBtn" class="btn btn-gray">📥 Import</button>
+    </div>
+    
+    <!-- Filter Section -->
+    <div class="filter-section">
+        <h3>🔍 Filter</h3>
+        <div class="filter-grid">
+            <div class="filter-group">
+                <label>Kategorie:</label>
+                <select id="categoryFilter">
+                    <option value="">Alle Kategorien</option>
+                    <option value="weapon">Waffen</option>
+                    <option value="armor">Rüstung</option>
+                    <option value="potion">Tränke</option>
+                    <option value="material">Materialien</option>
+
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Seltenheit:</label>
+                <select id="rarityFilter">
+                    <option value="">Alle Seltenheiten</option>
+                    <option value="common">Gewöhnlich</option>
+                    <option value="uncommon">Ungewöhnlich</option>
+                    <option value="rare">Selten</option>
+                    <option value="epic">Episch</option>
+                    <option value="legendary">Legendär</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Suche:</label>
+                <input type="text" id="searchFilter" placeholder="Item-Name suchen...">
+            </div>
+            <div class="filter-group">
+                <label>Level:</label>
+                <select id="levelFilter">
+                    <option value="">Alle Level</option>
+                    <option value="1-5">Level 1-5</option>
+                    <option value="6-10">Level 6-10</option>
+                    <option value="11-20">Level 11-20</option>
+                    <option value="21-50">Level 21-50</option>
+                    <option value="51+">Level 51+</option>
+                </select>
+            </div>
+        </div>
+        <div class="filter-actions">
+            <button id="applyFiltersBtn" class="btn btn-primary">Anwenden</button>
+            <button id="clearFiltersBtn" class="btn btn-secondary">Zurücksetzen</button>
+        </div>
+    </div>
+    
+    <!-- Tab Container -->
+    <div class="tab-container">
+        <div class="tab-bar">
+            <button id="tabWeapons" class="category-tab active" data-category="weapons">⚔️</button>
+            <button id="tabArmor" class="category-tab" data-category="armor">🛡️</button>
+            <button id="tabPotions" class="category-tab" data-category="potions">🧪</button>
+            <button id="tabMaterials" class="category-tab" data-category="materials">📦</button>
+
+        </div>
+        
+        <!-- Table Container -->
+        <div class="table-container">
+            <div class="table-header">
+                <h3 id="categoryTitle">⚔️ Waffen</h3>
+                <p class="item-count" id="itemCount">0 Items gefunden</p>
+            </div>
+            
+            <div class="table-wrapper">
+                <table id="itemsTable" class="items-table">
+                    <thead>
+                        <tr class="table-header-row">
+                            <th class="table-header-cell">Icon</th>
+                            <th class="table-header-cell sortable" data-sort="name">Name</th>
+                            <th class="table-header-cell sortable" data-sort="level">Level</th>
+                            <th class="table-header-cell sortable" data-sort="rarity">Seltenheit</th>
+                            <th class="table-header-cell sortable" data-sort="value">Wert</th>
+                            <th class="table-header-cell center">Aktionen</th>
+                        </tr>
+                    </thead>
+                    <tbody id="itemsTableBody">
+                        <!-- Items werden hier eingefügt -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination -->
+            <div class="pagination">
+                <div class="pagination-info">
+                    <span id="paginationInfo">Zeige 1-10 von 0 Items</span>
+                </div>
+                <div class="pagination-controls">
+                    <button id="prevPageBtn" class="pagination-btn" disabled>◀ Zurück</button>
+                    <button id="nextPageBtn" class="pagination-btn" disabled>Weiter ▶</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Hidden file input für Import -->
+    <input type="file" id="importFileInput" accept=".json" style="display: none;">
+</div>

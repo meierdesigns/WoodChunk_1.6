@@ -1,0 +1,1688 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Editor - Sidebar Functions</title>
+    <link rel="stylesheet" href="styles.css?v=v1">
+    <style>
+        .debug-container {
+            display: flex;
+            height: 100vh;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        
+        .debug-sidebar {
+            width: 300px;
+            background: #2a2a2a;
+            border-right: 1px solid #444;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        .debug-main {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .debug-tab {
+            background: #333;
+            border: 1px solid #555;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .debug-tab:hover {
+            background: #444;
+        }
+        
+        .debug-tab.active {
+            background: #4CAF50;
+            border-color: #4CAF50;
+        }
+        
+        .debug-content {
+            display: none;
+        }
+        
+        .debug-content.active {
+            display: block;
+        }
+        
+        .function-test {
+            background: #333;
+            border: 1px solid #555;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .function-test h3 {
+            margin: 0 0 10px 0;
+            color: #4CAF50;
+        }
+        
+        .function-test button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        
+        .function-test button:hover {
+            background: #45a049;
+        }
+        
+        .function-test button.danger {
+            background: #f44336;
+        }
+        
+        .function-test button.danger:hover {
+            background: #da190b;
+        }
+        
+        .test-result {
+            background: #222;
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 10px;
+            margin-top: 10px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        /* Cache busting for Buildings images */
+        img[src*="Buildings"], img[src*="slice_"], img[src*="tile_"] {
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            image-rendering: pixelated;
+        }
+        
+        .test-result.success {
+            border-color: #4CAF50;
+            color: #4CAF50;
+        }
+        
+        .test-result.error {
+            border-color: #f44336;
+            color: #f44336;
+        }
+        
+        .test-result.warning {
+            border-color: #ff9800;
+            color: #ff9800;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-indicator.success {
+            background: #4CAF50;
+        }
+        
+        .status-indicator.error {
+            background: #f44336;
+        }
+        
+        .status-indicator.warning {
+            background: #ff9800;
+        }
+        
+        .status-indicator.info {
+            background: #2196F3;
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-container">
+        <div class="debug-sidebar">
+            <h2>Debug Editor</h2>
+            <p>Teste alle Sidebar-Funktionen</p>
+            
+            <div class="debug-tab active" onclick="showTab('sidebar-functions')">
+                <span class="status-indicator success"></span>
+                Sidebar Functions
+            </div>
+            
+            <div class="debug-tab" onclick="showTab('biome-module')">
+                <span class="status-indicator info"></span>
+                Biome Module
+            </div>
+            
+            <div class="debug-tab" onclick="showTab('biome-menu-debug')">
+                <span class="status-indicator warning"></span>
+                Biome Menü Debug
+            </div>
+            
+            <div class="debug-tab" onclick="showTab('tools-module')">
+                <span class="status-indicator info"></span>
+                Tools Module
+            </div>
+            
+            <div class="debug-tab" onclick="showTab('settings-module')">
+                <span class="status-indicator info"></span>
+                Settings Module
+            </div>
+            
+            <div class="debug-tab" onclick="showTab('layer-tabs')">
+                <span class="status-indicator info"></span>
+                Layer Tabs
+            </div>
+            
+            <div class="debug-tab" onclick="showTab('toolbar')">
+                <span class="status-indicator info"></span>
+                Toolbar
+            </div>
+            
+            <div class="debug-tab" onclick="showTab('system')">
+                <span class="status-indicator warning"></span>
+                System Status
+            </div>
+            
+            <div class="debug-tab" onclick="showTab('performance')">
+                <span class="status-indicator info"></span>
+                Performance Analysis
+            </div>
+        </div>
+        
+        <div class="debug-main">
+            <!-- Sidebar Functions Tab -->
+            <div id="sidebar-functions" class="debug-content active">
+                <h2>Sidebar Functions Test</h2>
+                
+                <div class="function-test">
+                    <h3>Module Toggle Functions</h3>
+                    <button onclick="testModuleToggle()">Test Module Toggle</button>
+                    <button onclick="testAllModules()">Test All Modules</button>
+                    <button onclick="testModulePersistence()">Test Module Persistence</button>
+                    <div id="module-toggle-result" class="test-result"></div>
+                </div>
+                
+                <div class="function-test">
+                    <h3>Biome Functions</h3>
+                    <button onclick="testBiomeLoading()">Test Biome Loading</button>
+                    <button onclick="testBiomeFiltering()">Test Biome Filtering</button>
+                    <button onclick="testBiomeSelection()">Test Biome Selection</button>
+                    <button onclick="testBiomeRefresh()">Test Biome Refresh</button>
+                    <div id="biome-result" class="test-result"></div>
+                </div>
+                
+                <div class="function-test">
+                    <h3>Layer Functions</h3>
+                    <button onclick="testLayerSwitching()">Test Layer Switching</button>
+                    <button onclick="testLayerBiomeFiltering()">Test Layer Biome Filtering</button>
+                    <button onclick="testLayerPersistence()">Test Layer Persistence</button>
+                    <div id="layer-result" class="test-result"></div>
+                </div>
+                
+                <div class="function-test">
+                    <h3>DOM Functions</h3>
+                    <button onclick="testDOMElements()">Test DOM Elements</button>
+                    <button onclick="testEventListeners()">Test Event Listeners</button>
+                    <button onclick="testCSSClasses()">Test CSS Classes</button>
+                    <div id="dom-result" class="test-result"></div>
+                </div>
+            </div>
+            
+            <!-- Biome Module Tab -->
+            <div id="biome-module" class="debug-content">
+                <h2>Biome Module Test</h2>
+                
+                <div class="function-test">
+                    <h3>BiomeCore Functions</h3>
+                    <button onclick="testBiomeCore()">Test BiomeCore</button>
+                    <button onclick="testBiomeData()">Test BiomeData</button>
+                    <button onclick="testBiomeUI()">Test BiomeUI</button>
+                    <div id="biome-module-result" class="test-result"></div>
+                </div>
+                
+                <div class="function-test">
+                    <h3>BiomeUtils Functions</h3>
+                    <button onclick="testBiomeUtils()">Test BiomeUtils</button>
+                    <button onclick="testBiomeFolders()">Test BiomeFolders</button>
+                    <button onclick="testBiomeColors()">Test Biome Colors</button>
+                    <div id="biome-utils-result" class="test-result"></div>
+                </div>
+            </div>
+            
+            <!-- Biome Menü Debug Tab -->
+            <div id="biome-menu-debug" class="debug-content">
+                <h2>Biome Menü Debug</h2>
+                
+                <div class="function-test">
+                    <h3>Automatische Debug-Funktionen</h3>
+                    <button onclick="runAutoDebug()">🚀 Auto Debug</button>
+                    <button onclick="runComprehensiveDebug()">🔍 Umfassende Debug</button>
+                    <button onclick="runImageDebug()">🖼️ Bild Debug</button>
+                    <button onclick="runQuickDebug()">⚡ Schnelle Debug</button>
+                    <div id="auto-debug-result" class="test-result"></div>
+                </div>
+                
+                <div class="function-test">
+                    <h3>TileEditor Integration</h3>
+                    <button onclick="testTileEditorIntegration()">Test TileEditor</button>
+                    <button onclick="testBuildingsTilesList()">Test Buildings Tiles</button>
+                    <button onclick="testImageLoading()">Test Bild-Ladung</button>
+                    <div id="tileeditor-result" class="test-result"></div>
+                </div>
+                
+                <div class="function-test">
+                    <h3>DOM & UI Tests</h3>
+                    <button onclick="testBiomeDOM()">Test DOM-Elemente</button>
+                    <button onclick="testBiomeLayout()">Test Layout</button>
+                    <button onclick="testBiomeEvents()">Test Events</button>
+                    <div id="biome-dom-result" class="test-result"></div>
+                </div>
+            </div>
+            
+            <!-- Tools Module Tab -->
+            <div id="tools-module" class="debug-content">
+                <h2>Tools Module Test</h2>
+                
+                <div class="function-test">
+                    <h3>Brush Functions</h3>
+                    <button onclick="testBrushSizes()">Test Brush Sizes</button>
+                    <button onclick="testBrushModes()">Test Brush Modes</button>
+                    <button onclick="testBrushSelection()">Test Brush Selection</button>
+                    <div id="brush-result" class="test-result"></div>
+                </div>
+                
+                <div class="function-test">
+                    <h3>View Functions</h3>
+                    <button onclick="testViewReset()">Test View Reset</button>
+                    <button onclick="testMapCenter()">Test Map Center</button>
+                    <button onclick="testZoomFunctions()">Test Zoom Functions</button>
+                    <div id="view-result" class="test-result"></div>
+                </div>
+            </div>
+            
+            <!-- Settings Module Tab -->
+            <div id="settings-module" class="debug-content">
+                <h2>Settings Module Test</h2>
+                
+                <div class="function-test">
+                    <h3>Settings Functions</h3>
+                    <button onclick="testSettingsSave()">Test Settings Save</button>
+                    <button onclick="testSettingsLoad()">Test Settings Load</button>
+                    <button onclick="testSettingsReset()">Test Settings Reset</button>
+                    <div id="settings-result" class="test-result"></div>
+                </div>
+            </div>
+            
+            <!-- Layer Tabs Tab -->
+            <div id="layer-tabs" class="debug-content">
+                <h2>Layer Tabs Test</h2>
+                
+                <div class="function-test">
+                    <h3>Layer Tab Functions</h3>
+                    <button onclick="testLayerTabs()">Test Layer Tabs</button>
+                    <button onclick="testLayerEvents()">Test Layer Events</button>
+                    <button onclick="testLayerState()">Test Layer State</button>
+                    <div id="layer-tabs-result" class="test-result"></div>
+                </div>
+            </div>
+            
+            <!-- Toolbar Tab -->
+            <div id="toolbar" class="debug-content">
+                <h2>Toolbar Test</h2>
+                
+                <div class="function-test">
+                    <h3>Toolbar Functions</h3>
+                    <button onclick="testSaveFunction()">Test Save Function</button>
+                    <button onclick="testLoadFunction()">Test Load Function</button>
+                    <button onclick="testClearFunction()">Test Clear Function</button>
+                    <div id="toolbar-result" class="test-result"></div>
+                </div>
+            </div>
+            
+            <!-- System Status Tab -->
+            <div id="system" class="debug-content">
+                <h2>System Status</h2>
+                
+                <div class="function-test">
+                    <h3>System Information</h3>
+                    <button onclick="testSystemStatus()">Test System Status</button>
+                    <button onclick="testModuleAvailability()">Test Module Availability</button>
+                    <button onclick="testErrorLogging()">Test Error Logging</button>
+                    <button onclick="activateSystemTab()" class="danger">Aktiviere System Tab</button>
+                    <div id="system-result" class="test-result"></div>
+                </div>
+                
+                <div class="function-test">
+                    <h3>Debug Editor State Management</h3>
+                    <button onclick="testDebugEditorState()">Test Current State</button>
+                    <button onclick="clearDebugEditorState()">Clear Saved State</button>
+                    <button onclick="saveCurrentState()">Save Current State</button>
+                    <div id="debug-state-result" class="test-result"></div>
+                </div>
+            </div>
+            
+            <!-- Performance Analysis Tab -->
+            <div id="performance" class="debug-content">
+                <h2>Performance Analysis</h2>
+                
+                <div class="function-test">
+                    <h3>Performance Monitoring</h3>
+                    <button onclick="startPerformanceMonitoring()">Start Monitoring</button>
+                    <button onclick="stopPerformanceMonitoring()">Stop Monitoring</button>
+                    <button onclick="clearPerformanceData()">Clear Data</button>
+                    <button onclick="exportPerformanceData()">Export Data</button>
+                    <div id="performance-result" class="test-result"></div>
+                </div>
+                
+                <div class="function-test">
+                    <h3>Function Performance</h3>
+                    <button onclick="testFunctionPerformance()">Test Function Performance</button>
+                    <button onclick="profileModuleLoading()">Profile Module Loading</button>
+                    <button onclick="analyzeMemoryUsage()">Analyze Memory Usage</button>
+                    <div id="function-performance-result" class="test-result"></div>
+                </div>
+                
+                <div class="function-test">
+                    <h3>Performance Metrics</h3>
+                    <div id="performance-metrics" class="test-result">
+                        <div id="metrics-display">
+                            <h4>Real-time Metrics:</h4>
+                            <div id="fps-display">FPS: <span id="fps-value">--</span></div>
+                            <div id="memory-display">Memory: <span id="memory-value">--</span></div>
+                            <div id="load-time-display">Load Time: <span id="load-time-value">--</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab Management
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.debug-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active from all tab buttons
+            document.querySelectorAll('.debug-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            
+            // Save current tab state
+            saveDebugEditorState(tabName);
+        }
+        
+        // Debug Editor State Management
+        function saveDebugEditorState(activeTab = null) {
+            try {
+                const state = {
+                    isOpen: true,
+                    activeTab: activeTab || getCurrentActiveTab(),
+                    timestamp: new Date().toISOString()
+                };
+                
+                localStorage.setItem('debugEditorState', JSON.stringify(state));
+                console.log('[DebugEditor] State saved:', state);
+            } catch (error) {
+                console.error('[DebugEditor] Error saving state:', error);
+            }
+        }
+        
+        function restoreDebugEditorState() {
+            try {
+                const savedState = localStorage.getItem('debugEditorState');
+                if (savedState) {
+                    const state = JSON.parse(savedState);
+                    console.log('[DebugEditor] Restoring state:', state);
+                    
+                    if (state.activeTab && document.getElementById(state.activeTab)) {
+                        // Switch to saved tab
+                        showTab(state.activeTab);
+                        logResult('system-result', `✅ Debug Editor state restored - Active tab: ${state.activeTab}`, 'success');
+                    } else {
+                        logResult('system-result', '⚠️ Saved tab not found, using default', 'warning');
+                    }
+                } else {
+                    logResult('system-result', 'ℹ️ No saved debug editor state found', 'info');
+                }
+            } catch (error) {
+                console.error('[DebugEditor] Error restoring state:', error);
+                logResult('system-result', `❌ Error restoring debug editor state: ${error.message}`, 'error');
+            }
+        }
+        
+        function getCurrentActiveTab() {
+            const activeContent = document.querySelector('.debug-content.active');
+            return activeContent ? activeContent.id : 'sidebar-functions';
+        }
+        
+        function clearDebugEditorState() {
+            try {
+                localStorage.removeItem('debugEditorState');
+                console.log('[DebugEditor] State cleared');
+                logResult('system-result', '✅ Debug Editor state cleared', 'success');
+            } catch (error) {
+                console.error('[DebugEditor] Error clearing state:', error);
+                logResult('system-result', `❌ Error clearing debug editor state: ${error.message}`, 'error');
+            }
+        }
+        
+        // Test Functions
+        function logResult(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            const timestamp = new Date().toLocaleTimeString();
+            const className = `test-result ${type}`;
+            
+            element.className = className;
+            element.innerHTML += `[${timestamp}] ${message}\n`;
+            element.scrollTop = element.scrollHeight;
+        }
+        
+        // Module Toggle Tests
+        function testModuleToggle() {
+            logResult('module-toggle-result', 'Testing module toggle functions...', 'info');
+            
+            try {
+                // Test if toggleModule function exists
+                if (typeof toggleModule === 'function') {
+                    logResult('module-toggle-result', '✅ toggleModule function found', 'success');
+                    
+                    // Test module elements
+                    const modules = ['tools', 'biome', 'settings'];
+                    modules.forEach(module => {
+                        const moduleElement = document.getElementById(`${module}-module`);
+                        const contentElement = document.getElementById(`${module}-content`);
+                        const toggleElement = document.getElementById(`${module}-toggle`);
+                        
+                        if (moduleElement && contentElement && toggleElement) {
+                            logResult('module-toggle-result', `✅ ${module} module elements found`, 'success');
+                        } else {
+                            logResult('module-toggle-result', `❌ ${module} module elements missing`, 'error');
+                        }
+                    });
+                } else {
+                    logResult('module-toggle-result', '❌ toggleModule function not found', 'error');
+                }
+            } catch (error) {
+                logResult('module-toggle-result', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+        
+        function testAllModules() {
+            logResult('module-toggle-result', 'Testing all modules...', 'info');
+            
+            const modules = ['tools', 'biome', 'settings'];
+            modules.forEach(module => {
+                try {
+                    if (typeof toggleModule === 'function') {
+                        toggleModule(module);
+                        logResult('module-toggle-result', `✅ Toggled ${module} module`, 'success');
+                    }
+                } catch (error) {
+                    logResult('module-toggle-result', `❌ Error toggling ${module}: ${error.message}`, 'error');
+                }
+            });
+        }
+        
+        function testModulePersistence() {
+            logResult('module-toggle-result', 'Testing module persistence...', 'info');
+            
+            try {
+                const modules = ['tools', 'biome', 'settings'];
+                modules.forEach(module => {
+                    const savedState = localStorage.getItem(`${module}-module-expanded`);
+                    logResult('module-toggle-result', `${module} saved state: ${savedState}`, 'info');
+                });
+            } catch (error) {
+                logResult('module-toggle-result', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+        
+        // Biome Tests
+        function testBiomeLoading() {
+            logResult('biome-result', 'Testing biome loading...', 'info');
+            
+            try {
+                if (typeof BiomeUtils !== 'undefined') {
+                    logResult('biome-result', '✅ BiomeUtils found', 'success');
+                    
+                    if (typeof BiomeUtils.getBiomeFolders === 'function') {
+                        BiomeUtils.getBiomeFolders().then(biomes => {
+                            logResult('biome-result', `✅ Loaded ${biomes.length} biomes`, 'success');
+                            logResult('biome-result', `Biomes: ${biomes.map(b => b.name).join(', ')}`, 'info');
+                        }).catch(error => {
+                            logResult('biome-result', `❌ Error loading biomes: ${error.message}`, 'error');
+                        });
+                    } else {
+                        logResult('biome-result', '❌ getBiomeFolders function not found', 'error');
+                    }
+                } else {
+                    logResult('biome-result', '❌ BiomeUtils not found', 'error');
+                }
+            } catch (error) {
+                logResult('biome-result', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+        
+        function testBiomeFiltering() {
+            logResult('biome-result', 'Testing biome filtering...', 'info');
+            
+            try {
+                if (typeof BiomeUtils !== 'undefined' && typeof BiomeUtils.getBiomeFolders === 'function') {
+                    BiomeUtils.getBiomeFolders().then(biomes => {
+                        const biomeTypes = biomes.filter(b => b.type === 'biome');
+                        const entityTypes = biomes.filter(b => b.type === 'entities');
+                        
+                        logResult('biome-result', `✅ Biome types: ${biomeTypes.length}`, 'success');
+                        logResult('biome-result', `✅ Entity types: ${entityTypes.length}`, 'success');
+                        logResult('biome-result', `Biome names: ${biomeTypes.map(b => b.name).join(', ')}`, 'info');
+                        logResult('biome-result', `Entity names: ${entityTypes.map(b => b.name).join(', ')}`, 'info');
+                    });
+                } else {
+                    logResult('biome-result', '❌ BiomeUtils not available', 'error');
+                }
+            } catch (error) {
+                logResult('biome-result', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+        
+        function testBiomeSelection() {
+            logResult('biome-result', 'Testing biome selection...', 'info');
+            
+            try {
+                const biomeItems = document.querySelectorAll('.biome-category-item');
+                logResult('biome-result', `Found ${biomeItems.length} biome items`, 'info');
+                
+                biomeItems.forEach((item, index) => {
+                    const biomeId = item.getAttribute('data-category-id');
+                    logResult('biome-result', `Biome ${index + 1}: ${biomeId}`, 'info');
+                });
+            } catch (error) {
+                logResult('biome-result', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+        
+        function testBiomeRefresh() {
+            logResult('biome-result', 'Testing biome refresh...', 'info');
+            
+            try {
+                const refreshButton = document.getElementById('biome-refresh-btn');
+                if (refreshButton) {
+                    logResult('biome-result', '✅ Biome refresh button found', 'success');
+                    refreshButton.click();
+                    logResult('biome-result', '✅ Biome refresh triggered', 'success');
+                } else {
+                    logResult('biome-result', '❌ Biome refresh button not found', 'error');
+                }
+            } catch (error) {
+                logResult('biome-result', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+        
+        // Layer Tests
+        function testLayerSwitching() {
+            logResult('layer-result', 'Testing layer switching...', 'info');
+            
+            try {
+                const layerTabs = document.querySelectorAll('.layer-tab');
+                logResult('layer-result', `Found ${layerTabs.length} layer tabs`, 'info');
+                
+                layerTabs.forEach((tab, index) => {
+                    const layerName = tab.getAttribute('data-layer');
+                    logResult('layer-result', `Layer ${index + 1}: ${layerName}`, 'info');
+                });
+                
+                // Test layer switching
+                if (typeof window.core !== 'undefined' && window.core.setCurrentLayer) {
+                    logResult('layer-result', '✅ Core layer switching available', 'success');
+                } else {
+                    logResult('layer-result', '❌ Core layer switching not available', 'error');
+                }
+            } catch (error) {
+                logResult('layer-result', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+        
+        function testLayerBiomeFiltering() {
+            logResult('layer-result', 'Testing layer biome filtering...', 'info');
+            
+            try {
+                if (typeof window.core !== 'undefined' && window.core.getCurrentLayer) {
+                    const currentLayer = window.core.getCurrentLayer();
+                    logResult('layer-result', `Current layer: ${currentLayer}`, 'info');
+                    
+                    // Test biome filtering for current layer
+                    if (typeof BiomeUtils !== 'undefined') {
+                        BiomeUtils.getBiomeFolders().then(biomes => {
+                            const filteredBiomes = currentLayer === 'streets' 
+                                ? biomes.filter(b => b.type === 'entities')
+                                : biomes.filter(b => b.type === 'biome');
+                            
+                            logResult('layer-result', `Filtered biomes for ${currentLayer}: ${filteredBiomes.length}`, 'success');
+                        });
+                    }
+                } else {
+                    logResult('layer-result', '❌ Core not available', 'error');
+                }
+            } catch (error) {
+                logResult('layer-result', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+        
+        function testLayerPersistence() {
+            logResult('layer-result', 'Testing layer persistence...', 'info');
+            
+            try {
+                const savedLayer = localStorage.getItem('selected-layer');
+                logResult('layer-result', `Saved layer: ${savedLayer}`, 'info');
+            } catch (error) {
+                logResult('layer-result', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+        
+        // DOM Tests
+        function testDOMElements() {
+            logResult('dom-result', 'Testing DOM elements...', 'info');
+            
+            const requiredElements = [
+                'biome-categories-list',
+                'biome-categories-count',
+                'biome-refresh-btn',
+                'tools-content',
+                'settings-content',
+                'biome-content'
+            ];
+            
+            requiredElements.forEach(elementId => {
+                const element = document.getElementById(elementId);
+                if (element) {
+                    logResult('dom-result', `✅ ${elementId} found`, 'success');
+                } else {
+                    logResult('dom-result', `❌ ${elementId} not found`, 'error');
+                }
+            });
+        }
+        
+        function testEventListeners() {
+            logResult('dom-result', 'Testing event listeners...', 'info');
+            
+            try {
+                const refreshButton = document.getElementById('biome-refresh-btn');
+                if (refreshButton) {
+                    const listeners = getEventListeners(refreshButton);
+                    logResult('dom-result', `Refresh button listeners: ${listeners.length}`, 'info');
+                }
+                
+                const layerTabs = document.querySelectorAll('.layer-tab');
+                layerTabs.forEach((tab, index) => {
+                    const listeners = getEventListeners(tab);
+                    logResult('dom-result', `Layer tab ${index + 1} listeners: ${listeners.length}`, 'info');
+                });
+            } catch (error) {
+                logResult('dom-result', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+        
+        function getEventListeners(element) {
+            // Simple event listener detection
+            const events = ['click', 'mouseenter', 'mouseleave', 'change'];
+            const listeners = [];
+            
+            events.forEach(event => {
+                if (element[`on${event}`] || element._listeners) {
+                    listeners.push(event);
+                }
+            });
+            
+            return listeners;
+        }
+        
+        function testCSSClasses() {
+            logResult('dom-result', 'Testing CSS classes...', 'info');
+            
+            const requiredClasses = [
+                'module-container',
+                'module-header',
+                'module-content',
+                'biome-category-item',
+                'layer-tab'
+            ];
+            
+            requiredClasses.forEach(className => {
+                const elements = document.getElementsByClassName(className);
+                if (elements.length > 0) {
+                    logResult('dom-result', `✅ ${className}: ${elements.length} elements`, 'success');
+                } else {
+                    logResult('dom-result', `❌ ${className}: no elements found`, 'error');
+                }
+            });
+        }
+        
+        // Initialize debug editor
+        document.addEventListener('DOMContentLoaded', function() {
+            logResult('system-result', 'Debug Editor initialized', 'success');
+            logResult('system-result', 'Ready to test sidebar functions', 'info');
+            
+            // Restore debug editor state
+            restoreDebugEditorState();
+            
+            // Automatische Debug-Analyse nach 1 Sekunde
+            setTimeout(() => {
+                logResult('system-result', '🚀 Starte automatische Debug-Analyse...', 'info');
+                
+                // Teste automatische Debug-Funktion
+                if (typeof window.autoDebug === 'function') {
+                    logResult('system-result', '✅ autoDebug Funktion verfügbar', 'success');
+                    try {
+                        const result = window.autoDebug();
+                        logResult('system-result', '✅ Automatische Debug-Analyse abgeschlossen', 'success');
+                        logResult('system-result', `📊 Ergebnis: ${JSON.stringify(result, null, 2)}`, 'info');
+                    } catch (error) {
+                        logResult('system-result', `❌ autoDebug Fehler: ${error.message}`, 'error');
+                    }
+                } else {
+                    logResult('system-result', '❌ autoDebug Funktion nicht verfügbar (nur im HexMapEditor)', 'warning');
+                }
+                
+                // Teste andere Debug-Funktionen
+                const debugFunctions = [
+                    'comprehensiveBiomeMenuDebug',
+                    'debugImageLoadingIssue',
+                    'quickBiomeDebug'
+                ];
+                
+                debugFunctions.forEach(funcName => {
+                    if (typeof window[funcName] === 'function') {
+                        logResult('system-result', `✅ ${funcName} verfügbar`, 'success');
+                    } else {
+                        logResult('system-result', `❌ ${funcName} nicht verfügbar (nur im HexMapEditor)`, 'warning');
+                    }
+                });
+                
+                // Teste globale Verfügbarkeit
+                logResult('system-result', `window.buildingsTilesList: ${!!window.buildingsTilesList}`, window.buildingsTilesList ? 'success' : 'warning');
+                logResult('system-result', `window.tileEditor: ${!!window.tileEditor}`, window.tileEditor ? 'success' : 'warning');
+                logResult('system-result', `window.BiomeData: ${!!window.BiomeData}`, window.BiomeData ? 'success' : 'warning');
+                
+                // Debug-Editor spezifische Tests
+                logResult('system-result', '=== DEBUG-EDITOR SPEZIFISCHE TESTS ===', 'info');
+                logResult('system-result', `Debug-Editor URL: ${window.location.href}`, 'info');
+                logResult('system-result', `Debug-Editor geladen: ${!!document.querySelector('.debug-container')}`, 'success');
+                logResult('system-result', `Debug-Tabs gefunden: ${document.querySelectorAll('.debug-tab').length}`, 'success');
+                logResult('system-result', `Debug-Content gefunden: ${document.querySelectorAll('.debug-content').length}`, 'success');
+                
+                // Teste Tab-Funktionalität
+                const systemTab = document.querySelector('.debug-tab[onclick*="system"]');
+                const systemContent = document.getElementById('system');
+                logResult('system-result', `System-Tab gefunden: ${!!systemTab}`, systemTab ? 'success' : 'error');
+                logResult('system-result', `System-Content gefunden: ${!!systemContent}`, systemContent ? 'success' : 'error');
+                
+            }, 1000);
+        });
+        
+        // Additional test functions for other tabs
+        function testBiomeCore() {
+            logResult('biome-module-result', 'Testing BiomeCore...', 'info');
+            // Implementation for BiomeCore testing
+        }
+        
+        function testBiomeData() {
+            logResult('biome-module-result', 'Testing BiomeData...', 'info');
+            
+            try {
+                // Teste automatische Debug-Funktion
+                if (typeof window.autoDebug === 'function') {
+                    logResult('biome-module-result', '✅ autoDebug Funktion verfügbar', 'success');
+                    const result = window.autoDebug();
+                    logResult('biome-module-result', `✅ Automatische Debug-Analyse abgeschlossen`, 'success');
+                    logResult('biome-module-result', `📊 Ergebnis: ${JSON.stringify(result, null, 2)}`, 'info');
+                } else {
+                    logResult('biome-module-result', '❌ autoDebug Funktion nicht verfügbar', 'error');
+                }
+                
+                // Teste umfassende Debug-Funktion
+                if (typeof window.comprehensiveBiomeMenuDebug === 'function') {
+                    logResult('biome-module-result', '✅ comprehensiveBiomeMenuDebug verfügbar', 'success');
+                    const result = window.comprehensiveBiomeMenuDebug();
+                    logResult('biome-module-result', `✅ Umfassende Debug-Analyse abgeschlossen`, 'success');
+                } else {
+                    logResult('biome-module-result', '❌ comprehensiveBiomeMenuDebug nicht verfügbar', 'error');
+                }
+                
+                // Teste Bild-Ladungs-Debug
+                if (typeof window.debugImageLoadingIssue === 'function') {
+                    logResult('biome-module-result', '✅ debugImageLoadingIssue verfügbar', 'success');
+                    const result = window.debugImageLoadingIssue();
+                    logResult('biome-module-result', `✅ Bild-Ladungs-Debug abgeschlossen`, 'success');
+                } else {
+                    logResult('biome-module-result', '❌ debugImageLoadingIssue nicht verfügbar', 'error');
+                }
+                
+            } catch (error) {
+                logResult('biome-module-result', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+        
+        function testBiomeUI() {
+            logResult('biome-module-result', 'Testing BiomeUI...', 'info');
+            
+            try {
+                // Teste DOM-Elemente des Biome-Menüs
+                const sidebar = document.querySelector('.sidebar');
+                const biomeMenu = document.querySelector('#biome-menu');
+                const categoriesList = document.querySelector('#biome-categories-list');
+                
+                logResult('biome-module-result', `Sidebar gefunden: ${!!sidebar}`, sidebar ? 'success' : 'error');
+                logResult('biome-module-result', `Biome-Menü gefunden: ${!!biomeMenu}`, biomeMenu ? 'success' : 'error');
+                logResult('biome-module-result', `Kategorien-Liste gefunden: ${!!categoriesList}`, categoriesList ? 'success' : 'error');
+                
+                // Teste Subkategorien
+                const subcategories = document.querySelectorAll('.subcategory-item');
+                logResult('biome-module-result', `Subkategorien gefunden: ${subcategories.length}`, subcategories.length > 0 ? 'success' : 'error');
+                
+                // Teste Tile-Elemente
+                const tileElements = document.querySelectorAll('.tile-element');
+                const tileImages = document.querySelectorAll('.tile-element img');
+                logResult('biome-module-result', `Tile-Elemente gefunden: ${tileElements.length}`, tileElements.length > 0 ? 'success' : 'error');
+                logResult('biome-module-result', `Tile-Bilder gefunden: ${tileImages.length}`, tileImages.length > 0 ? 'success' : 'error');
+                
+                // Teste Bild-Ladung
+                let loadedImages = 0;
+                let brokenImages = 0;
+                
+                tileImages.forEach(img => {
+                    if (img.complete && img.naturalHeight > 0) {
+                        loadedImages++;
+                    } else if (img.complete && img.naturalHeight === 0) {
+                        brokenImages++;
+                    }
+                });
+                
+                logResult('biome-module-result', `Geladene Bilder: ${loadedImages}`, loadedImages > 0 ? 'success' : 'warning');
+                logResult('biome-module-result', `Fehlende Bilder: ${brokenImages}`, brokenImages === 0 ? 'success' : 'error');
+                
+                const loadRate = (loadedImages + brokenImages) > 0 ? ((loadedImages / (loadedImages + brokenImages)) * 100).toFixed(1) : 0;
+                logResult('biome-module-result', `Bild-Lade-Rate: ${loadRate}%`, loadRate > 50 ? 'success' : 'warning');
+                
+                // Teste Layer-Tabs
+                const terrainTab = document.querySelector('.layer-tab[data-layer="terrain"]');
+                const streetsTab = document.querySelector('.layer-tab[data-layer="streets"]');
+                logResult('biome-module-result', `Terrain-Tab gefunden: ${!!terrainTab}`, terrainTab ? 'success' : 'error');
+                logResult('biome-module-result', `Streets-Tab gefunden: ${!!streetsTab}`, streetsTab ? 'success' : 'error');
+                
+            } catch (error) {
+                logResult('biome-module-result', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+        
+        function testBiomeUtils() {
+            logResult('biome-utils-result', 'Testing BiomeUtils...', 'info');
+            
+            try {
+                // Teste TileEditor-Integration
+                logResult('biome-utils-result', '=== TILEEDITOR INTEGRATION TEST ===', 'info');
+                
+                // Teste globale Verfügbarkeit
+                logResult('biome-utils-result', `window.tileEditor verfügbar: ${!!window.tileEditor}`, window.tileEditor ? 'success' : 'error');
+                logResult('biome-utils-result', `window.buildingsTilesList verfügbar: ${!!window.buildingsTilesList}`, window.buildingsTilesList ? 'success' : 'error');
+                logResult('biome-utils-result', `window.TileEditor verfügbar: ${!!window.TileEditor}`, window.TileEditor ? 'success' : 'error');
+                
+                // Teste buildingsTilesList Inhalt
+                if (window.buildingsTilesList) {
+                    logResult('biome-utils-result', `buildingsTilesList Anzahl: ${window.buildingsTilesList.length}`, 'success');
+                    
+                    if (window.buildingsTilesList.length > 0) {
+                        const sampleTile = window.buildingsTilesList[0];
+                        logResult('biome-utils-result', `Sample Tile: ${JSON.stringify(sampleTile, null, 2)}`, 'info');
+                        
+                        // Teste verfügbare Kategorien
+                        const categories = [...new Set(window.buildingsTilesList.map(t => t.buildingCategory).filter(Boolean))];
+                        logResult('biome-utils-result', `Verfügbare Kategorien: ${categories.join(', ')}`, 'success');
+                        
+                        // Teste Bild-Pfade
+                        const sampleImage = sampleTile.image;
+                        logResult('biome-utils-result', `Sample Bild-Pfad: ${sampleImage}`, 'info');
+                        
+                        // Teste ob Bild geladen werden kann
+                        const testImg = new Image();
+                        testImg.onload = () => {
+                            logResult('biome-utils-result', `✅ Test-Bild erfolgreich geladen: ${sampleImage}`, 'success');
+                        };
+                        testImg.onerror = () => {
+                            logResult('biome-utils-result', `❌ Test-Bild konnte nicht geladen werden: ${sampleImage}`, 'error');
+                        };
+                        testImg.src = sampleImage;
+                    }
+                }
+                
+                // Teste TileEditor Instance
+                if (window.tileEditor) {
+                    logResult('biome-utils-result', `TileEditor isInitialized: ${window.tileEditor.isInitialized}`, 'info');
+                    logResult('biome-utils-result', `TileEditor tiles count: ${window.tileEditor.tiles?.length || 0}`, 'info');
+                    logResult('biome-utils-result', `TileEditor categories count: ${window.tileEditor.categories?.length || 0}`, 'info');
+                    
+                    // Teste verfügbare Methoden
+                    const methods = Object.getOwnPropertyNames(Object.getPrototypeOf(window.tileEditor));
+                    logResult('biome-utils-result', `Verfügbare Methoden: ${methods.join(', ')}`, 'info');
+                }
+                
+                // Teste BiomeUtils Funktionen
+                if (typeof BiomeUtils !== 'undefined') {
+                    logResult('biome-utils-result', '✅ BiomeUtils verfügbar', 'success');
+                    
+                    if (typeof BiomeUtils.getBiomeFolders === 'function') {
+                        BiomeUtils.getBiomeFolders().then(biomes => {
+                            logResult('biome-utils-result', `BiomeFolders geladen: ${biomes.length} Biomes`, 'success');
+                            logResult('biome-utils-result', `Biome-Namen: ${biomes.map(b => b.name).join(', ')}`, 'info');
+                        }).catch(error => {
+                            logResult('biome-utils-result', `❌ BiomeFolders Fehler: ${error.message}`, 'error');
+                        });
+                    } else {
+                        logResult('biome-utils-result', '❌ getBiomeFolders Funktion nicht verfügbar', 'error');
+                    }
+                } else {
+                    logResult('biome-utils-result', '❌ BiomeUtils nicht verfügbar', 'error');
+                }
+                
+            } catch (error) {
+                logResult('biome-utils-result', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+        
+        function testBiomeFolders() {
+            logResult('biome-utils-result', 'Testing BiomeFolders...', 'info');
+            // Implementation for BiomeFolders testing
+        }
+        
+        function testBiomeColors() {
+            logResult('biome-utils-result', 'Testing Biome Colors...', 'info');
+            // Implementation for biome colors testing
+        }
+        
+        function testBrushSizes() {
+            logResult('brush-result', 'Testing Brush Sizes...', 'info');
+            // Implementation for brush sizes testing
+        }
+        
+        function testBrushModes() {
+            logResult('brush-result', 'Testing Brush Modes...', 'info');
+            // Implementation for brush modes testing
+        }
+        
+        function testBrushSelection() {
+            logResult('brush-result', 'Testing Brush Selection...', 'info');
+            // Implementation for brush selection testing
+        }
+        
+        function testViewReset() {
+            logResult('view-result', 'Testing View Reset...', 'info');
+            // Implementation for view reset testing
+        }
+        
+        function testMapCenter() {
+            logResult('view-result', 'Testing Map Center...', 'info');
+            // Implementation for map center testing
+        }
+        
+        function testZoomFunctions() {
+            logResult('view-result', 'Testing Zoom Functions...', 'info');
+            // Implementation for zoom functions testing
+        }
+        
+        function testSettingsSave() {
+            logResult('settings-result', 'Testing Settings Save...', 'info');
+            // Implementation for settings save testing
+        }
+        
+        function testSettingsLoad() {
+            logResult('settings-result', 'Testing Settings Load...', 'info');
+            // Implementation for settings load testing
+        }
+        
+        function testSettingsReset() {
+            logResult('settings-result', 'Testing Settings Reset...', 'info');
+            // Implementation for settings reset testing
+        }
+        
+        function testLayerTabs() {
+            logResult('layer-tabs-result', 'Testing Layer Tabs...', 'info');
+            // Implementation for layer tabs testing
+        }
+        
+        function testLayerEvents() {
+            logResult('layer-tabs-result', 'Testing Layer Events...', 'info');
+            // Implementation for layer events testing
+        }
+        
+        function testLayerState() {
+            logResult('layer-tabs-result', 'Testing Layer State...', 'info');
+            // Implementation for layer state testing
+        }
+        
+        function testSaveFunction() {
+            logResult('toolbar-result', 'Testing Save Function...', 'info');
+            // Implementation for save function testing
+        }
+        
+        function testLoadFunction() {
+            logResult('toolbar-result', 'Testing Load Function...', 'info');
+            // Implementation for load function testing
+        }
+        
+        function testClearFunction() {
+            logResult('toolbar-result', 'Testing Clear Function...', 'info');
+            // Implementation for clear function testing
+        }
+        
+        function testSystemStatus() {
+            logResult('system-result', '=== SYSTEM STATUS TEST ===', 'info');
+            
+            // Browser-Informationen
+            logResult('system-result', `Browser: ${navigator.userAgent}`, 'info');
+            logResult('system-result', `URL: ${window.location.href}`, 'info');
+            logResult('system-result', `Viewport: ${window.innerWidth}x${window.innerHeight}`, 'info');
+            
+            // Debug-Editor Status
+            logResult('system-result', '=== DEBUG-EDITOR STATUS ===', 'info');
+            logResult('system-result', `Debug-Container: ${!!document.querySelector('.debug-container')}`, 'success');
+            logResult('system-result', `Debug-Sidebar: ${!!document.querySelector('.debug-sidebar')}`, 'success');
+            logResult('system-result', `Debug-Main: ${!!document.querySelector('.debug-main')}`, 'success');
+            
+            // Tab-Status
+            const tabs = document.querySelectorAll('.debug-tab');
+            const contents = document.querySelectorAll('.debug-content');
+            logResult('system-result', `Tabs gefunden: ${tabs.length}`, 'success');
+            logResult('system-result', `Contents gefunden: ${contents.length}`, 'success');
+            
+            // Aktiver Tab
+            const activeTab = document.querySelector('.debug-tab.active');
+            const activeContent = document.querySelector('.debug-content.active');
+            logResult('system-result', `Aktiver Tab: ${activeTab?.textContent?.trim()}`, 'info');
+            logResult('system-result', `Aktives Content: ${activeContent?.id}`, 'info');
+            
+            // System Tab spezifisch
+            const systemTab = document.querySelector('.debug-tab[onclick*="system"]');
+            const systemContent = document.getElementById('system');
+            logResult('system-result', `System-Tab: ${!!systemTab}`, systemTab ? 'success' : 'error');
+            logResult('system-result', `System-Content: ${!!systemContent}`, systemContent ? 'success' : 'error');
+            
+            if (systemTab) {
+                logResult('system-result', `System-Tab Text: ${systemTab.textContent.trim()}`, 'info');
+                logResult('system-result', `System-Tab onclick: ${systemTab.getAttribute('onclick')}`, 'info');
+            }
+            
+            if (systemContent) {
+                logResult('system-result', `System-Content ID: ${systemContent.id}`, 'info');
+                logResult('system-result', `System-Content Klassen: ${systemContent.className}`, 'info');
+                logResult('system-result', `System-Content Sichtbar: ${systemContent.style.display !== 'none'}`, 'info');
+            }
+            
+            // HexMapEditor Integration (falls verfügbar)
+            logResult('system-result', '=== HEXMAPEDITOR INTEGRATION ===', 'info');
+            logResult('system-result', `window.autoDebug: ${typeof window.autoDebug}`, typeof window.autoDebug === 'function' ? 'success' : 'warning');
+            logResult('system-result', `window.buildingsTilesList: ${typeof window.buildingsTilesList}`, typeof window.buildingsTilesList !== 'undefined' ? 'success' : 'warning');
+            logResult('system-result', `window.tileEditor: ${typeof window.tileEditor}`, typeof window.tileEditor !== 'undefined' ? 'success' : 'warning');
+        }
+        
+        function testModuleAvailability() {
+            logResult('system-result', 'Testing Module Availability...', 'info');
+            // Implementation for module availability testing
+        }
+        
+        function testErrorLogging() {
+            logResult('system-result', '=== ERROR LOGGING TEST ===', 'info');
+            
+            // Teste verschiedene Fehlertypen
+            try {
+                // Teste Console-Logging
+                console.log('Test: Console log funktioniert');
+                logResult('system-result', '✅ Console logging funktioniert', 'success');
+                
+                // Teste Error-Logging
+                console.error('Test: Console error funktioniert');
+                logResult('system-result', '✅ Error logging funktioniert', 'success');
+                
+                // Teste Warning-Logging
+                console.warn('Test: Console warn funktioniert');
+                logResult('system-result', '✅ Warning logging funktioniert', 'success');
+                
+            } catch (error) {
+                logResult('system-result', `❌ Logging Fehler: ${error.message}`, 'error');
+            }
+        }
+        
+        // Hilfsfunktion zum manuellen Aktivieren des System Tabs
+        function activateSystemTab() {
+            logResult('system-result', 'Manuell aktiviere System Tab...', 'info');
+            
+            // Entferne active von allen Tabs
+            document.querySelectorAll('.debug-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Verstecke alle Contents
+            document.querySelectorAll('.debug-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Aktiviere System Tab
+            const systemTab = document.querySelector('.debug-tab[onclick*="system"]');
+            const systemContent = document.getElementById('system');
+            
+            if (systemTab && systemContent) {
+                systemTab.classList.add('active');
+                systemContent.classList.add('active');
+                logResult('system-result', '✅ System Tab erfolgreich aktiviert', 'success');
+            } else {
+                logResult('system-result', '❌ System Tab konnte nicht aktiviert werden', 'error');
+            }
+        }
+        
+        // Debug Editor State Management Functions
+        function testDebugEditorState() {
+            logResult('debug-state-result', '=== DEBUG EDITOR STATE TEST ===', 'info');
+            
+            try {
+                // Test current state
+                const currentTab = getCurrentActiveTab();
+                logResult('debug-state-result', `Current active tab: ${currentTab}`, 'info');
+                
+                // Test saved state
+                const savedState = localStorage.getItem('debugEditorState');
+                if (savedState) {
+                    const state = JSON.parse(savedState);
+                    logResult('debug-state-result', `Saved state found:`, 'success');
+                    logResult('debug-state-result', `  - Active tab: ${state.activeTab}`, 'info');
+                    logResult('debug-state-result', `  - Is open: ${state.isOpen}`, 'info');
+                    logResult('debug-state-result', `  - Timestamp: ${state.timestamp}`, 'info');
+                    
+                    // Check if saved tab still exists
+                    const savedTabExists = document.getElementById(state.activeTab);
+                    logResult('debug-state-result', `Saved tab exists: ${!!savedTabExists}`, savedTabExists ? 'success' : 'warning');
+                } else {
+                    logResult('debug-state-result', 'No saved state found', 'warning');
+                }
+                
+                // Test localStorage availability
+                logResult('debug-state-result', `localStorage available: ${!!window.localStorage}`, 'info');
+                
+            } catch (error) {
+                logResult('debug-state-result', `❌ Error testing debug editor state: ${error.message}`, 'error');
+            }
+        }
+        
+        function saveCurrentState() {
+            logResult('debug-state-result', 'Saving current debug editor state...', 'info');
+            
+            try {
+                const currentTab = getCurrentActiveTab();
+                saveDebugEditorState(currentTab);
+                logResult('debug-state-result', `✅ Current state saved - Active tab: ${currentTab}`, 'success');
+                
+                // Verify save
+                const savedState = localStorage.getItem('debugEditorState');
+                if (savedState) {
+                    const state = JSON.parse(savedState);
+                    logResult('debug-state-result', `Verified save: ${state.activeTab}`, 'success');
+                }
+                
+            } catch (error) {
+                logResult('debug-state-result', `❌ Error saving current state: ${error.message}`, 'error');
+            }
+        }
+        
+        // Biome Menü Debug Funktionen
+        function runAutoDebug() {
+            logResult('auto-debug-result', '🚀 Starte automatische Debug-Analyse...', 'info');
+            
+            if (typeof window.autoDebug === 'function') {
+                try {
+                    const result = window.autoDebug();
+                    logResult('auto-debug-result', '✅ Automatische Debug-Analyse erfolgreich', 'success');
+                    logResult('auto-debug-result', `📊 Ergebnis: ${JSON.stringify(result, null, 2)}`, 'info');
+                } catch (error) {
+                    logResult('auto-debug-result', `❌ Fehler: ${error.message}`, 'error');
+                }
+            } else {
+                logResult('auto-debug-result', '❌ autoDebug Funktion nicht verfügbar', 'error');
+            }
+        }
+        
+        function runComprehensiveDebug() {
+            logResult('auto-debug-result', '🔍 Starte umfassende Debug-Analyse...', 'info');
+            
+            if (typeof window.comprehensiveBiomeMenuDebug === 'function') {
+                try {
+                    const result = window.comprehensiveBiomeMenuDebug();
+                    logResult('auto-debug-result', '✅ Umfassende Debug-Analyse erfolgreich', 'success');
+                } catch (error) {
+                    logResult('auto-debug-result', `❌ Fehler: ${error.message}`, 'error');
+                }
+            } else {
+                logResult('auto-debug-result', '❌ comprehensiveBiomeMenuDebug nicht verfügbar', 'error');
+            }
+        }
+        
+        function runImageDebug() {
+            logResult('auto-debug-result', '🖼️ Starte Bild-Debug-Analyse...', 'info');
+            
+            if (typeof window.debugImageLoadingIssue === 'function') {
+                try {
+                    const result = window.debugImageLoadingIssue();
+                    logResult('auto-debug-result', '✅ Bild-Debug-Analyse erfolgreich', 'success');
+                } catch (error) {
+                    logResult('auto-debug-result', `❌ Fehler: ${error.message}`, 'error');
+                }
+            } else {
+                logResult('auto-debug-result', '❌ debugImageLoadingIssue nicht verfügbar', 'error');
+            }
+        }
+        
+        function runQuickDebug() {
+            logResult('auto-debug-result', '⚡ Starte schnelle Debug-Analyse...', 'info');
+            
+            if (typeof window.quickBiomeDebug === 'function') {
+                try {
+                    window.quickBiomeDebug();
+                    logResult('auto-debug-result', '✅ Schnelle Debug-Analyse erfolgreich', 'success');
+                } catch (error) {
+                    logResult('auto-debug-result', `❌ Fehler: ${error.message}`, 'error');
+                }
+            } else {
+                logResult('auto-debug-result', '❌ quickBiomeDebug nicht verfügbar', 'error');
+            }
+        }
+        
+        function testTileEditorIntegration() {
+            logResult('tileeditor-result', '=== TILEEDITOR INTEGRATION TEST ===', 'info');
+            
+            // Teste globale Verfügbarkeit
+            logResult('tileeditor-result', `window.tileEditor: ${!!window.tileEditor}`, window.tileEditor ? 'success' : 'error');
+            logResult('tileeditor-result', `window.buildingsTilesList: ${!!window.buildingsTilesList}`, window.buildingsTilesList ? 'success' : 'error');
+            logResult('tileeditor-result', `window.TileEditor: ${!!window.TileEditor}`, window.TileEditor ? 'success' : 'error');
+            
+            // Teste TileEditor Instance
+            if (window.tileEditor) {
+                logResult('tileeditor-result', `TileEditor isInitialized: ${window.tileEditor.isInitialized}`, 'info');
+                logResult('tileeditor-result', `TileEditor tiles: ${window.tileEditor.tiles?.length || 0}`, 'info');
+                logResult('tileeditor-result', `TileEditor categories: ${window.tileEditor.categories?.length || 0}`, 'info');
+            }
+            
+            // Teste buildingsTilesList
+            if (window.buildingsTilesList) {
+                logResult('tileeditor-result', `buildingsTilesList count: ${window.buildingsTilesList.length}`, 'success');
+                
+                if (window.buildingsTilesList.length > 0) {
+                    const sampleTile = window.buildingsTilesList[0];
+                    logResult('tileeditor-result', `Sample tile: ${JSON.stringify(sampleTile, null, 2)}`, 'info');
+                }
+            }
+        }
+        
+        function testBuildingsTilesList() {
+            logResult('tileeditor-result', '=== BUILDINGS TILES LIST TEST ===', 'info');
+            
+            if (window.buildingsTilesList && window.buildingsTilesList.length > 0) {
+                logResult('tileeditor-result', `✅ ${window.buildingsTilesList.length} Tiles gefunden`, 'success');
+                
+                // Teste Kategorien
+                const categories = [...new Set(window.buildingsTilesList.map(t => t.buildingCategory).filter(Boolean))];
+                logResult('tileeditor-result', `Kategorien: ${categories.join(', ')}`, 'success');
+                
+                // Teste Bild-Pfade
+                const sampleTile = window.buildingsTilesList[0];
+                logResult('tileeditor-result', `Sample Bild-Pfad: ${sampleTile.image}`, 'info');
+                
+                // Teste Bild-Ladung
+                const testImg = new Image();
+                testImg.onload = () => {
+                    logResult('tileeditor-result', `✅ Test-Bild erfolgreich geladen: ${sampleTile.image}`, 'success');
+                };
+                testImg.onerror = () => {
+                    logResult('tileeditor-result', `❌ Test-Bild Fehler: ${sampleTile.image}`, 'error');
+                };
+                testImg.src = sampleTile.image;
+                
+            } else {
+                logResult('tileeditor-result', '❌ Keine Tiles gefunden', 'error');
+            }
+        }
+        
+        function testImageLoading() {
+            logResult('tileeditor-result', '=== BILD-LADUNG TEST ===', 'info');
+            
+            const tileImages = document.querySelectorAll('.tile-element img');
+            logResult('tileeditor-result', `${tileImages.length} Tile-Bilder gefunden`, 'info');
+            
+            let loadedImages = 0;
+            let brokenImages = 0;
+            
+            tileImages.forEach((img, index) => {
+                logResult('tileeditor-result', `Bild ${index + 1}: ${img.src}`, 'info');
+                logResult('tileeditor-result', `  - complete: ${img.complete}`, 'info');
+                logResult('tileeditor-result', `  - naturalWidth: ${img.naturalWidth}`, 'info');
+                logResult('tileeditor-result', `  - naturalHeight: ${img.naturalHeight}`, 'info');
+                
+                if (img.complete && img.naturalHeight > 0) {
+                    loadedImages++;
+                    logResult('tileeditor-result', `  ✅ Geladen`, 'success');
+                } else if (img.complete && img.naturalHeight === 0) {
+                    brokenImages++;
+                    logResult('tileeditor-result', `  ❌ Fehler beim Laden`, 'error');
+                } else {
+                    logResult('tileeditor-result', `  ⏳ Lädt noch...`, 'warning');
+                }
+            });
+            
+            logResult('tileeditor-result', `📊 Zusammenfassung: ${loadedImages} geladen, ${brokenImages} fehlerhaft`, 'info');
+        }
+        
+        function testBiomeDOM() {
+            logResult('biome-dom-result', '=== BIOME DOM TEST ===', 'info');
+            
+            const elements = [
+                { id: '.sidebar', selector: '.sidebar' },
+                { id: '#biome-menu', selector: '#biome-menu' },
+                { id: '#biome-categories-list', selector: '#biome-categories-list' },
+                { id: '.subcategory-item', selector: '.subcategory-item' },
+                { id: '.tile-element', selector: '.tile-element' },
+                { id: '.tile-element img', selector: '.tile-element img' },
+                { id: '.layer-tab[data-layer="terrain"]', selector: '.layer-tab[data-layer="terrain"]' },
+                { id: '.layer-tab[data-layer="streets"]', selector: '.layer-tab[data-layer="streets"]' }
+            ];
+            
+            elements.forEach(element => {
+                const found = document.querySelectorAll(element.selector);
+                logResult('biome-dom-result', `${element.id}: ${found.length} gefunden`, found.length > 0 ? 'success' : 'error');
+            });
+        }
+        
+        function testBiomeLayout() {
+            logResult('biome-dom-result', '=== BIOME LAYOUT TEST ===', 'info');
+            
+            const categoriesList = document.querySelector('#biome-categories-list');
+            if (categoriesList) {
+                const style = getComputedStyle(categoriesList);
+                logResult('biome-dom-result', `Kategorien-Liste Styling:`, 'info');
+                logResult('biome-dom-result', `  - width: ${style.width}`, 'info');
+                logResult('biome-dom-result', `  - height: ${style.height}`, 'info');
+                logResult('biome-dom-result', `  - display: ${style.display}`, 'info');
+                logResult('biome-dom-result', `  - flexDirection: ${style.flexDirection}`, 'info');
+                logResult('biome-dom-result', `  - overflow: ${style.overflow}`, 'info');
+            } else {
+                logResult('biome-dom-result', '❌ Kategorien-Liste nicht gefunden', 'error');
+            }
+        }
+        
+        function testBiomeEvents() {
+            logResult('biome-dom-result', '=== BIOME EVENTS TEST ===', 'info');
+            
+            const refreshButton = document.querySelector('#refresh-biome-btn');
+            const layerTabs = document.querySelectorAll('.layer-tab');
+            
+            logResult('biome-dom-result', `Refresh-Button gefunden: ${!!refreshButton}`, refreshButton ? 'success' : 'error');
+            logResult('biome-dom-result', `Layer-Tabs gefunden: ${layerTabs.length}`, layerTabs.length > 0 ? 'success' : 'error');
+            
+            // Teste Event-Listener
+            if (refreshButton) {
+                const hasClickListeners = refreshButton.onclick || refreshButton._listeners;
+                logResult('biome-dom-result', `Refresh-Button hat Click-Listener: ${!!hasClickListeners}`, hasClickListeners ? 'success' : 'warning');
+            }
+        }
+             }
+         
+         // Performance Analysis Functions
+         let performanceMonitoring = false;
+         let performanceData = [];
+         let fpsInterval;
+         let memoryInterval;
+         
+         function startPerformanceMonitoring() {
+             logResult('performance-result', '🚀 Starting performance monitoring...', 'info');
+             
+             try {
+                 performanceMonitoring = true;
+                 performanceData = [];
+                 
+                 // Start FPS monitoring
+                 let frameCount = 0;
+                 let lastTime = performance.now();
+                 
+                 fpsInterval = setInterval(() => {
+                     frameCount++;
+                     const currentTime = performance.now();
+                     
+                     if (currentTime - lastTime >= 1000) {
+                         const fps = Math.round((frameCount * 1000) / (currentTime - lastTime));
+                         document.getElementById('fps-value').textContent = fps;
+                         
+                         performanceData.push({
+                             timestamp: new Date().toISOString(),
+                             type: 'fps',
+                             value: fps
+                         });
+                         
+                         frameCount = 0;
+                         lastTime = currentTime;
+                     }
+                 }, 16); // ~60fps
+                 
+                 // Start memory monitoring
+                 memoryInterval = setInterval(() => {
+                     if (performance.memory) {
+                         const memory = performance.memory;
+                         const usedMB = Math.round(memory.usedJSHeapSize / 1024 / 1024);
+                         const totalMB = Math.round(memory.totalJSHeapSize / 1024 / 1024);
+                         
+                         document.getElementById('memory-value').textContent = `${usedMB}MB / ${totalMB}MB`;
+                         
+                         performanceData.push({
+                             timestamp: new Date().toISOString(),
+                             type: 'memory',
+                             used: usedMB,
+                             total: totalMB
+                         });
+                     } else {
+                         document.getElementById('memory-value').textContent = 'N/A';
+                     }
+                 }, 1000);
+                 
+                 // Record load time
+                 const loadTime = performance.now();
+                 document.getElementById('load-time-value').textContent = `${Math.round(loadTime)}ms`;
+                 
+                 logResult('performance-result', '✅ Performance monitoring started', 'success');
+                 logResult('performance-result', `📊 FPS monitoring: ${!!fpsInterval}`, 'info');
+                 logResult('performance-result', `📊 Memory monitoring: ${!!memoryInterval}`, 'info');
+                 
+             } catch (error) {
+                 logResult('performance-result', `❌ Error starting monitoring: ${error.message}`, 'error');
+             }
+         }
+         
+         function stopPerformanceMonitoring() {
+             logResult('performance-result', '⏹️ Stopping performance monitoring...', 'info');
+             
+             try {
+                 performanceMonitoring = false;
+                 
+                 if (fpsInterval) {
+                     clearInterval(fpsInterval);
+                     fpsInterval = null;
+                 }
+                 
+                 if (memoryInterval) {
+                     clearInterval(memoryInterval);
+                     memoryInterval = null;
+                 }
+                 
+                 document.getElementById('fps-value').textContent = '--';
+                 document.getElementById('memory-value').textContent = '--';
+                 
+                 logResult('performance-result', '✅ Performance monitoring stopped', 'success');
+                 logResult('performance-result', `📊 Data points collected: ${performanceData.length}`, 'info');
+                 
+             } catch (error) {
+                 logResult('performance-result', `❌ Error stopping monitoring: ${error.message}`, 'error');
+             }
+         }
+         
+         function clearPerformanceData() {
+             logResult('performance-result', '🗑️ Clearing performance data...', 'info');
+             
+             try {
+                 performanceData = [];
+                 logResult('performance-result', '✅ Performance data cleared', 'success');
+             } catch (error) {
+                 logResult('performance-result', `❌ Error clearing data: ${error.message}`, 'error');
+             }
+         }
+         
+         function exportPerformanceData() {
+             logResult('performance-result', '📤 Exporting performance data...', 'info');
+             
+             try {
+                 const exportData = {
+                     timestamp: new Date().toISOString(),
+                     dataPoints: performanceData.length,
+                     data: performanceData
+                 };
+                 
+                 const dataStr = JSON.stringify(exportData, null, 2);
+                 const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                 const url = URL.createObjectURL(dataBlob);
+                 
+                 const link = document.createElement('a');
+                 link.href = url;
+                 link.download = `performance-data-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.json`;
+                 link.click();
+                 
+                 URL.revokeObjectURL(url);
+                 
+                 logResult('performance-result', '✅ Performance data exported', 'success');
+                 
+             } catch (error) {
+                 logResult('performance-result', `❌ Error exporting data: ${error.message}`, 'error');
+             }
+         }
+         
+         function testFunctionPerformance() {
+             logResult('function-performance-result', '⚡ Testing function performance...', 'info');
+             
+             try {
+                 const testFunctions = [
+                     { name: 'logResult', func: logResult },
+                     { name: 'getCurrentActiveTab', func: getCurrentActiveTab },
+                     { name: 'saveDebugEditorState', func: saveDebugEditorState }
+                 ];
+                 
+                 testFunctions.forEach(({ name, func }) => {
+                     const startTime = performance.now();
+                     
+                     // Run function multiple times for accurate measurement
+                     for (let i = 0; i < 100; i++) {
+                         if (name === 'logResult') {
+                             func('function-performance-result', `Test ${i}`, 'info');
+                         } else if (name === 'getCurrentActiveTab') {
+                             func();
+                         } else if (name === 'saveDebugEditorState') {
+                             func('sidebar-functions');
+                         }
+                     }
+                     
+                     const endTime = performance.now();
+                     const duration = endTime - startTime;
+                     const avgDuration = duration / 100;
+                     
+                     logResult('function-performance-result', `${name}: ${avgDuration.toFixed(3)}ms avg (${duration.toFixed(2)}ms total)`, 'info');
+                 });
+                 
+                 logResult('function-performance-result', '✅ Function performance test completed', 'success');
+                 
+             } catch (error) {
+                 logResult('function-performance-result', `❌ Error testing function performance: ${error.message}`, 'error');
+             }
+         }
+         
+         function profileModuleLoading() {
+             logResult('function-performance-result', '📦 Profiling module loading...', 'info');
+             
+             try {
+                 const modules = [
+                     'BiomeUtils',
+                     'tileEditor',
+                     'buildingsTilesList',
+                     'core'
+                 ];
+                 
+                 modules.forEach(moduleName => {
+                     const startTime = performance.now();
+                     const moduleAvailable = typeof window[moduleName] !== 'undefined';
+                     const endTime = performance.now();
+                     
+                     const status = moduleAvailable ? '✅ Available' : '❌ Not available';
+                     const loadTime = moduleAvailable ? `${(endTime - startTime).toFixed(3)}ms` : 'N/A';
+                     
+                     logResult('function-performance-result', `${moduleName}: ${status} (${loadTime})`, moduleAvailable ? 'success' : 'error');
+                 });
+                 
+                 logResult('function-performance-result', '✅ Module loading profile completed', 'success');
+                 
+             } catch (error) {
+                 logResult('function-performance-result', `❌ Error profiling module loading: ${error.message}`, 'error');
+             }
+         }
+         
+         function analyzeMemoryUsage() {
+             logResult('function-performance-result', '🧠 Analyzing memory usage...', 'info');
+             
+             try {
+                 if (performance.memory) {
+                     const memory = performance.memory;
+                     
+                     logResult('function-performance-result', 'Memory Information:', 'info');
+                     logResult('function-performance-result', `  - Used JS Heap: ${Math.round(memory.usedJSHeapSize / 1024 / 1024)}MB`, 'info');
+                     logResult('function-performance-result', `  - Total JS Heap: ${Math.round(memory.totalJSHeapSize / 1024 / 1024)}MB`, 'info');
+                     logResult('function-performance-result', `  - JS Heap Limit: ${Math.round(memory.jsHeapSizeLimit / 1024 / 1024)}MB`, 'info');
+                     
+                     const usagePercent = (memory.usedJSHeapSize / memory.jsHeapSizeLimit * 100).toFixed(1);
+                     logResult('function-performance-result', `  - Usage: ${usagePercent}%`, usagePercent > 80 ? 'warning' : 'success');
+                     
+                 } else {
+                     logResult('function-performance-result', '❌ Performance.memory not available', 'error');
+                 }
+                 
+                 // Analyze DOM elements
+                 const domElements = document.querySelectorAll('*').length;
+                 logResult('function-performance-result', `DOM Elements: ${domElements}`, 'info');
+                 
+                 // Analyze event listeners (approximate)
+                 const elementsWithListeners = document.querySelectorAll('[onclick], [onchange], [oninput]').length;
+                 logResult('function-performance-result', `Elements with listeners: ${elementsWithListeners}`, 'info');
+                 
+                 logResult('function-performance-result', '✅ Memory analysis completed', 'success');
+                 
+             } catch (error) {
+                 logResult('function-performance-result', `❌ Error analyzing memory: ${error.message}`, 'error');
+             }
+         }
+     </script>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!-- People Editor Module Content -->
+<div class="people-editor">
+    <h2>👥 Völker Editor</h2>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+        <button id="refreshPeoplesBtn" class="btn btn-success">🔄 Neu Laden</button>
+        <button id="addPeopleBtn" class="btn btn-primary">➕ Neuer Archetyp</button>
+        <button id="editPeopleBtn" class="btn btn-secondary">✏️ Bearbeiten</button>
+        <button id="deletePeopleBtn" class="btn btn-danger">🗑️ Löschen</button>
+        <button id="exportPeoplesBtn" class="btn btn-gray">📤 Export</button>
+        <button id="importPeoplesBtn" class="btn btn-gray">📥 Import</button>
+    </div>
+    
+    <!-- Main Content Tabs -->
+    <div class="main-tabs">
+        <button id="archetypesTab" class="main-tab active" data-tab="archetypes">🎭 Archetypen</button>
+        <button id="abilitiesTab" class="main-tab" data-tab="abilities">⚡ Fähigkeiten</button>
+    </div>
+
+    <!-- Archetypes Content -->
+    <div id="archetypesContent" class="tab-content active">
+        <div class="table-container">
+            <div class="table-header">
+                <h3>🎭 Archetypen</h3>
+                <div class="category-tabs-in-header">
+                    <button id="tabAll" class="category-tab active" data-category="all" title="Alle Völker">📋</button>
+                    <button id="tabGoblins" class="category-tab" data-category="goblins" title="Goblins">👺</button>
+                    <button id="tabOrcs" class="category-tab" data-category="orcs" title="Orks">🧌</button>
+                    <button id="tabElves" class="category-tab" data-category="elves" title="Elfen">🧝</button>
+                    <button id="tabDwarves" class="category-tab" data-category="dwarves" title="Zwerge">🧔</button>
+                    <button id="tabHumans" class="category-tab" data-category="humans" title="Menschen">👤</button>
+                </div>
+                <div class="rank-filter-row">
+                    <label for="rankFilter">Rang:</label>
+                    <select id="rankFilter">
+                        <option value="">Alle Ränge</option>
+                        <option value="1">Rang 1</option>
+                        <option value="2">Rang 2</option>
+                        <option value="3">Rang 3</option>
+                        <option value="4">Rang 4</option>
+                        <option value="5">Rang 5</option>
+                    </select>
+                </div>
+                <p class="people-count" id="peopleCount">0 Archetypen gefunden</p>
+            </div>
+        
+            <div class="table-wrapper">
+                <table id="peoplesTable" class="peoples-table">
+                    <thead id="peoplesTableHead">
+                        <tr id="peoplesTableHeaderRow">
+                            <th class="table-header-cell">Icon</th>
+                            <th class="table-header-cell">Name</th>
+                            <th class="table-header-cell">Rasse</th>
+                            <th class="table-header-cell">Rang</th>
+                            <th class="table-header-cell">Magie Anforderung</th>
+                            <th class="table-header-cell">Beschreibung</th>
+                            <th class="table-header-cell">Aktionen</th>
+                        </tr>
+                    </thead>
+                    <tbody id="peoplesTableBody">
+                        <!-- Wird dynamisch gefüllt -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Abilities Content -->
+    <div id="abilitiesContent" class="tab-content">
+        <div class="abilities-header">
+            <h3>⚡ Fähigkeiten Management</h3>
+            <p class="abilities-info">Hier können Sie Fähigkeiten verwalten und Archetypen zuweisen.</p>
+        </div>
+
+        <div class="abilities-toolbar">
+            <button id="refreshAbilitiesBtn" class="btn btn-success">🔄 Neu Laden</button>
+            <button id="addAbilityBtn" class="btn btn-primary">➕ Neue Fähigkeit</button>
+            <button id="editAbilityBtn" class="btn btn-secondary">✏️ Bearbeiten</button>
+            <button id="deleteAbilityBtn" class="btn btn-danger">🗑️ Löschen</button>
+        </div>
+
+        <div class="abilities-filter">
+            <div class="filter-group">
+                <label for="abilityTypeFilter">Typ:</label>
+                <select id="abilityTypeFilter">
+                    <option value="">Alle Typen</option>
+                    <option value="combat">Kampf</option>
+                    <option value="magic">Magie</option>
+                    <option value="craft">Handwerk</option>
+                    <option value="social">Sozial</option>
+                    <option value="passive">Passiv</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="abilityMagicFilter">Magie:</label>
+                <select id="abilityMagicFilter">
+                    <option value="">Alle</option>
+                    <option value="none">Keine</option>
+                    <option value="basic">Basis</option>
+                    <option value="advanced">Fortgeschritten</option>
+                    <option value="master">Meister</option>
+                    <option value="legendary">Legendär</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <div class="table-header">
+                <h3>⚡ Verfügbare Fähigkeiten</h3>
+                <p class="people-count" id="abilitiesCount">0 Fähigkeiten gefunden</p>
+            </div>
+            
+            <div class="table-wrapper">
+                <table id="abilitiesTable" class="abilities-table">
+                    <thead id="abilitiesTableHead">
+                        <tr id="abilitiesTableHeaderRow">
+                            <th class="table-header-cell">Icon</th>
+                            <th class="table-header-cell">Name</th>
+                            <th class="table-header-cell">Typ</th>
+                            <th class="table-header-cell">Magie Anforderung</th>
+                            <th class="table-header-cell">Beschreibung</th>
+                            <th class="table-header-cell">Zugewiesene Archetypen</th>
+                            <th class="table-header-cell">Aktionen</th>
+                        </tr>
+                    </thead>
+                    <tbody id="abilitiesTableBody">
+                        <!-- Wird dynamisch gefüllt -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

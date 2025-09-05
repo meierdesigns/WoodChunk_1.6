@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Modal</title>
+    <script src="test-api.js?v=41cccd92"></script>
+    <style>
+        /* Modal Overlay */
+        .debug-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        /* Modal Container */
+        .debug-modal {
+            background: #1a1a1a;
+            color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            width: 90vw;
+            height: 90vh;
+            max-width: 1400px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Modal Header */
+        .debug-modal-header {
+            background: #2a2a2a;
+            padding: 15px 20px;
+            border-bottom: 1px solid #444;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .debug-modal-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .debug-modal-close {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .debug-modal-close:hover {
+            background: #d32f2f;
+        }
+
+        /* Modal Content */
+        .debug-modal-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .debug-sidebar {
+            width: 300px;
+            background: #2a2a2a;
+            border-right: 1px solid #444;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .debug-main {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .debug-tab {
+            background: #333;
+            border: 1px solid #555;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .debug-tab:hover {
+            background: #444;
+        }
+        
+        /* Cache busting for Buildings images */
+        img[src*="Buildings"], img[src*="slice_"], img[src*="tile_"] {
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            image-rendering: pixelated;
+        }
+
+        .debug-tab.active {
+            background: #4CAF50;
+            border-color: #4CAF50;
+        }
+
+        .debug-content {
+            display: none;
+        }
+
+        .debug-content.active {
+            display: block;
+        }
+
+        .function-test {
+            background: #333;
+            border: 1px solid #555;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .function-test h3 {
+            margin: 0 0 10px 0;
+            color: #4CAF50;
+        }
+
+        .function-test button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        .function-test button:hover {
+            background: #45a049;
+        }
+
+        .function-test button.danger {
+            background: #f44336;
+        }
+
+        .function-test button.danger:hover {
+            background: #da190b;
+        }
+
+        .test-result {
+            background: #222;
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 10px;
+            margin-top: 10px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .test-result.success {
+            border-color: #4CAF50;
+            color: #4CAF50;
+        }
+
+        .test-result.error {
+            border-color: #f44336;
+            color: #f44336;
+        }
+
+        .test-result.warning {
+            border-color: #ff9800;
+            color: #ff9800;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-indicator.success {
+            background: #4CAF50;
+        }
+
+        .status-indicator.error {
+            background: #f44336;
+        }
+
+        .status-indicator.warning {
+            background: #ff9800;
+        }
+
+        .status-indicator.info {
+            background: #2196F3;
+        }
+
+        /* Modal State Management */
+        .debug-modal.hidden {
+            display: none;
+        }
+
+        /* Performance Metrics */
+        .performance-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .metric-card {
+            background: #333;
+            border: 1px solid #555;
+            border-radius: 4px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .metric-label {
+            font-size: 12px;
+            color: #888;
+            margin-top: 5px;
+        }
+        
+        /* Server Events */
+        .server-events {
+            max-height: 200px;
+            overflow-y: auto;
+            background: #222;
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+        
+        .server-event {
+            display: flex;
+            gap: 10px;
+            padding: 5px 0;
+            border-bottom: 1px solid #333;
+            font-family: monospace;
+            font-size: 11px;
+        }
+        
+        .server-event:last-child {
+            border-bottom: none;
+        }
+        
+        .event-time {
+            color: #888;
+            min-width: 80px;
+        }
+        
+        .event-status {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        
+        .event-details {
+            color: #2196F3;
+        }
+        
+        .debug-info {
+            background: #333;
+            border: 1px solid #555;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .debug-info h4 {
+            color: #4CAF50;
+            margin: 0 0 10px 0;
+        }
+        
+        .debug-info p {
+            margin: 5px 0;
+            color: #ccc;
+        }
+        
+        .debug-info hr {
+            border: none;
+            border-top: 1px solid #555;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Debug Modal -->
+    <div id="debugModal" class="debug-modal-overlay">
+        <div class="debug-modal">
+            <div class="debug-modal-header">
+                <div class="debug-modal-title">🐛 Debug Editor</div>
+                <button class="debug-modal-close" onclick="closeDebugModal()">✕ Schließen</button>
+            </div>
+            
+            <div class="debug-modal-content">
+                <div class="debug-sidebar">
+                    <p>Teste alle Sidebar-Funktionen</p>
+                    
+                    <div class="debug-tab active" onclick="showTab('sidebar-functions')">
+                        <span class="status-indicator success"></span>
+                        Sidebar Functions
+                    </div>
+                    
+                    <div class="debug-tab" onclick="showTab('biome-module')">
+                        <span class="status-indicator info"></span>
+                        Biome Module
+                    </div>
+                    
+                    <div class="debug-tab" onclick="showTab('biome-menu-debug')">
+                        <span class="status-indicator warning"></span>
+                        Biome Menü Debug
+                    </div>
+                    
+                    <div class="debug-tab" onclick="showTab('tools-module')">
+                        <span class="status-indicator info"></span>
+                        Tools Module
+                    </div>
+                    
+                    <div class="debug-tab" onclick="showTab('settings-module')">
+                        <span class="status-indicator info"></span>
+                        Settings Module
+                    </div>
+                    
+                    <div class="debug-tab" onclick="showTab('layer-tabs')">
+                        <span class="status-indicator info"></span>
+                        Layer Tabs
+                    </div>
+                    
+                    <div class="debug-tab" onclick="showTab('toolbar')">
+                        <span class="status-indicator info"></span>
+                        Toolbar
+                    </div>
+                    
+                    <div class="debug-tab" onclick="showTab('system')">
+                        <span class="status-indicator warning"></span>
+                        System Status
+                    </div>
+                    
+                    <div class="debug-tab" onclick="showTab('performance')">
+                        <span class="status-indicator info"></span>
+                        Performance Analysis
+                    </div>
+                </div>
+                
+                <div class="debug-main">
+                    <!-- Sidebar Functions Tab -->
+                    <div id="sidebar-functions" class="debug-content active">
+                        <h2>Sidebar Functions Test</h2>
+                        
+                        <div class="function-test">
+                            <h3>Module Toggle Functions</h3>
+                            <button onclick="testModuleToggle()">Test Module Toggle</button>
+                            <button onclick="testAllModules()">Test All Modules</button>
+                            <button onclick="testModulePersistence()">Test Module Persistence</button>
+                            <div id="module-toggle-result" class="test-result"></div>
+                        </div>
+                        
+                        <div class="function-test">
+                            <h3>Biome Functions</h3>
+                            <button onclick="testBiomeLoading()">Test Biome Loading</button>
+                            <button onclick="testBiomeFiltering()">Test Biome Filtering</button>
+                            <button onclick="testBiomeSelection()">Test Biome Selection</button>
+                            <button onclick="testBiomeRefresh()">Test Biome Refresh</button>
+                            <div id="biome-result" class="test-result"></div>
+                        </div>
+                        
+                        <div class="function-test">
+                            <h3>Layer Functions</h3>
+                            <button onclick="testLayerSwitching()">Test Layer Switching</button>
+                            <button onclick="testLayerBiomeFiltering()">Test Layer Biome Filtering</button>
+                            <button onclick="testLayerPersistence()">Test Layer Persistence</button>
+                            <div id="layer-result" class="test-result"></div>
+                        </div>
+                        
+                        <div class="function-test">
+                            <h3>DOM Functions</h3>
+                            <button onclick="testDOMElements()">Test DOM Elements</button>
+                            <button onclick="testEventListeners()">Test Event Listeners</button>
+                            <button onclick="testCSSClasses()">Test CSS Classes</button>
+                            <div id="dom-result" class="test-result"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- System Status Tab -->
+                    <div id="system" class="debug-content">
+                        <h2>System Status</h2>
+                        
+                        <div class="function-test">
+                            <h3>System Information</h3>
+                            <button onclick="testSystemStatus()">Test System Status</button>
+                            <button onclick="testModuleAvailability()">Test Module Availability</button>
+                            <button onclick="testErrorLogging()">Test Error Logging</button>
+                            <button onclick="activateSystemTab()" class="danger">Aktiviere System Tab</button>
+                            <div id="system-result" class="test-result"></div>
+                        </div>
+                        
+                        <div class="function-test">
+                            <h3>Debug Editor State Management</h3>
+                            <button onclick="testDebugEditorState()">Test Current State</button>
+                            <button onclick="clearDebugEditorState()">Clear Saved State</button>
+                            <button onclick="saveCurrentState()">Save Current State</button>
+                            <div id="debug-state-result" class="test-result"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Performance Analysis Tab -->
+                    <div id="performance" class="debug-content">
+                        <h2>Performance Analysis</h2>
+                        
+                        <div class="function-test">
+                            <h3>Performance Monitoring</h3>
+                            <button onclick="startPerformanceMonitoring()">Start Monitoring</button>
+                            <button onclick="stopPerformanceMonitoring()">Stop Monitoring</button>
+                            <button onclick="clearPerformanceData()">Clear Data</button>
+                            <button onclick="exportPerformanceData()">Export Data</button>
+                            <div id="performance-result" class="test-result"></div>
+                        </div>
+                        
+                        <div class="function-test">
+                            <h3>Function Performance</h3>
+                            <button onclick="testFunctionPerformance()">Test Function Performance</button>
+                            <button onclick="profileModuleLoading()">Profile Module Loading</button>
+                            <button onclick="analyzeMemoryUsage()">Analyze Memory Usage</button>
+                            <div id="function-performance-result" class="test-result"></div>
+                        </div>
+                        
+                        <div class="function-test">
+                            <h3>Performance Metrics</h3>
+                            <div class="performance-metrics">
+                                <div class="metric-card">
+                                    <div class="metric-value" id="fps-value">--</div>
+                                    <div class="metric-label">FPS</div>
+                                </div>
+                                <div class="metric-card">
+                                    <div class="metric-value" id="memory-value">--</div>
+                                    <div class="metric-label">Memory</div>
+                                </div>
+                                <div class="metric-card">
+                                    <div class="metric-value" id="load-time-value">--</div>
+                                    <div class="metric-label">Load Time</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Placeholder tabs for other sections -->
+                    <div id="biome-module" class="debug-content">
+                        <h2>Biome Module Test</h2>
+                        <div class="function-test">
+                            <h3>BiomeCore Functions</h3>
+                            <button onclick="testBiomeCore()">Test BiomeCore</button>
+                            <button onclick="testBiomeData()">Test BiomeData</button>
+                            <button onclick="testBiomeUI()">Test BiomeUI</button>
+                            <div id="biome-module-result" class="test-result"></div>
+                        </div>
+                    </div>
+                    
+                    <div id="biome-menu-debug" class="debug-content">
+                        <h2>Biome Menü Debug</h2>
+                        <div class="function-test">
+                            <h3>Automatische Debug-Funktionen</h3>
+                            <button onclick="runAutoDebug()">🚀 Auto Debug</button>
+                            <button onclick="runComprehensiveDebug()">🔍 Umfassende Debug</button>
+                            <button onclick="runImageDebug()">🖼️ Bild Debug</button>
+                            <button onclick="runQuickDebug()">⚡ Schnelle Debug</button>
+                            <div id="auto-debug-result" class="test-result"></div>
+                        </div>
+                    </div>
+                    
+                    <div id="tools-module" class="debug-content">
+                        <h2>Tools Module Test</h2>
+                        <div class="function-test">
+                            <h3>Brush Functions</h3>
+                            <button onclick="testBrushSizes()">Test Brush Sizes</button>
+                            <button onclick="testBrushModes()">Test Brush Modes</button>
+                            <button onclick="testBrushSelection()">Test Brush Selection</button>
+                            <div id="brush-result" class="test-result"></div>
+                        </div>
+                    </div>
+                    
+                    <div id="settings-module" class="debug-content">
+                        <h2>Settings Module Test</h2>
+                        <div class="function-test">
+                            <h3>Settings Functions</h3>
+                            <button onclick="testSettingsSave()">Test Settings Save</button>
+                            <button onclick="testSettingsLoad()">Test Settings Load</button>
+                            <button onclick="testSettingsReset()">Test Settings Reset</button>
+                            <div id="settings-result" class="test-result"></div>
+                        </div>
+                    </div>
+                    
+                    <div id="layer-tabs" class="debug-content">
+                        <h2>Layer Tabs Test</h2>
+                        <div class="function-test">
+                            <h3>Layer Tab Functions</h3>
+                            <button onclick="testLayerTabs()">Test Layer Tabs</button>
+                            <button onclick="testLayerEvents()">Test Layer Events</button>
+                            <button onclick="testLayerState()">Test Layer State</button>
+                            <div id="layer-tabs-result" class="test-result"></div>
+                        </div>
+                    </div>
+                    
+                    <div id="toolbar" class="debug-content">
+                        <h2>Toolbar Test</h2>
+                        <div class="function-test">
+                            <h3>Toolbar Functions</h3>
+                            <button onclick="testSaveFunction()">Test Save Function</button>
+                            <button onclick="testLoadFunction()">Test Load Function</button>
+                            <button onclick="testClearFunction()">Test Clear Function</button>
+                            <div id="toolbar-result" class="test-result"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Modal Management
+        function openDebugModal() {
+            const modal = document.getElementById('debugModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                restoreDebugEditorState();
+                console.log('[DebugModal] Modal opened');
+            }
+        }
+
+        function closeDebugModal() {
+            const modal = document.getElementById('debugModal');
+            if (modal) {
+                modal.style.display = 'none';
+                saveDebugEditorState();
+                console.log('[DebugModal] Modal closed');
+                
+                // Notify parent window
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({ type: 'debugModalClose' }, '*');
+                }
+            }
+        }
+
+        // Tab Management
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.debug-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active from all tab buttons
+            document.querySelectorAll('.debug-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            
+            // Save current tab state
+            saveDebugEditorState(tabName);
+        }
+        
+        // Debug Editor State Management
+        function saveDebugEditorState(activeTab = null) {
+            try {
+                const state = {
+                    isOpen: true,
+                    activeTab: activeTab || getCurrentActiveTab(),
+                    timestamp: new Date().toISOString()
+                };
+                
+                localStorage.setItem('debugEditorState', JSON.stringify(state));
+                console.log('[DebugModal] State saved:', state);
+            } catch (error) {
+                console.error('[DebugModal] Error saving state:', error);
+            }
+        }
+        
+        function restoreDebugEditorState() {
+            try {
+                const savedState = localStorage.getItem('debugEditorState');
+                if (savedState) {
+                    const state = JSON.parse(savedState);
+                    console.log('[DebugModal] Restoring state:', state);
+                    
+                    if (state.activeTab && document.getElementById(state.activeTab)) {
+                        // Switch to saved tab
+                        showTab(state.activeTab);
+                        logResult('system-result', `✅ Debug Editor state restored - Active tab: ${state.activeTab}`, 'success');
+                    } else {
+                        logResult('system-result', '⚠️ Saved tab not found, using default', 'warning');
+                    }
+                } else {
+                    logResult('system-result', 'ℹ️ No saved debug editor state found', 'info');
+                }
+            } catch (error) {
+                console.error('[DebugModal] Error restoring state:', error);
+                logResult('system-result', `❌ Error restoring debug editor state: ${error.message}`, 'error');
+            }
+        }
+        
+        function getCurrentActiveTab() {
+            const activeContent = document.querySelector('.debug-content.active');
+            return activeContent ? activeContent.id : 'sidebar-functions';
+        }
+        
+        function clearDebugEditorState() {
+            try {
+                localStorage.removeItem('debugEditorState');
+                console.log('[DebugModal] State cleared');
+                logResult('system-result', '✅ Debug Editor state cleared', 'success');
+            } catch (error) {
+                console.error('[DebugModal] Error clearing state:', error);
+                logResult('system-result', `❌ Error clearing debug editor state: ${error.message}`, 'error');
+            }
+        }
+        
+        // Test Functions
+        function logResult(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            if (element) {
+                const timestamp = new Date().toLocaleTimeString();
+                const className = `test-result ${type}`;
+                
+                element.className = className;
+                element.innerHTML += `[${timestamp}] ${message}\n`;
+                element.scrollTop = element.scrollHeight;
+            }
+        }
+        
+        // Initialize debug modal
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('[DebugModal] DOM loaded, initializing...');
+            
+            // Simple test function
+            function runInitialTests() {
+                logResult('system-result', '=== DEBUG MODAL INITIALIZATION ===', 'info');
+                logResult('system-result', 'Debug Modal initialized', 'success');
+                logResult('system-result', 'Ready to test sidebar functions', 'info');
+                
+                // Test basic functionality
+                logResult('system-result', `Current URL: ${window.location.href}`, 'info');
+                logResult('system-result', `Document ready: ${document.readyState}`, 'success');
+                logResult('system-result', `Modal element: ${!!document.getElementById('debugModal')}`, 'success');
+                
+                // Test API availability
+                if (window.testAPI) {
+                    logResult('system-result', '✅ Test API loaded successfully', 'success');
+                    const data = window.testAPI.getData();
+                    logResult('system-result', `📊 Mock data: ${data.categories.length} categories, ${data.tiles.length} tiles`, 'info');
+                } else {
+                    logResult('system-result', '❌ Test API not loaded - using fallback', 'warning');
+                }
+                
+                // Test fetch override
+                if (window.fetch === window.mockFetch) {
+                    logResult('system-result', '✅ Fetch function overridden with mock', 'success');
+                } else {
+                    logResult('system-result', '⚠️ Using original fetch function', 'warning');
+                }
+                
+                // Test server communication
+                testServerCommunication();
+            }
+            
+            // Test server communication
+            async function testServerCommunication() {
+                logResult('system-result', '🔄 Testing server communication...', 'info');
+                
+                try {
+                    // Test basic fetch
+                    const response = await fetch('/api/status');
+                    const data = await response.json();
+                    logResult('system-result', `✅ Server status: ${data.status}`, 'success');
+                } catch (error) {
+                    logResult('system-result', `❌ Server communication failed: ${error.message}`, 'error');
+                }
+            }
+            
+            // Run initial tests
+            runInitialTests();
+            
+            // Restore debug editor state
+            restoreDebugEditorState();
+            
+            // Add server monitoring buttons
+            addServerMonitoringButtons();
+            
+            // Automatisch Biome Cards laden nach 500ms
+            setTimeout(() => {
+                logResult('system-result', '🔄 Auto-loading biome cards...', 'info');
+                loadServerData();
+            }, 500);
+            
+            // Automatische Debug-Analyse nach 1 Sekunde
+            setTimeout(() => {
+                logResult('system-result', '🚀 Starte automatische Debug-Analyse...', 'info');
+                
+                // Teste automatische Debug-Funktion
+                if (typeof window.autoDebug === 'function') {
+                    logResult('system-result', '✅ autoDebug Funktion verfügbar', 'success');
+                    try {
+                        const result = window.autoDebug();
+                        logResult('system-result', '✅ Automatische Debug-Analyse abgeschlossen', 'success');
+                        logResult('system-result', `📊 Ergebnis: ${JSON.stringify(result, null, 2)}`, 'info');
+                    } catch (error) {
+                        logResult('system-result', `❌ autoDebug Fehler: ${error.message}`, 'error');
+                    }
+                } else {
+                    logResult('system-result', '❌ autoDebug Funktion nicht verfügbar (nur im HexMapEditor)', 'warning');
+                }
+                
+                // Teste andere Debug-Funktionen
+                const debugFunctions = [
+                    'comprehensiveBiomeMenuDebug',
+                    'debugImageLoadingIssue',
+                    'quickBiomeDebug'
+                ];
+                
+                debugFunctions.forEach(funcName => {
+                    if (typeof window[funcName] === 'function') {
+                        logResult('system-result', `✅ ${funcName} verfügbar`, 'success');
+                    } else {
+                        logResult('system-result', `❌ ${funcName} nicht verfügbar (nur im HexMapEditor)`, 'warning');
+                    }
+                });
+                
+                // Teste globale Verfügbarkeit
+                logResult('system-result', `window.buildingsTilesList: ${!!window.buildingsTilesList}`, window.buildingsTilesList ? 'success' : 'warning');
+                logResult('system-result', `window.tileEditor: ${!!window.tileEditor}`, window.tileEditor ? 'success' : 'warning');
+                logResult('system-result', `window.BiomeData: ${!!window.BiomeData}`, window.BiomeData ? 'success' : 'warning');
+                
+                // Debug-Modal spezifische Tests
+                logResult('system-result', '=== DEBUG-MODAL SPEZIFISCHE TESTS ===', 'info');
+                logResult('system-result', `Debug-Modal URL: ${window.location.href}`, 'info');
+                logResult('system-result', `Debug-Modal geladen: ${!!document.querySelector('.debug-modal')}`, 'success');
+                logResult('system-result', `Debug-Tabs gefunden: ${document.querySelectorAll('.debug-tab').length}`, 'success');
+                logResult('system-result', `Debug-Content gefunden: ${document.querySelectorAll('.debug-content').length}`, 'success');
+                
+                // Teste Tab-Funktionalität
+                const systemTab = document.querySelector('.debug-tab[onclick*="system"]');
+                const systemContent = document.getElementById('system');
+                logResult('system-result', `System-Tab gefunden: ${!!systemTab}`, systemTab ? 'success' : 'error');
+                logResult('system-result', `System-Content gefunden: ${!!systemContent}`, systemContent ? 'success' : 'error');
+                
+            }, 1000);
+        });
+
+        // Performance Analysis Functions
+        let performanceMonitoring = false;
+        let performanceData = [];
+        let fpsInterval;
+        let memoryInterval;
+        
+        function startPerformanceMonitoring() {
+            logResult('performance-result', '🚀 Starting performance monitoring...', 'info');
+            
+            try {
+                performanceMonitoring = true;
+                performanceData = [];
+                
+                // Start FPS monitoring
+                let frameCount = 0;
+                let lastTime = performance.now();
+                
+                fpsInterval = setInterval(() => {
+                    frameCount++;
+                    const currentTime = performance.now();
+                    
+                    if (currentTime - lastTime >= 1000) {
+                        const fps = Math.round((frameCount * 1000) / (currentTime - lastTime));
+                        document.getElementById('fps-value').textContent = fps;
+                        
+                        performanceData.push({
+                            timestamp: new Date().toISOString(),
+                            type: 'fps',
+                            value: fps
+                        });
+                        
+                        frameCount = 0;
+                        lastTime = currentTime;
+                    }
+                }, 16); // ~60fps
+                
+                // Start memory monitoring
+                memoryInterval = setInterval(() => {
+                    if (performance.memory) {
+                        const memory = performance.memory;
+                        const usedMB = Math.round(memory.usedJSHeapSize / 1024 / 1024);
+                        const totalMB = Math.round(memory.totalJSHeapSize / 1024 / 1024);
+                        
+                        document.getElementById('memory-value').textContent = `${usedMB}MB / ${totalMB}MB`;
+                        
+                        performanceData.push({
+                            timestamp: new Date().toISOString(),
+                            type: 'memory',
+                            used: usedMB,
+                            total: totalMB
+                        });
+                    } else {
+                        document.getElementById('memory-value').textContent = 'N/A';
+                    }
+                }, 1000);
+                
+                // Record load time
+                const loadTime = performance.now();
+                document.getElementById('load-time-value').textContent = `${Math.round(loadTime)}ms`;
+                
+                logResult('performance-result', '✅ Performance monitoring started', 'success');
+                logResult('performance-result', `📊 FPS monitoring: ${!!fpsInterval}`, 'info');
+                logResult('performance-result', `📊 Memory monitoring: ${!!memoryInterval}`, 'info');
+                
+            } catch (error) {
+                logResult('performance-result', `❌ Error starting monitoring: ${error.message}`, 'error');
+            }
+        }
+        
+        function stopPerformanceMonitoring() {
+            logResult('performance-result', '⏹️ Stopping performance monitoring...', 'info');
+            
+            try {
+                performanceMonitoring = false;
+                
+                if (fpsInterval) {
+                    clearInterval(fpsInterval);
+                    fpsInterval = null;
+                }
+                
+                if (memoryInterval) {
+                    clearInterval(memoryInterval);
+                    memoryInterval = null;
+                }
+                
+                document.getElementById('fps-value').textContent = '--';
+                document.getElementById('memory-value').textContent = '--';
+                
+                logResult('performance-result', '✅ Performance monitoring stopped', 'success');
+                logResult('performance-result', `📊 Data points collected: ${performanceData.length}`, 'info');
+                
+            } catch (error) {
+                logResult('performance-result', `❌ Error stopping monitoring: ${error.message}`, 'error');
+            }
+        }
+        
+        function clearPerformanceData() {
+            logResult('performance-result', '🗑️ Clearing performance data...', 'info');
+            
+            try {
+                performanceData = [];
+                logResult('performance-result', '✅ Performance data cleared', 'success');
+            } catch (error) {
+                logResult('performance-result', `❌ Error clearing data: ${error.message}`, 'error');
+            }
+        }
+        
+        function exportPerformanceData() {
+            logResult('performance-result', '📤 Exporting performance data...', 'info');
+            
+            try {
+                const exportData = {
+                    timestamp: new Date().toISOString(),
+                    dataPoints: performanceData.length,
+                    data: performanceData
+                };
+                
+                const dataStr = JSON.stringify(exportData, null, 2);
+                const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(dataBlob);
+                
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `performance-data-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.json`;
+                link.click();
+                
+                URL.revokeObjectURL(url);
+                
+                logResult('performance-result', '✅ Performance data exported', 'success');
+                
+            } catch (error) {
+                logResult('performance-result', `❌ Error exporting data: ${error.message}`, 'error');
+            }
+        }
+
+        // Placeholder functions for other tabs
+        function testModuleToggle() { logResult('module-toggle-result', 'Testing module toggle functions...', 'info'); }
+        function testAllModules() { logResult('module-toggle-result', 'Testing all modules...', 'info'); }
+        function testModulePersistence() { logResult('module-toggle-result', 'Testing module persistence...', 'info'); }
+        function testBiomeLoading() { logResult('biome-result', 'Testing biome loading...', 'info'); }
+        function testBiomeFiltering() { logResult('biome-result', 'Testing biome filtering...', 'info'); }
+        function testBiomeSelection() { logResult('biome-result', 'Testing biome selection...', 'info'); }
+        function testBiomeRefresh() { logResult('biome-result', 'Testing biome refresh...', 'info'); }
+        function testLayerSwitching() { logResult('layer-result', 'Testing layer switching...', 'info'); }
+        function testLayerBiomeFiltering() { logResult('layer-result', 'Testing layer biome filtering...', 'info'); }
+        function testLayerPersistence() { logResult('layer-result', 'Testing layer persistence...', 'info'); }
+        function testDOMElements() { logResult('dom-result', 'Testing DOM elements...', 'info'); }
+        function testEventListeners() { logResult('dom-result', 'Testing event listeners...', 'info'); }
+        function testCSSClasses() { logResult('dom-result', 'Testing CSS classes...', 'info'); }
+        function testSystemStatus() { logResult('system-result', '=== SYSTEM STATUS TEST ===', 'info'); }
+        function testModuleAvailability() { logResult('system-result', 'Testing Module Availability...', 'info'); }
+        function testErrorLogging() { logResult('system-result', '=== ERROR LOGGING TEST ===', 'info'); }
+        function activateSystemTab() { logResult('system-result', 'Manuell aktiviere System Tab...', 'info'); }
+        function testDebugEditorState() { logResult('debug-state-result', '=== DEBUG EDITOR STATE TEST ===', 'info'); }
+        function saveCurrentState() { logResult('debug-state-result', 'Saving current debug editor state...', 'info'); }
+        function testFunctionPerformance() { logResult('function-performance-result', '⚡ Testing function performance...', 'info'); }
+        function profileModuleLoading() { logResult('function-performance-result', '📦 Profiling module loading...', 'info'); }
+        function analyzeMemoryUsage() { logResult('function-performance-result', '🧠 Analyzing memory usage...', 'info'); }
+        function testBiomeCore() { logResult('biome-module-result', 'Testing BiomeCore...', 'info'); }
+        function testBiomeData() { logResult('biome-module-result', 'Testing BiomeData...', 'info'); }
+        function testBiomeUI() { logResult('biome-module-result', 'Testing BiomeUI...', 'info'); }
+        function runAutoDebug() { logResult('auto-debug-result', '🚀 Starte automatische Debug-Analyse...', 'info'); }
+        function runComprehensiveDebug() { logResult('auto-debug-result', '🔍 Starte umfassende Debug-Analyse...', 'info'); }
+        function runImageDebug() { logResult('auto-debug-result', '🖼️ Starte Bild-Debug-Analyse...', 'info'); }
+        function runQuickDebug() { logResult('auto-debug-result', '⚡ Starte schnelle Debug-Analyse...', 'info'); }
+        function testBrushSizes() { logResult('brush-result', 'Testing Brush Sizes...', 'info'); }
+        function testBrushModes() { logResult('brush-result', 'Testing Brush Modes...', 'info'); }
+        function testBrushSelection() { logResult('brush-result', 'Testing Brush Selection...', 'info'); }
+        function testSettingsSave() { logResult('settings-result', 'Testing Settings Save...', 'info'); }
+        function testSettingsLoad() { logResult('settings-result', 'Testing Settings Load...', 'info'); }
+        function testSettingsReset() { logResult('settings-result', 'Testing Settings Reset...', 'info'); }
+        function testLayerTabs() { logResult('layer-tabs-result', 'Testing Layer Tabs...', 'info'); }
+        function testLayerEvents() { logResult('layer-tabs-result', 'Testing Layer Events...', 'info'); }
+        function testLayerState() { logResult('layer-tabs-result', 'Testing Layer State...', 'info'); }
+        function testSaveFunction() { logResult('toolbar-result', 'Testing Save Function...', 'info'); }
+        function testLoadFunction() { logResult('toolbar-result', 'Testing Load Function...', 'info'); }
+        function testClearFunction() { logResult('toolbar-result', 'Testing Clear Function...', 'info'); }
+
+        // Make functions globally available
+        window.openDebugModal = openDebugModal;
+        window.closeDebugModal = closeDebugModal;
+        window.showTab = showTab;
+        
+        // Communication with parent window
+        window.addEventListener('message', function(event) {
+            console.log('[DebugModal] Received message from parent:', event.data);
+            
+            switch (event.data.type) {
+                case 'init':
+                    logResult('sidebar-functions-result', `Connected to: ${event.data.data.currentPage}`, 'success');
+                    logResult('sidebar-functions-result', `TileEditor: ${event.data.data.tileEditor}`, 'info');
+                    break;
+                    
+                case 'tileEditorState':
+                    displayTileEditorState(event.data.data);
+                    break;
+                    
+                case 'commandResult':
+                    if (event.data.data.success) {
+                        logResult('sidebar-functions-result', `Command executed successfully: ${JSON.stringify(event.data.data.result)}`, 'success');
+                    } else {
+                        logResult('sidebar-functions-result', `Command failed: ${event.data.data.error}`, 'error');
+                    }
+                    break;
+            }
+        });
+        
+        // Request initial data from parent
+        if (window.opener) {
+            setTimeout(() => {
+                window.opener.postMessage({ type: 'getTileEditorState' }, '*');
+            }, 500);
+        }
+        
+        // Server Communication Functions
+        async function fetchServerData(endpoint) {
+            try {
+                const response = await fetch(`/api/${endpoint}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return await response.json();
+            } catch (error) {
+                console.error(`[DebugModal] Error fetching ${endpoint}:`, error);
+                throw error;
+            }
+        }
+        
+        async function trackServerEvent(eventType, data) {
+            try {
+                const response = await fetch('/api/debug/track', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        event: eventType,
+                        data: data,
+                        timestamp: new Date().toISOString(),
+                        sessionId: getSessionId()
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                return await response.json();
+            } catch (error) {
+                console.error('[DebugModal] Error tracking event:', error);
+                throw error;
+            }
+        }
+        
+        function getSessionId() {
+            let sessionId = localStorage.getItem('debugSessionId');
+            if (!sessionId) {
+                sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('debugSessionId', sessionId);
+            }
+            return sessionId;
+        }
+        
+        // Server Data Tracking Functions
+        async function loadServerData() {
+            logResult('sidebar-functions-result', '🔄 Loading server data...', 'info');
+            
+            try {
+                // Load categories
+                const categories = await fetchServerData('categories');
+                logResult('sidebar-functions-result', `📊 Categories loaded: ${categories.length}`, 'success');
+                
+                // Load tiles
+                const tiles = await fetchServerData('tiles');
+                logResult('sidebar-functions-result', `📊 Tiles loaded: ${tiles.length}`, 'success');
+                
+                // Load biomes
+                const biomes = await fetchServerData('biomes');
+                logResult('sidebar-functions-result', `📊 Biomes loaded: ${biomes.length}`, 'success');
+                
+                // Track data load
+                await trackServerEvent('data_loaded', {
+                    categories: categories.length,
+                    tiles: tiles.length,
+                    biomes: biomes.length
+                });
+                
+                // Display server data
+                displayServerData({ categories, tiles, biomes });
+                
+            } catch (error) {
+                logResult('sidebar-functions-result', `❌ Error loading server data: ${error.message}`, 'error');
+            }
+        }
+        
+        function displayServerData(data) {
+            const resultDiv = document.getElementById('sidebar-functions-result');
+            if (resultDiv) {
+                resultDiv.innerHTML = `
+                    <div class="debug-info">
+                        <h4>Server Data:</h4>
+                        <p><strong>Categories:</strong> ${data.categories ? data.categories.length : 0}</p>
+                        <p><strong>Tiles:</strong> ${data.tiles ? data.tiles.length : 0}</p>
+                        <p><strong>Biomes:</strong> ${data.biomes ? data.biomes.length : 0}</p>
+                        <hr>
+                        <h4>Recent Server Events:</h4>
+                        <div id="server-events" class="server-events"></div>
+                    </div>
+                `;
+            }
+        }
+        
+        // Real-time server monitoring
+        let serverMonitoringInterval = null;
+        
+        function startServerMonitoring() {
+            logResult('sidebar-functions-result', '🚀 Starting server monitoring...', 'info');
+            
+            serverMonitoringInterval = setInterval(async () => {
+                try {
+                    // Check server status
+                    const status = await fetchServerData('status');
+                    
+                    // Track monitoring event
+                    await trackServerEvent('monitoring_pulse', {
+                        timestamp: new Date().toISOString(),
+                        status: status
+                    });
+                    
+                    // Update display
+                    updateServerStatus(status);
+                    
+                } catch (error) {
+                    logResult('sidebar-functions-result', `❌ Server monitoring error: ${error.message}`, 'error');
+                }
+            }, 5000); // Check every 5 seconds
+            
+            logResult('sidebar-functions-result', '✅ Server monitoring started', 'success');
+        }
+        
+        function stopServerMonitoring() {
+            if (serverMonitoringInterval) {
+                clearInterval(serverMonitoringInterval);
+                serverMonitoringInterval = null;
+                logResult('sidebar-functions-result', '⏹️ Server monitoring stopped', 'info');
+            }
+        }
+        
+        function updateServerStatus(status) {
+            const eventsDiv = document.getElementById('server-events');
+            if (eventsDiv) {
+                const timestamp = new Date().toLocaleTimeString();
+                eventsDiv.innerHTML = `
+                    <div class="server-event">
+                        <span class="event-time">[${timestamp}]</span>
+                        <span class="event-status">Server: ${status.status}</span>
+                        <span class="event-details">Active connections: ${status.connections || 0}</span>
+                    </div>
+                ` + eventsDiv.innerHTML;
+                
+                // Keep only last 10 events
+                const events = eventsDiv.querySelectorAll('.server-event');
+                if (events.length > 10) {
+                    events[events.length - 1].remove();
+                }
+            }
+        }
+        
+        // Add server monitoring buttons
+        function addServerMonitoringButtons() {
+            const sidebarFunctions = document.getElementById('sidebar-functions');
+            if (sidebarFunctions) {
+                const serverSection = document.createElement('div');
+                serverSection.className = 'function-test';
+                serverSection.innerHTML = `
+                    <h3>Server Monitoring</h3>
+                    <button onclick="loadServerData()">📊 Load Server Data</button>
+                    <button onclick="startServerMonitoring()">🚀 Start Monitoring</button>
+                    <button onclick="stopServerMonitoring()">⏹️ Stop Monitoring</button>
+                    <button onclick="trackServerEvent('manual_test', {test: true})">🧪 Test Tracking</button>
+                `;
+                sidebarFunctions.appendChild(serverSection);
+            }
+        }
+        
+        function displayTileEditorState(state) {
+            const resultDiv = document.getElementById('sidebar-functions-result');
+            if (resultDiv) {
+                resultDiv.innerHTML = `
+                    <div class="debug-info">
+                        <h4>TileEditor State:</h4>
+                        <p><strong>Categories:</strong> ${state.categories ? state.categories.length : 0}</p>
+                        <p><strong>Tiles:</strong> ${state.tiles ? state.tiles.length : 0}</p>
+                        <p><strong>Selected Category:</strong> ${state.selectedCategoryId || 'none'}</p>
+                        <p><strong>Selected Tile:</strong> ${state.selectedTileId || 'none'}</p>
+                        <p><strong>Debug Mode:</strong> ${state.debugMode ? 'enabled' : 'disabled'}</p>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

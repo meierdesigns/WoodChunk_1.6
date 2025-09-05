@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Modal Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .test-section h3 {
+            margin-top: 0;
+            color: #4CAF50;
+        }
+        
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        
+        button:hover {
+            background: #45a049;
+        }
+        
+        .info {
+            background: #e3f2fd;
+            border: 1px solid #2196F3;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        
+        /* Cache busting for Buildings images */
+        img[src*="Buildings"], img[src*="slice_"], img[src*="tile_"] {
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            image-rendering: pixelated;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🐛 Debug Modal Test</h1>
+        
+        <div class="info">
+            <h3>Debug Modal Features:</h3>
+            <ul>
+                <li>✅ Modal stays open until explicitly closed</li>
+                <li>✅ Saves and restores active tab state</li>
+                <li>✅ Performance analysis with real-time metrics</li>
+                <li>✅ Comprehensive debugging tools</li>
+                <li>✅ Responsive design</li>
+            </ul>
+        </div>
+        
+        <div class="test-section">
+            <h3>Debug Modal Controls</h3>
+            <button onclick="openDebugModal()">🐛 Open Debug Modal</button>
+            <button onclick="closeDebugModal()">✕ Close Debug Modal</button>
+            <button onclick="testModalState()">🔍 Test Modal State</button>
+        </div>
+        
+        <div class="test-section">
+            <h3>Test Functions</h3>
+            <button onclick="testFunction1()">Test Function 1</button>
+            <button onclick="testFunction2()">Test Function 2</button>
+            <button onclick="testFunction3()">Test Function 3</button>
+        </div>
+        
+        <div class="test-section">
+            <h3>Performance Test</h3>
+            <button onclick="startPerformanceTest()">Start Performance Test</button>
+            <button onclick="stopPerformanceTest()">Stop Performance Test</button>
+            <div id="performance-result"></div>
+        </div>
+    </div>
+
+    <!-- Include Debug Modal Integration Script -->
+    <script src="debug/debugModalIntegration.js?v=v1"></script>
+    
+    <script>
+        // Test functions
+        function testFunction1() {
+            console.log('[Test] Function 1 executed');
+            alert('Function 1 executed successfully!');
+        }
+        
+        function testFunction2() {
+            console.log('[Test] Function 2 executed');
+            alert('Function 2 executed successfully!');
+        }
+        
+        function testFunction3() {
+            console.log('[Test] Function 3 executed');
+            alert('Function 3 executed successfully!');
+        }
+        
+        function testModalState() {
+            const container = document.getElementById('debugModalContainer');
+            const isOpen = container && container.style.display === 'flex';
+            alert(`Debug Modal is ${isOpen ? 'OPEN' : 'CLOSED'}`);
+        }
+        
+        // Performance test
+        let performanceInterval = null;
+        
+        function startPerformanceTest() {
+            const resultDiv = document.getElementById('performance-result');
+            let counter = 0;
+            
+            performanceInterval = setInterval(() => {
+                counter++;
+                resultDiv.innerHTML = `Performance test running... Counter: ${counter}`;
+                
+                // Simulate some work
+                for (let i = 0; i < 1000000; i++) {
+                    Math.random();
+                }
+            }, 100);
+            
+            console.log('[Test] Performance test started');
+        }
+        
+        function stopPerformanceTest() {
+            if (performanceInterval) {
+                clearInterval(performanceInterval);
+                performanceInterval = null;
+                document.getElementById('performance-result').innerHTML = 'Performance test stopped';
+                console.log('[Test] Performance test stopped');
+            }
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('[Test] Debug Modal Test page loaded');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+{
+  "biomeName": "Mountains",
+  "tiles": [
+    {
+      "name": "Slice_36.png",
+      "path": "assets/biomes/Mountains/tiles/Slice_36.png",
+      "isTile": true,
+      "displayName": "Felswand",
+      "movementCost": 3,
+      "defenseBonus": 2,
+      "resources": "Stein, Erz",
+      "description": "Steile Felswand"
+    },
+    {
+      "name": "Slice_37.png",
+      "path": "assets/biomes/Mountains/tiles/Slice_37.png",
+      "isTile": true,
+      "displayName": "Bergpass",
+      "movementCost": 2,
+      "defenseBonus": 1,
+      "resources": "Stein",
+      "description": "Bergpass"
+    },
+    {
+      "name": "Slice_38.png",
+      "path": "assets/biomes/Mountains/tiles/Slice_38.png",
+      "isTile": true,
+      "displayName": "Gipfel",
+      "movementCost": 4,
+      "defenseBonus": 3,
+      "resources": "Schnee, Stein",
+      "description": "Berggipfel"
+    }
+  ],
+  "excludedFiles": [
+    {
+      "name": "Mountains.png",
+      "path": "assets/biomes/Mountains/Mountains.png",
+      "isTile": false,
+      "reason": "Titelbild des Bioms"
+    }
+  ]
+}

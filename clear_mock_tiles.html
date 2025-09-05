@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Clear Mock Tiles</title>
+</head>
+<body>
+    <h1>Clearing Mock Tiles from localStorage</h1>
+    <div id="status"></div>
+    
+    <script>
+        const status = document.getElementById('status');
+        
+        try {
+            // Clear all biome-related localStorage items
+            const keysToRemove = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && (key.includes('biome_tiles_') || key.includes('biomeData_') || key.includes('biomeSettings_'))) {
+                    keysToRemove.push(key);
+                }
+            }
+            
+            keysToRemove.forEach(key => {
+                localStorage.removeItem(key);
+                console.log('Removed:', key);
+            });
+            
+            status.innerHTML = `
+                <p>✅ Successfully cleared ${keysToRemove.length} biome-related items from localStorage:</p>
+                <ul>
+                    ${keysToRemove.map(key => `<li>${key}</li>`).join('')}
+                </ul>
+                <p>Mock tiles should no longer appear.</p>
+            `;
+            
+        } catch (error) {
+            status.innerHTML = `<p>❌ Error: ${error.message}</p>`;
+        }
+    </script>
+</body>
+</html>

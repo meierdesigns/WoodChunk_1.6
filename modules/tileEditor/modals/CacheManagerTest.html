@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CacheManager Debug Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .output {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .error {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .success {
+            color: #28a745;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>CacheManager Debug Test</h1>
+        <p>Teste den CacheManager und identifiziere Probleme.</p>
+        
+        <div class="test-section">
+            <h3>1. CacheManager Grundfunktionen</h3>
+            <button onclick="runBasicTests()">Grundfunktionen testen</button>
+            <div id="basic-output" class="output"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>2. CacheManager Integration</h3>
+            <button onclick="runIntegrationTests()">Integration testen</button>
+            <div id="integration-output" class="output"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>3. CacheManager Debug</h3>
+            <button onclick="runDebugTests()">Debug-Funktionen testen</button>
+            <div id="debug-output" class="output"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>4. Console Output</h3>
+            <button onclick="clearOutputs()">Outputs löschen</button>
+            <div id="console-output" class="output">Console-Ausgaben werden hier angezeigt...</div>
+        </div>
+    </div>
+
+    <!-- Load CacheManager -->
+    <script src="CacheManager.js?v=76a39078"></script>
+    <script src="CacheManagerDebug.js?v=94d14d43"></script>
+    
+    <script>
+        // Capture console output
+        const originalConsoleLog = console.log;
+        const originalConsoleError = console.error;
+        const consoleOutput = document.getElementById('console-output');
+        
+        function captureConsole(type, ...args) {
+            const timestamp = new Date().toLocaleTimeString();
+            const message = `[${timestamp}] [${type.toUpperCase()}] ${args.join(' ')}`;
+            consoleOutput.textContent += message + '\n';
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        }
+        
+        console.log = function(...args) {
+            captureConsole('log', ...args);
+            originalConsoleLog.apply(console, args);
+        };
+        
+        console.error = function(...args) {
+            captureConsole('error', ...args);
+            originalConsoleError.apply(console, args);
+        };
+        
+        // Test functions
+        function runBasicTests() {
+            const output = document.getElementById('basic-output');
+            output.textContent = '=== GRUNDFUNKTIONEN TEST START ===\n';
+            
+            try {
+                // Test 1: Check if CacheManager exists
+                if (typeof CacheManager === 'undefined') {
+                    output.textContent += '❌ CacheManager class not found!\n';
+                    return;
+                }
+                output.textContent += '✅ CacheManager class found\n';
+                
+                // Test 2: Create instance
+                const cacheManager = new CacheManager();
+                output.textContent += '✅ CacheManager instance created\n';
+                
+                // Test 3: Check initial state
+                output.textContent += `- Initial cache size: ${cacheManager.getCacheSize()}\n`;
+                output.textContent += `- Initial cache keys: ${JSON.stringify(cacheManager.getAllCacheKeys())}\n`;
+                output.textContent += `- Initial force refresh: ${cacheManager.forceRefresh}\n`;
+                
+                // Test 4: Set test data
+                const testData = [
+                    { name: 'test1', id: 1, image: 'test1.png', source: 'test' },
+                    { name: 'test2', id: 2, image: 'test2.png', source: 'test' }
+                ];
+                cacheManager.setCachedData('test_biome_all', testData);
+                output.textContent += `✅ Test data set, cache size: ${cacheManager.getCacheSize()}\n`;
+                
+                // Test 5: Get cached data
+                const retrievedData = cacheManager.getCachedData('test_biome_all');
+                output.textContent += `✅ Retrieved data length: ${retrievedData ? retrievedData.length : 'null'}\n`;
+                
+                // Test 6: Cache usage check
+                const shouldUseCache = cacheManager.shouldUseCache('test_biome_all');
+                output.textContent += `✅ Should use cache: ${shouldUseCache}\n`;
+                
+                // Test 7: Force refresh
+                cacheManager.setForceRefresh(true);
+                const shouldUseCacheForce = cacheManager.shouldUseCache('test_biome_all');
+                output.textContent += `✅ Should use cache (force refresh): ${shouldUseCacheForce}\n`;
+                
+                // Test 8: Reset force refresh
+                cacheManager.resetForceRefresh();
+                const shouldUseCacheReset = cacheManager.shouldUseCache('test_biome_all');
+                output.textContent += `✅ Should use cache (after reset): ${shouldUseCacheReset}\n`;
+                
+                output.textContent += '=== GRUNDFUNKTIONEN TEST END ===\n';
+                
+            } catch (error) {
+                output.textContent += `❌ Error: ${error.message}\n`;
+                console.error('Basic test error:', error);
+            }
+        }
+        
+        function runIntegrationTests() {
+            const output = document.getElementById('integration-output');
+            output.textContent = '=== INTEGRATION TEST START ===\n';
+            
+            try {
+                // Test if ModalManager can be created with CacheManager
+                const testTileEditor = { categories: [] };
+                const modalManager = new ModalManager(testTileEditor);
+                output.textContent += '✅ ModalManager created with CacheManager\n';
+                
+                // Check if cacheManager exists
+                if (modalManager.cacheManager) {
+                    output.textContent += '✅ ModalManager has cacheManager\n';
+                    output.textContent += `- CacheManager type: ${typeof modalManager.cacheManager}\n`;
+                    output.textContent += `- CacheManager instanceof CacheManager: ${modalManager.cacheManager instanceof CacheManager}\n`;
+                    
+                    // Test cache operations through ModalManager
+                    const cacheManager = modalManager.cacheManager;
+                    const testData = [
+                        { name: 'integration_test1', id: 201, image: 'integration_test1.png', source: 'integration_test' }
+                    ];
+                    
+                    cacheManager.setCachedData('integration_test_biome_all', testData);
+                    output.textContent += `✅ Data set through ModalManager, cache size: ${cacheManager.getCacheSize()}\n`;
+                    
+                    const retrievedData = cacheManager.getCachedData('integration_test_biome_all');
+                    output.textContent += `✅ Data retrieved through ModalManager, length: ${retrievedData ? retrievedData.length : 'null'}\n`;
+                    
+                } else {
+                    output.textContent += '❌ ModalManager does not have cacheManager\n';
+                }
+                
+                output.textContent += '=== INTEGRATION TEST END ===\n';
+                
+            } catch (error) {
+                output.textContent += `❌ Error: ${error.message}\n`;
+                console.error('Integration test error:', error);
+            }
+        }
+        
+        function runDebugTests() {
+            const output = document.getElementById('debug-output');
+            output.textContent = '=== DEBUG TEST START ===\n';
+            
+            try {
+                const cacheManager = new CacheManager();
+                
+                // Set some test data for debug
+                const testData = [
+                    { name: 'debug_test1', id: 301, image: 'debug_test1.png', source: 'debug_test' },
+                    { name: 'debug_test2', id: 302, image: 'debug_test2.png', source: 'debug_test' }
+                ];
+                cacheManager.setCachedData('debug_test_biome_all', testData);
+                
+                // Test debug function
+                output.textContent += 'Running debugAllCacheSources...\n';
+                cacheManager.debugAllCacheSources('debug_test_biome');
+                
+                output.textContent += '✅ Debug functions executed (check console for details)\n';
+                output.textContent += '=== DEBUG TEST END ===\n';
+                
+            } catch (error) {
+                output.textContent += `❌ Error: ${error.message}\n`;
+                console.error('Debug test error:', error);
+            }
+        }
+        
+        function clearOutputs() {
+            document.getElementById('basic-output').textContent = '';
+            document.getElementById('integration-output').textContent = '';
+            document.getElementById('debug-output').textContent = '';
+            document.getElementById('console-output').textContent = 'Console-Ausgaben werden hier angezeigt...\n';
+        }
+        
+        // Auto-run basic test on load
+        window.addEventListener('load', function() {
+            console.log('CacheManager Debug Test Page loaded');
+            console.log('CacheManager available:', typeof CacheManager !== 'undefined');
+            if (typeof ModalManager !== 'undefined') {
+                console.log('ModalManager available:', typeof ModalManager !== 'undefined');
+            }
+        });
+    </script>
+</body>
+</html>

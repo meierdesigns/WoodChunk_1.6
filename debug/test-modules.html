@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module Test - WoodChunk 1.5</title>
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f0f0f0;
+        }
+        .module-test {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .module-test h2 {
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        .module-container {
+            border: 2px solid #ddd;
+            min-height: 400px;
+            padding: 20px;
+            background: #fafafa;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 18px;
+        }
+        .error {
+            color: #d32f2f;
+            background: #ffebee;
+            padding: 20px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        .success {
+            color: #2e7d32;
+            background: #e8f5e8;
+            padding: 20px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        
+        /* Cache busting for Buildings images */
+        img[src*="Buildings"], img[src*="slice_"], img[src*="tile_"] {
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            image-rendering: pixelated;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Module Test - WoodChunk 1.5</h1>
+    
+    <div class="module-test">
+        <h2>⚔️ Item Editor Test</h2>
+        <div class="module-container" id="itemEditorContainer">
+            <div class="loading">Lade Item Editor...</div>
+        </div>
+    </div>
+    
+    <div class="module-test">
+        <h2>👤 Character Editor Test</h2>
+        <div class="module-container" id="characterEditorContainer">
+            <div class="loading">Lade Character Editor...</div>
+        </div>
+    </div>
+
+    <script>
+        // Test ItemEditor Module
+        async function testItemEditor() {
+            try {
+                console.log('Testing ItemEditor module...');
+                
+                // Load CSS
+                const cssLink = document.createElement('link');
+                cssLink.rel = 'stylesheet';
+                cssLink.href = '/modules/itemEditor/itemEditor.css';
+                document.head.appendChild(cssLink);
+                
+                // Load HTML
+                const response = await fetch('/modules/itemEditor/itemEditor.html');
+                if (response.ok) {
+                    const html = await response.text();
+                    document.getElementById('itemEditorContainer').innerHTML = html;
+                    
+                    // Load JavaScript
+                    const script = document.createElement('script');
+                    script.src = '/modules/itemEditor/itemEditor.js';
+                    script.type = 'module';
+                    
+                    script.onload = () => {
+                        console.log('ItemEditor script loaded');
+                        if (window.itemEditor) {
+                            window.itemEditor.initialize();
+                            document.getElementById('itemEditorContainer').innerHTML += 
+                                '<div class="success">✅ ItemEditor erfolgreich geladen!</div>';
+                        }
+                    };
+                    
+                    document.head.appendChild(script);
+                }
+            } catch (error) {
+                console.error('ItemEditor test failed:', error);
+                document.getElementById('itemEditorContainer').innerHTML += 
+                    `<div class="error">❌ Fehler: ${error}</div>`;
+            }
+        }
+
+        // Test CharacterEditor Module
+        async function testCharacterEditor() {
+            try {
+                console.log('Testing CharacterEditor module...');
+                
+                // Load CSS
+                const cssLink = document.createElement('link');
+                cssLink.rel = 'stylesheet';
+                cssLink.href = '/modules/characterEditor/characterEditor.css';
+                document.head.appendChild(cssLink);
+                
+                // Load HTML
+                const response = await fetch('/modules/characterEditor/characterEditor.html');
+                if (response.ok) {
+                    const html = await response.text();
+                    document.getElementById('characterEditorContainer').innerHTML = html;
+                    
+                    // Load JavaScript
+                    const script = document.createElement('script');
+                    script.src = '/modules/characterEditor/characterEditor.js';
+                    script.type = 'module';
+                    
+                    script.onload = () => {
+                        console.log('CharacterEditor script loaded');
+                        if (window.characterEditor) {
+                            window.characterEditor.initialize();
+                            document.getElementById('characterEditorContainer').innerHTML += 
+                                '<div class="success">✅ CharacterEditor erfolgreich geladen!</div>';
+                        }
+                    };
+                    
+                    document.head.appendChild(script);
+                }
+            } catch (error) {
+                console.error('CharacterEditor test failed:', error);
+                document.getElementById('characterEditorContainer').innerHTML += 
+                    `<div class="error">❌ Fehler: ${error}</div>`;
+            }
+        }
+
+        // Start tests when page loads
+        window.addEventListener('load', () => {
+            setTimeout(testItemEditor, 500);
+            setTimeout(testCharacterEditor, 1000);
+        });
+    </script>
+</body>
+</html>

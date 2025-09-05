@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tile Editor - WoodChunk 1.5</title>
+    <link rel="icon" type="image/x-icon" href="../../assets/favicon.ico">
+    <link rel="stylesheet" href="../../modules/core/styles.css?v=v1">
+    <link rel="stylesheet" href="tileEditor.css?v=v1">
+    <style>
+        /* Cache busting for Buildings images */
+        img[src*="Buildings"], img[src*="slice_"], img[src*="tile_"] {
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            image-rendering: pixelated;
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- Toast Container -->
+        <div id="toastContainer" class="toast-container"></div>
+        
+        <!-- Header Navigation -->
+        <nav class="app-navigation" id="appNavigation">
+            <a href="/" class="nav-btn" data-view="menu" data-icon="🏠">Menu</a>
+            <a href="/modules/itemEditor/itemEditor.html" class="nav-btn" data-view="itemEditor" data-icon="🛡️">Item</a>
+            <a href="/modules/peopleEditor/index.html" class="nav-btn" data-view="peopleEditor" data-icon="👥">People</a>
+            <a href="/modules/characterEditor/characterEditor.html" class="nav-btn" data-view="characterEditor" data-icon="⚔️">Character</a>
+            <a href="/modules/hexMapEditor/hexMapEditor.html" class="nav-btn" data-view="hexMapEditor" data-icon="🗺️">HexMap</a>
+            <a href="/modules/abilitiesEditor/abilitiesEditor.html" class="nav-btn" data-view="abilitiesEditor" data-icon="✨">Abilities</a>
+            <a href="/modules/tileEditor/tileEditor.html" class="nav-btn active" data-view="tileEditor" data-icon="🧩">Tiles</a>
+        </nav>
+        
+        <main class="app-content" id="appContent">
+            <div class="editor">
+                <div class="editor-header">
+                    <h2>🧩 Tile Editor</h2>
+                                            <div class="header-controls">
+                            <div class="header-dropdown">
+                                <select id="headerBiomeFilter" class="header-biome-filter">
+                                    <option value="">Alle Biome</option>
+                                    <option value="forests">Wälder</option>
+                                    <option value="mountains">Gebirge</option>
+                                    <option value="water">Wasser</option>
+                                    <option value="desert">Wüste</option>
+                                </select>
+                            </div>
+                            <div class="debug-controls">
+                                <!-- Debug checkbox removed - use fly-in debug panel instead -->
+                            </div>
+                            <button type="button" id="refreshBuildingImages" class="btn btn-warning btn-small" title="Building images neu laden">🔄 Buildings</button>
+                            <button type="button" id="saveAllBiomes" class="btn btn-success btn-small">💾 Alle Biome speichern</button>
+                            <span class="loading-indicator">🔄 Lade Module...</span>
+                        </div>
+                </div>
+                <div id="tileEditorContainer">
+                    <!-- Biome Categories Header -->
+                    <div class="categories-header">
+                        <h3>Biome Kategorien <span id="biomeProgressCounter" class="progress-counter" style="display: none;">0/0</span></h3>
+                        <div class="category-controls">
+                            <div class="sort-controls">
+                                <span class="sort-label">Sortieren:</span>
+                                <button type="button" id="sortCategoriesByName" class="btn btn-small sort-btn">Name</button>
+                                <button type="button" id="sortCategoriesByType" class="btn btn-small sort-btn">Typ</button>
+                                <button type="button" id="sortCategoriesByColor" class="btn btn-small sort-btn">Farbe</button>
+                            </div>
+                            <button type="button" id="testProgressCounter" class="btn btn-small" style="background: #ff6b6b; color: white;">🧪 Test Counter</button>
+                            <button type="button" id="newCategory" class="btn btn-primary btn-small">+ Kategorie</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Categories Grid -->
+                    <div id="categoriesList" class="categories-grid">
+                        <!-- Categories will be loaded here -->
+                    </div>
+
+                   <!-- Tiles Section - Show by default -->
+                   <div class="tiles-section">
+                       <div class="section-header">
+                           <h3>Tiles</h3>
+                           <div class="tile-controls">
+                               <div class="filter-controls">
+                                   <select id="categoryFilter" class="category-filter">
+                                       <option value="">Alle Kategorien</option>
+                                   </select>
+                               </div>
+                               <button type="button" id="newTile" class="btn btn-primary btn-small">+ Tile</button>
+                           </div>
+                       </div>
+                       <div id="tilesList" class="tiles-list">
+                           <!-- Tiles will be loaded here -->
+                       </div>
+                   </div>
+
+                   <!-- Preview Section - Only for Biome Modals -->
+                   <div class="preview-section" style="display: none;">
+                       <div class="section-header">
+                           <h3>Vorschau</h3>
+                       </div>
+                       <div id="tilePreview" class="tile-preview">
+                           <div class="preview-placeholder">
+                               <p>Wähle eine Kategorie oder ein Tile aus um Details zu sehen</p>
+                           </div>
+                       </div>
+                   </div>
+                </div>
+                
+                <!-- Category Modal -->
+                <div id="categoryModal" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 id="categoryModalTitle">Kategorie Details</h3>
+                            <button type="button" class="modal-close" id="closeCategoryModal">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="categoryForm" class="category-form">
+                                <div class="form-group">
+                                    <label for="categoryName">Name:</label>
+                                    <input type="text" id="categoryName" name="categoryName" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="categoryType">Typ:</label>
+                                    <select id="categoryType" name="categoryType" required>
+                                        <option value="terrain">Terrain</option>
+                                        <option value="biome">Biome</option>
+                                        <option value="entities">Entities</option>
+                                        <option value="special">Spezial</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="categoryColor">Farbe:</label>
+                                    <input type="color" id="categoryColor" name="categoryColor" value="#4CAF50">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="categoryDescription">Beschreibung:</label>
+                                    <textarea id="categoryDescription" name="categoryDescription" rows="3"></textarea>
+                                </div>
+                                
+                                <div class="form-actions">
+                                    <button type="button" id="saveCategory" class="btn btn-primary">Speichern</button>
+                                    <button type="button" id="deleteCategory" class="btn btn-danger">Löschen</button>
+                                    <button type="button" id="cancelCategory" class="btn btn-secondary">Abbrechen</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tile Modal -->
+                <div id="tileModal" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 id="tileModalTitle">Tile Details</h3>
+                            <button type="button" class="modal-close" id="closeTileModal">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="tileForm" class="tile-form">
+                                <div class="form-group">
+                                    <label for="tileName">Name:</label>
+                                    <input type="text" id="tileName" name="tileName" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="tileCategory">Kategorie:</label>
+                                    <select id="tileCategory" name="tileCategory" required>
+                                        <!-- Categories will be loaded here -->
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="tileImage">Bild:</label>
+                                    <input type="file" id="tileImage" name="tileImage" accept="image/*">
+                                    <div id="currentImagePath" class="current-image-path" style="margin-top: 5px; font-size: 12px; color: #666; display: none;">
+                                        <strong>Aktuelles Bild:</strong> <span id="currentImagePathText"></span>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="tileMovementCost">Bewegungskosten:</label>
+                                    <input type="number" id="tileMovementCost" name="tileMovementCost" min="1" max="10" value="1" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="tileDefenseBonus">Verteidigungsbonus:</label>
+                                    <input type="number" id="tileDefenseBonus" name="tileDefenseBonus" min="0" max="5" value="0" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="tileResources">Ressourcen:</label>
+                                    <input type="text" id="tileResources" name="tileResources" placeholder="Holz, Stein, etc.">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="tileDescription">Beschreibung:</label>
+                                    <textarea id="tileDescription" name="tileDescription" rows="3"></textarea>
+                                </div>
+                                
+                                <div class="form-actions">
+                                    <button type="button" id="saveTile" class="btn btn-primary">Speichern</button>
+                                    <button type="button" id="deleteTile" class="btn btn-danger">Löschen</button>
+                                    <button type="button" id="cancelTile" class="btn btn-secondary">Abbrechen</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Biome Modal -->
+                <div id="biomeModal" class="modal">
+                    <div class="modal-content modal-large">
+                        <div class="modal-header">
+                            <h3 id="biomeModalTitle">Biome Verwalten</h3>
+                            <button type="button" class="modal-close" id="closeBiomeModalHeaderBtn">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                                                            <div class="biome-modal-content">
+                                    <div class="biome-info-section">
+                                        <div class="biome-content-row">
+                                            <img id="biomeMainImage" src="" alt="Biome" class="biome-title-image">
+                                            <div class="biome-details">
+                                                <div id="biomeName">Biome Name</div>
+                                                <div class="biome-stats">
+                                                    <span class="biome-stat">
+                                                        <span class="stat-icon">📁</span>
+                                                        <span id="biomeFolderPath">assets/biomes/...</span>
+                                                    </span>
+                                                </div>
+                                                <div class="biome-description" id="biomeDescription">
+                                                    Beschreibung des Biomes...
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                
+                                <div class="biome-settings-section">
+                                    <div class="settings-header">
+                                        <h4>Biome Einstellungen</h4>
+                                        <button type="button" id="toggleBiomeSettings" class="toggle-btn collapsed">▶</button>
+                                    </div>
+                                    <div class="settings-content collapsed" id="biomeSettingsContent">
+                                        <div class="settings-tabs">
+                                            <div class="tab-buttons">
+                                                <button type="button" class="tab-btn active" data-tab="colorTab">🎨 Farbe</button>
+                                                <button type="button" class="tab-btn" data-tab="descriptionTab">📝 Beschreibung</button>
+                                                <button type="button" class="tab-btn" data-tab="imageTab">🖼️ Titelbild</button>
+                                            </div>
+                                            <div class="tab-content">
+                                                <div class="tab-panel active" id="colorTab">
+                                                    <div class="color-input-container">
+                                                        <div class="color-preview" id="colorPreview"></div>
+                                                        <div class="color-input-group">
+                                                            <input type="text" id="biomeColorInput" placeholder="#000000" maxlength="7">
+                                                            <span class="color-input-separator">oder</span>
+                                                            <div class="rgb-input-group">
+                                                                <input type="number" id="biomeColorR" placeholder="R" min="0" max="255">
+                                                                <input type="number" id="biomeColorG" placeholder="G" min="0" max="255">
+                                                                <input type="number" id="biomeColorB" placeholder="B" min="0" max="255">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="color-picker-sections-container">
+                                                        <div class="color-picker-section">
+                                                            <h4>Farben aus Titelbild wählen</h4>
+                                                            <div class="color-picker-container">
+                                                                <canvas id="colorPickerCanvas" width="300" height="200"></canvas>
+                                                                <div class="color-picker-cursor" id="colorPickerCursor"></div>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div class="color-picker-section">
+                                                            <h4>Farben aus Gradient wählen</h4>
+                                                            <div class="color-picker-container">
+                                                                <canvas id="gradientPickerCanvas" width="300" height="200"></canvas>
+                                                                <div class="color-picker-cursor" id="gradientPickerCursor"></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="tab-panel" id="descriptionTab">
+                                                    <textarea id="biomeDescriptionInput" class="biome-description-input" rows="3" placeholder="Beschreibe die Eigenschaften dieses Biomes..."></textarea>
+                                                </div>
+                                                <div class="tab-panel" id="imageTab">
+                                                    <div class="image-upload-container">
+                                                        <input type="file" id="biomeImageUpload" class="image-upload-input" accept="image/*" style="display: none;">
+                                                        <button type="button" id="biomeImageUploadBtn" class="image-upload-btn">📁 Bild auswählen</button>
+                                                        <span class="image-upload-info">PNG, JPG bis 2MB</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="biome-tiles-section">
+                                    <div class="section-header">
+                                        <div class="section-header-horizontal">
+                                            <div class="section-header-left">
+                                                <h4>Tiles in diesem Biome</h4>
+                                            </div>
+                                            <div class="section-header-center">
+                                                <div class="biome-drag-drop-area">
+                                                    <div class="biome-drag-drop-zone" id="biomeDragDropZone">
+                                                        <div class="drag-drop-content">
+                                                            <h5>Bilder hier hineinziehen</h5>
+                                                            <div class="drag-drop-info">oder klicken zum Auswählen</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="section-header-right">
+                                                <div class="tile-action-buttons">
+                                                    <button type="button" id="addTileToBiome" class="btn btn-primary btn-small">+ Tile hinzufügen</button>
+                                                    <button type="button" id="importTilesToBiome" class="btn btn-secondary btn-small">Tiles importieren</button>
+                                                    <button type="button" id="cleanTilesBtn" class="btn btn-warning btn-small">🧹 Tiles säubern</button>
+                                                </div>
+                                                <div class="view-toggle-controls">
+                                                    <span class="view-label">Ansicht:</span>
+                                                    <button type="button" id="toggleTableView" class="btn btn-small view-toggle-btn active" data-view="table">📊 Tabelle</button>
+                                                    <button type="button" id="toggleCardView" class="btn btn-small view-toggle-btn" data-view="cards">🃏 Cards</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="filter-tabs">
+                                            <button type="button" class="filter-tab active" data-filter="all">Alle</button>
+                                            <button type="button" class="filter-tab" data-filter="mining_site">⛏️ Mining</button>
+                                            <button type="button" class="filter-tab" data-filter="tower">🗼 Tower</button>
+                                            <button type="button" class="filter-tab" data-filter="building">🏢 Building</button>
+                                            <button type="button" class="filter-tab" data-filter="settlement">🏘️ Settlement</button>
+                                            <button type="button" class="filter-tab" data-filter="castle">🏰 Castle</button>
+                                            <button type="button" class="filter-tab" data-filter="village">🏘️ Village</button>
+                                            <button type="button" class="filter-tab" data-filter="temple">⛪ Temple</button>
+                                            <button type="button" class="filter-tab" data-filter="ritual_site">🔮 Ritual</button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div id="biomeTilesList" class="biome-tiles-list">
+                                        <!-- Tiles will be loaded here -->
+                                    </div>
+                                    
+                                    <!-- Tile Cleaner View -->
+                                    <div id="tileCleanerView" class="tile-cleaner-view" style="display: none;">
+                                        <div class="cleaner-header">
+                                            <h4>🧹 Tile-Ordner säubern: <span id="currentBiomeName">Aktuelles Biome</span></h4>
+                                            <p>Wählen Sie die Dateien aus, die gelöscht werden sollen:</p>
+                                        </div>
+                                        <div class="cleaner-controls">
+                                            <button type="button" id="selectAllFiles" class="btn btn-secondary btn-small">Alle auswählen</button>
+                                            <button type="button" id="deselectAllFiles" class="btn btn-secondary btn-small">Alle abwählen</button>
+                                            <button type="button" id="deleteSelectedFiles" class="btn btn-danger btn-small">Ausgewählte löschen</button>
+                                            <button type="button" id="backToTiles" class="btn btn-secondary btn-small">← Zurück zu Tiles</button>
+                                                                <div class="file-type-filters">
+                        <button type="button" class="file-type-filter active" data-type="all">Alle</button>
+                        <button type="button" class="file-type-filter unassigned" data-type="unassigned">Nicht zugewiesen</button>
+                        <button type="button" class="file-type-filter duplicate" data-type="duplicate">Duplikate</button>
+                        <button type="button" class="file-type-filter corrupted" data-type="corrupted">Beschädigt</button>
+                        <button type="button" class="file-type-filter assigned" data-type="assigned">Zugewiesen</button>
+                        <button type="button" class="file-type-filter renamed" data-type="renamed">Umbenannt</button>
+                        <button type="button" class="file-type-filter split" data-type="split">Gesplittet</button>
+                        <button type="button" class="file-type-filter original" data-type="original">Original</button>
+                    </div>
+                                        </div>
+                                        <div id="fileListContainer" class="file-list-container">
+                                            <!-- Dateien werden hier dynamisch geladen -->
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Tile Editor Section -->
+                                <div id="biomeTileEditorSection" class="biome-tile-editor-section" style="display: none;">
+                                    <div class="section-header">
+                                        <h4>Tile Bearbeiten</h4>
+                                        <button type="button" id="closeTileEditor" class="btn btn-secondary btn-small">Editor schließen</button>
+                                    </div>
+                                    <div class="tile-editor-content">
+                                        <div class="tile-preview">
+                                            <img id="biomeTilePreviewImage" src="" alt="Tile Preview" class="tile-preview-image">
+                                            <h5 id="biomeTilePreviewName">Tile Name</h5>
+                                        </div>
+                                        <div class="tile-editor-form">
+                                            <div class="form-group">
+                                                <label for="biomeTileName">Name:</label>
+                                                <input type="text" id="biomeTileName" name="biomeTileName" required>
+                                            </div>
+                                            
+
+                                            
+                                            <div class="form-group">
+                                                <label for="biomeTileMovementCost">Bewegungskosten:</label>
+                                                <input type="number" id="biomeTileMovementCost" name="biomeTileMovementCost" min="1" max="10" value="1" required>
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <label for="biomeTileDefenseBonus">Verteidigungsbonus:</label>
+                                                <input type="number" id="biomeTileDefenseBonus" name="biomeTileDefenseBonus" min="0" max="5" value="0" required>
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <label for="biomeTileIsDefault">Standardtile:</label>
+                                                <div class="checkbox-container">
+                                                    <input type="checkbox" id="biomeTileIsDefault" name="biomeTileIsDefault">
+                                                    <label for="biomeTileIsDefault" class="checkbox-label">Als Standardtile für dieses Biome verwenden</label>
+                                                </div>
+                                                <small class="form-help">Das Standardtile wird automatisch verwendet, wenn kein spezifisches Tile definiert ist.</small>
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <label for="biomeTileItems">Items (durch Komma getrennt):</label>
+                                                <div class="items-input-container">
+                                                    <input type="text" id="biomeTileItems" name="biomeTileItems" placeholder="Schwert, Trank, Gold, etc.">
+                                                    <button type="button" id="biomeTileItemsSelector" class="btn btn-secondary btn-small">📦 Items auswählen</button>
+                                                </div>
+                                                <div id="biomeTileItemsList" class="items-list">
+                                                    <!-- Selected items will be displayed here -->
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <label for="biomeTileDescription">Beschreibung:</label>
+                                                <textarea id="biomeTileDescription" name="biomeTileDescription" rows="4" placeholder="Beschreibe die Eigenschaften dieses Tiles..."></textarea>
+                                            </div>
+                                        </div>
+                                        <div id="buildingCategoryList" class="building-category-list" style="display: none;">
+                                            <h6>Gebäudekategorie:</h6>
+                                            <div class="category-buttons">
+                                                <button type="button" class="category-btn" data-category="mining_site">⛏️ Mining Site</button>
+                                                <button type="button" class="category-btn" data-category="tower">🗼 Tower</button>
+                                                <button type="button" class="category-btn" data-category="building">🏢 Building</button>
+                                                <button type="button" class="category-btn" data-category="settlement">🏘️ Settlement</button>
+                                                <button type="button" class="category-btn" data-category="castle">🏰 Castle</button>
+                                                <button type="button" class="category-btn" data-category="village">🏡 Village</button>
+                                                <button type="button" class="category-btn" data-category="temple">⛪ Temple</button>
+                                                <button type="button" class="category-btn" data-category="ritual_site">🔮 Ritual Site</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tile-editor-actions">
+                                        <button type="button" id="saveBiomeTile" class="btn btn-primary">💾 Speichern</button>
+                                        <button type="button" id="deleteBiomeTile" class="btn btn-danger">🗑️ Löschen</button>
+                                        <button type="button" id="cancelBiomeTile" class="btn btn-secondary">❌ Abbrechen</button>
+                                    </div>
+                                </div>
+                                
+                                <div class="biome-actions">
+                                    <button type="button" id="saveBiomeChanges" class="btn btn-success">💾 Speichern</button>
+                                    <button type="button" id="checkTilesFolder" class="btn btn-info">📁 Tiles Ordner prüfen</button>
+                                    <button type="button" id="exportBiomeData" class="btn btn-secondary">📤 Biome exportieren</button>
+                                    <button type="button" id="closeBiomeModalActionBtn" class="btn btn-secondary">Schließen</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Load modules in correct order -->
+    <script src="utils/ToastManager.js?v=v1"></script>
+    
+    <!-- Load modular components -->
+    <script src="modules/BiomeLoader.js?v=v1"></script>
+    <script src="modules/TileRenderer.js?v=v1"></script>
+    <script src="modules/BiomeManager.js?v=v1"></script>
+    <script src="modules/TileEditorCore.js?v=v1"></script>
+    
+    <!-- Load BiomeTableComponent -->
+    <script src="modals/BiomeTableComponent.js?v=v1"></script>
+    
+    <!-- Load existing components -->
+    <script src="core/TileEditor.js?v=v1"></script>
+    <script src="modals/CacheManager.js?v=v1"></script>
+    <script src="modals/TileDataManager.js?v=v1"></script>
+    <script src="modals/UIManager.js?v=v1"></script>
+    <script src="modals/ImageUploadManager.js?v=v1"></script>
+    <script src="modals/ModalManager.js?v=v1"></script>
+    <script src="data/DataManager.js?v=v1"></script>
+    <script src="index.js?v=v1"></script>
+    
+    <!-- Debugger Module -->
+    <!-- Debugger removed - use fly-in debug panel instead -->
+    
+    <!-- Debug Modal Integration -->
+    <!-- Debug Modal Integration removed - use fly-in debug panel instead -->
+    
+    <!-- Test Sort Functionality -->
+    <script src="test-sort.js?v=v1"></script>
+    
+    <!-- Debug Fly-in Card -->
+    <script src="../../debug/debugFlyinCard.js?v=v1"></script>
+    
+    <!-- Error handling for missing TileEditor -->
+    <script>
+        // Check if TileEditor is available immediately (no delay)
+        if (typeof window.tileEditor === 'undefined' || !window.tileEditor) {
+            console.error('[TileEditor] TileEditor not available');
+            
+            // Show error message in the container
+            const container = document.getElementById('tileEditorContainer');
+            if (container) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 50px; color: #666;">
+                        <h3>🧩 Tile Editor</h3>
+                        <p>Tile-Editor wird geladen...</p>
+                        <p><small>Falls das Problem weiterhin besteht, laden Sie die Seite neu.</small></p>
+                        <button onclick="location.reload()" style="margin-top: 20px; padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                            🔄 Seite neu laden
+                        </button>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

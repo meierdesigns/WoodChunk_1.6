@@ -1,0 +1,465 @@
+/* Item Editor Module Specific Styles */
+
+.item-editor-module {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.item-editor-module h2 {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    margin: 0;
+    padding: 20px;
+    text-align: center;
+    font-size: 1.8em;
+}
+
+.item-editor-content {
+    flex: 1;
+    overflow: hidden;
+}
+
+#itemEditorContainer {
+    height: 100%;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+/* Item Editor Styles */
+.item-editor {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.item-editor h2 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Toolbar */
+.toolbar {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* Buttons */
+.btn {
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.btn-primary {
+    background: #28a745;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #218838;
+}
+
+.btn-secondary {
+    background: #17a2b8;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #138496;
+}
+
+.btn-danger {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #c82333;
+}
+
+.btn-success {
+    background: #28a745;
+    color: white;
+}
+
+.btn-success:hover {
+    background: #218838;
+}
+
+.btn-gray {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-gray:hover {
+    background: #5a6268;
+}
+
+/* Filter Section */
+.filter-section {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.filter-section h3 {
+    margin: 0 0 15px 0;
+    color: #495057;
+}
+
+.filter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.filter-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.filter-group select,
+.filter-group input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.filter-actions {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+}
+
+/* Category Tabs */
+.tab-container {
+    background: white;
+    border-radius: 8px 8px 0 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-bottom: 1px solid #dee2e6;
+}
+
+.tab-bar {
+    display: flex;
+    border-bottom: 1px solid #dee2e6;
+    gap: 4px;
+    padding: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.category-tab {
+    width: 80px !important;
+    height: 80px !important;
+    min-width: 80px !important;
+    min-height: 80px !important;
+    max-width: 80px !important;
+    max-height: 80px !important;
+    padding: 0 !important;
+    background: #6c757d;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+    border-radius: 8px;
+    margin: 2px;
+    flex: none;
+    box-sizing: border-box;
+}
+
+.category-tab:hover {
+    background: #5a6268;
+}
+
+.category-tab.active {
+    background: #007bff;
+}
+
+.category-tab.active:hover {
+    background: #0056b3;
+}
+
+/* Table Container */
+.table-container {
+    background: white;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.table-header {
+    padding: 15px 20px;
+    border-bottom: 1px solid #dee2e6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.table-header h3 {
+    margin: 0;
+    color: #495057;
+    font-size: 1.5em;
+    flex-shrink: 0;
+}
+
+.item-count {
+    margin: 5px 0 0 0;
+    color: #6c757d;
+    font-size: 0.9em;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+}
+
+/* Table Styles */
+.items-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-header-row {
+    background: #f8f9fa;
+}
+
+.table-header-cell {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 2px solid #dee2e6;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.table-header-cell.sortable:hover {
+    background: #e9ecef;
+}
+
+.table-header-cell.center {
+    text-align: center;
+}
+
+.table-row {
+    border-bottom: 1px solid #dee2e6;
+}
+
+.table-row:hover {
+    background: #f8f9fa;
+}
+
+.table-row.selected {
+    background: #e3f2fd !important;
+    border-left: 4px solid #2196f3;
+}
+
+.table-row.selected:hover {
+    background: #bbdefb !important;
+}
+
+.table-cell {
+    padding: 12px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.table-cell.center {
+    text-align: center;
+}
+
+/* Item Icon Cell */
+.item-icon-cell {
+    width: 40px !important;
+    min-width: 40px !important;
+    max-width: 40px !important;
+    padding: 4px !important;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.item-placeholder {
+    font-size: 20px;
+    color: #6c757d;
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+}
+
+/* Action Buttons */
+.action-btn {
+    border: none;
+    padding: 4px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+    margin-right: 5px;
+    font-size: 12px;
+}
+
+.action-btn:last-child {
+    margin-right: 0;
+}
+
+.action-btn-edit {
+    background: #17a2b8;
+    color: white;
+}
+
+.action-btn-edit:hover {
+    background: #138496;
+}
+
+.action-btn-delete {
+    background: #dc3545;
+    color: white;
+}
+
+.action-btn-delete:hover {
+    background: #c82333;
+}
+
+/* Pagination */
+.pagination {
+    padding: 15px 20px;
+    border-top: 1px solid #dee2e6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8f9fa;
+}
+
+.pagination-info {
+    color: #6c757d;
+    font-size: 0.9em;
+}
+
+.pagination-controls {
+    display: flex;
+    gap: 10px;
+}
+
+.pagination-btn {
+    padding: 8px 16px;
+    border: 1px solid #ced4da;
+    background: white;
+    color: #495057;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background: #e9ecef;
+}
+
+.pagination-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Rarity Colors */
+.rarity {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.rarity-common {
+    background: #95a5a6;
+    color: white;
+}
+
+.rarity-uncommon {
+    background: #27ae60;
+    color: white;
+}
+
+.rarity-rare {
+    background: #3498db;
+    color: white;
+}
+
+.rarity-epic {
+    background: #9b59b6;
+    color: white;
+}
+
+.rarity-legendary {
+    background: #f39c12;
+    color: white;
+}
+
+/* Loading and Error States */
+.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    color: #6c757d;
+    font-size: 1.1em;
+}
+
+.error-message {
+    text-align: center;
+    padding: 40px;
+    color: #dc3545;
+}
+
+.error-message h3 {
+    margin-bottom: 15px;
+    color: #dc3545;
+}
+
+.error-message p {
+    margin-bottom: 20px;
+    color: #6c757d;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .item-editor {
+        padding: 1rem;
+    }
+    
+    .toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .filter-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .table-header {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+    }
+    
+    .pagination {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+}
