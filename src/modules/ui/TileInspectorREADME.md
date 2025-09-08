@@ -1,6 +1,6 @@
 # Tile Inspector Module
 
-A comprehensive tile inspection system for the WoodChunk 1.6 hexmap editor that allows users to examine hexmap tiles in detail.
+A comprehensive tile inspection system for the WoodChunk 1.6.1 hexmap editor that allows users to examine hexmap tiles in detail.
 
 ## Overview
 
@@ -176,4 +176,4 @@ npm run lint
 
 ## License
 
-Part of the WoodChunk 1.6 project. See main project license for details.
+Part of the WoodChunk 1.6.1 project. See main project license for details.

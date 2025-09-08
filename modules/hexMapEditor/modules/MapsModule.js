@@ -1056,7 +1056,7 @@ class MapsModule {
                 tilesCount: mapData.tiles ? mapData.tiles.length : 0,
                 settingsCount: mapData.settings ? Object.keys(mapData.settings).length : 0,
                 createdBy: 'HexMapEditor',
-                editorVersion: '1.6'
+                editorVersion: '1.6.1'
             }
         };
         
@@ -1229,7 +1229,7 @@ class MapsModule {
                 tilesCount: mapData.tiles ? mapData.tiles.length : 0,
                 settingsCount: mapData.settings ? Object.keys(mapData.settings).length : 0,
                 createdBy: 'HexMapEditor',
-                editorVersion: '1.6'
+                editorVersion: '1.6.1'
             }
         };
         

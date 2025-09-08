@@ -1,8 +1,8 @@
 @echo off
-title WoodChunk 1.6 Server
+title WoodChunk 1.6.1 Server
 echo.
 echo ========================================
-echo    WoodChunk 1.6 Server Starter
+echo    WoodChunk 1.6.1 Server Starter
 echo ========================================
 echo.
 

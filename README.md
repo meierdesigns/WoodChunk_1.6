@@ -1,10 +1,10 @@
-# WoodChunk 1.6
+# WoodChunk 1.6.1
 
 Eine umfassende modulare Spiel-Engine für Hex-basierte Strategie- und Rollenspiele mit vollständiger Editor-Suite und Asset-Management-System.
 
 ## 🎮 Überblick
 
-WoodChunk 1.6 ist eine professionelle Spiel-Engine, die speziell für Hex-Grid-basierte Spiele entwickelt wurde. Das System bietet eine vollständige Entwicklungsumgebung mit integrierten Editoren für Charaktere, Items, Biomes, Tiles und mehr.
+WoodChunk 1.6.1 ist eine professionelle Spiel-Engine, die speziell für Hex-Grid-basierte Spiele entwickelt wurde. Das System bietet eine vollständige Entwicklungsumgebung mit integrierten Editoren für Charaktere, Items, Biomes, Tiles und mehr.
 
 ## 🏗️ Architektur
 
@@ -93,7 +93,7 @@ Alle Module kommunizieren über typsichere Interfaces:
 ## 📁 Vollständige Projektstruktur
 
 ```
-WoodChunk_1.6/
+WoodChunk_1.6.1/
 ├── src/                          # TypeScript-Quellcode
 │   ├── modules/
 │   │   ├── core/                 # Core-Systeme
@@ -166,8 +166,8 @@ WoodChunk_1.6/
 
 ```bash
 # Repository klonen
-git clone https://github.com/meierdesigns/WoodChunk_1.6.git
-cd WoodChunk_1.6
+git clone https://github.com/meierdesigns/WoodChunk_1.6.1.git
+cd WoodChunk_1.6.1
 
 # Abhängigkeiten installieren
 npm install
@@ -299,4 +299,4 @@ Bei Fragen oder Problemen:
 
 ---
 
-**WoodChunk 1.6** - Professionelle Hex-Grid-Spiel-Engine mit vollständiger Editor-Suite
+**WoodChunk 1.6.1** - Professionelle Hex-Grid-Spiel-Engine mit vollständiger Editor-Suite
