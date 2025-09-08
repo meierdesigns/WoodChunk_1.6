@@ -10,7 +10,7 @@
     "experience": 45,
     "goldDrop": 15,
     "description": "Ein wilder Ork-Berserker der in Rage verfällt.",
-    "abilities": "Berserker-Wut, Schwere Waffen",
+    "abilities": "",
     "lootTable": "[{\"item\":\"Ork-Axt\",\"chance\":0.4},{\"item\":\"Eisenrüstung\",\"chance\":0.2},{\"item\":\"Goldmünzen\",\"chance\":0.9}]",
     "rank": 3,
     "rankIconPath": "assets/ranks/rare_3.png"

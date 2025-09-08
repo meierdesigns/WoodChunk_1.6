@@ -8,6 +8,7 @@ export * from './ItemEditor';
 export * from './PeopleEditor';
 export * from './CharacterEditor';
 export * from './Settings';
+export * from './TileInspector';
 
 // Cache busting utility for Buildings images
 import { addCacheBusting } from '../../shared/types';

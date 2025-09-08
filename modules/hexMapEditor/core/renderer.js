@@ -1441,6 +1441,35 @@ class MapRenderer {
         }, 500); // Reduziert auf 500ms für schnellere Ladezeit
     }
 
+    createFallbackImage() {
+        console.log('[MapRenderer] Creating fallback image for missing tile');
+        
+        // Erstelle ein Canvas-Element für das Fallback-Image
+        const canvas = document.createElement('canvas');
+        canvas.width = 64;
+        canvas.height = 64;
+        const ctx = canvas.getContext('2d');
+        
+        // Zeichne ein einfaches Muster
+        ctx.fillStyle = '#666666'; // Grauer Hintergrund
+        ctx.fillRect(0, 0, 64, 64);
+        
+        // Zeichne ein "?" Symbol
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = '24px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('?', 32, 32);
+        
+        // Zeichne einen Rahmen
+        ctx.strokeStyle = '#333333';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(1, 1, 62, 62);
+        
+        console.log('[MapRenderer] Fallback image created');
+        return canvas;
+    }
+
 // Preload Tiles für ein spezifisches Biome
 async preloadBiomeTiles(biomeName) {
     if (!biomeName) return;
@@ -1503,8 +1532,14 @@ async preloadBiomeTiles(biomeName) {
                 resolve(img);
             };
             img.onerror = () => {
-                console.warn(`[MapRenderer] Failed to preload image: ${correctedImageSrc}`);
-                reject(new Error(`Failed to load ${correctedImageSrc}`));
+                console.warn(`[MapRenderer] ⚠️ Failed to preload image: ${correctedImageSrc}`);
+                console.warn(`[MapRenderer] ⚠️ This is likely a missing tile image - creating fallback`);
+                
+                // Erstelle einen Fallback-Image
+                const fallbackImg = this.createFallbackImage();
+                this.biomeTileCache.set(correctedImageSrc, fallbackImg);
+                this.preloadedImages.add(correctedImageSrc);
+                resolve(fallbackImg);
             };
             img.src = correctedImageSrc;
         });
@@ -1648,6 +1683,7 @@ async preloadBiomeTiles(biomeName) {
         const tileTypeToBiome = {
             'grass': 'Plain',
             'mountain': 'Mountains', 
+            'Mountain': 'Mountains',  // Add specific Mountain.png handling
             'water': 'Water',
             'forest': 'Forest',
             'ocean': 'Ocean',
@@ -1661,7 +1697,10 @@ async preloadBiomeTiles(biomeName) {
             'yellow': 'Desert',
             'orange': 'Desert',
             'blue': 'Water',
-            'green': 'Forest'
+            'green': 'Forest',
+            'slice_': 'Buildings',  // Buildings tiles start with slice_
+            'tile_': 'Buildings',   // Generated tiles start with tile_
+            'Slice ': 'Unassigned'  // Slice files with space are in Unassigned
         };
         
         // Prüfe ob der Bildname einem bekannten Tile-Typ entspricht
@@ -1674,7 +1713,7 @@ async preloadBiomeTiles(biomeName) {
         
         // Wenn wir im Streets-Layer sind und es ein Building-Tile ist
         const currentLayer = this.core.getCurrentLayer();
-        if (currentLayer === 'streets' && (imagePath.includes('.png') || imagePath.includes('temple') || imagePath.includes('house'))) {
+        if (currentLayer === 'streets' && (imagePath.includes('slice_') || imagePath.includes('tile_') || imagePath.includes('temple') || imagePath.includes('house') || imagePath.includes('castle') || imagePath.includes('tower') || imagePath.includes('mining'))) {
             biomeFolder = 'Buildings';
         }
         
@@ -1982,30 +2021,163 @@ async preloadBiomeTiles(biomeName) {
         this.ctx.fillText(coordText, pixelPos.x, pixelPos.y);
     }
 
-    // Funktion zum Aktualisieren aller bestehenden Tiles mit dem aktuell ausgewählten Tile
-    updateAllTilesWithSelectedTile() {
-        console.log('[renderer] Updating all tiles with selected tile:', this.core.selectedTile?.name);
+    // Asynchrone Version mit Progress-Anzeige für sehr große Maps
+    async updateAllTilesWithSelectedTileAsyncWithProgress(progressCallback) {
+        console.log('[renderer] Async updating all tiles with selected tile:', this.core.selectedTile?.name);
+        
+        if (!this.core.selectedTile) {
+            console.warn('[renderer] No selected tile available for update');
+            return;
+        }
+        
+        let updatedCount = 0;
+        const startTime = performance.now();
+        
+        // Batch-Update für bessere Performance
+        const batchSize = 500; // Kleinere Batches für async processing
+        
+        // Zähle alle Tiles für Progress
+        let totalTiles = 0;
+        Object.keys(this.core.layers).forEach(layerName => {
+            totalTiles += this.core.layers[layerName].size;
+        });
+        totalTiles += this.core.tiles.size;
+        
+        let processedTiles = 0;
         
         // Aktualisiere Tiles in allen Layern
-        Object.keys(this.core.layers).forEach(layerName => {
-            this.core.layers[layerName].forEach((tile, key) => {
-                if (tile && this.core.selectedTile) {
-                    tile.selectedTile = this.core.selectedTile;
-                    console.log('[renderer] Updated tile at', key, 'with selectedTile:', this.core.selectedTile.name);
+        for (const layerName of Object.keys(this.core.layers)) {
+            const layerTiles = this.core.layers[layerName];
+            const tileKeys = Array.from(layerTiles.keys());
+            
+            // Process in batches with async yield
+            for (let i = 0; i < tileKeys.length; i += batchSize) {
+                const batch = tileKeys.slice(i, i + batchSize);
+                batch.forEach(key => {
+                    const tile = layerTiles.get(key);
+                    if (tile && this.core.selectedTile) {
+                        tile.selectedTile = this.core.selectedTile;
+                        updatedCount++;
+                    }
+                    processedTiles++;
+                });
+                
+                // Progress callback
+                if (progressCallback) {
+                    const progress = (processedTiles / totalTiles) * 100;
+                    progressCallback(progress, updatedCount, processedTiles, totalTiles);
                 }
-            });
-        });
+                
+                // Yield control to prevent blocking
+                if (i + batchSize < tileKeys.length) {
+                    await new Promise(resolve => setTimeout(resolve, 0));
+                }
+            }
+        }
         
         // Aktualisiere auch die Haupt-Tiles
-        this.core.tiles.forEach((tile, key) => {
-            if (tile && this.core.selectedTile) {
-                tile.selectedTile = this.core.selectedTile;
-                console.log('[renderer] Updated main tile at', key, 'with selectedTile:', this.core.selectedTile.name);
+        const mainTileKeys = Array.from(this.core.tiles.keys());
+        for (let i = 0; i < mainTileKeys.length; i += batchSize) {
+            const batch = mainTileKeys.slice(i, i + batchSize);
+            batch.forEach(key => {
+                const tile = this.core.tiles.get(key);
+                if (tile && this.core.selectedTile) {
+                    tile.selectedTile = this.core.selectedTile;
+                    updatedCount++;
+                }
+                processedTiles++;
+            });
+            
+            // Progress callback
+            if (progressCallback) {
+                const progress = (processedTiles / totalTiles) * 100;
+                progressCallback(progress, updatedCount, processedTiles, totalTiles);
             }
-        });
+            
+            // Yield control to prevent blocking
+            if (i + batchSize < mainTileKeys.length) {
+                await new Promise(resolve => setTimeout(resolve, 0));
+            }
+        }
+        
+        const endTime = performance.now();
+        const duration = endTime - startTime;
+        
+        console.log(`[renderer] Async updated ${updatedCount} tiles in ${duration.toFixed(2)}ms`);
         
         // Rendere die Karte neu
         this.render();
+        
+        // Notify observers
+        this.core.notifyObservers('tilesUpdated', { count: updatedCount, duration: duration });
+    }
+
+    // Einfache asynchrone Version für kleine bis mittlere Maps
+    async updateAllTilesWithSelectedTileAsync() {
+        console.log('[renderer] Async updating all tiles with selected tile:', this.core.selectedTile?.name);
+        
+        if (!this.core.selectedTile) {
+            console.warn('[renderer] No selected tile available for update');
+            return;
+        }
+        
+        let updatedCount = 0;
+        const startTime = performance.now();
+        
+        // Batch-Update für bessere Performance
+        const batchSize = 500; // Kleinere Batches für async processing
+        
+        // Aktualisiere Tiles in allen Layern
+        for (const layerName of Object.keys(this.core.layers)) {
+            const layerTiles = this.core.layers[layerName];
+            const tileKeys = Array.from(layerTiles.keys());
+            
+            // Process in batches with async yield
+            for (let i = 0; i < tileKeys.length; i += batchSize) {
+                const batch = tileKeys.slice(i, i + batchSize);
+                batch.forEach(key => {
+                    const tile = layerTiles.get(key);
+                    if (tile && this.core.selectedTile) {
+                        tile.selectedTile = this.core.selectedTile;
+                        updatedCount++;
+                    }
+                });
+                
+                // Yield control to prevent blocking
+                if (i + batchSize < tileKeys.length) {
+                    await new Promise(resolve => setTimeout(resolve, 0));
+                }
+            }
+        }
+        
+        // Aktualisiere auch die Haupt-Tiles
+        const mainTileKeys = Array.from(this.core.tiles.keys());
+        for (let i = 0; i < mainTileKeys.length; i += batchSize) {
+            const batch = mainTileKeys.slice(i, i + batchSize);
+            batch.forEach(key => {
+                const tile = this.core.tiles.get(key);
+                if (tile && this.core.selectedTile) {
+                    tile.selectedTile = this.core.selectedTile;
+                    updatedCount++;
+                }
+            });
+            
+            // Yield control to prevent blocking
+            if (i + batchSize < mainTileKeys.length) {
+                await new Promise(resolve => setTimeout(resolve, 0));
+            }
+        }
+        
+        const endTime = performance.now();
+        const duration = endTime - startTime;
+        
+        console.log(`[renderer] Async updated ${updatedCount} tiles in ${duration.toFixed(2)}ms`);
+        
+        // Rendere die Karte neu
+        this.render();
+        
+        // Notify observers
+        this.core.notifyObservers('tilesUpdated', { count: updatedCount, duration: duration });
     }
 
     setSelectedTileType(type) {

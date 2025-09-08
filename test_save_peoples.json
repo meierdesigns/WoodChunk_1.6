@@ -1,0 +1,9 @@
+{
+  "peoples": [
+    {
+      "name": "Zwerg Schmied",
+      "race": "dwarves",
+      "assignedAbilities": ["Schildstoß", "Schildwall", "Test"]
+    }
+  ]
+}

@@ -847,9 +847,7 @@
       "cost": "105",
       "status": "active",
       "races": [
-        "Humans",
-        "Elves",
-        "Orcs"
+        "Elves"
       ],
       "characterData": {
         "id": "chain_lightning",

@@ -510,14 +510,14 @@ class MapCore {
             window.forestTilesList = [
                 {
                     "id": 5,
-                    "name": "Eichenwald",
+                    "name": "Forest",
                     "categoryId": 5,
                     "categoryName": "Forest",
-                    "image": "/assets/biomes/Forest/tiles/Slice_1.png",
+                    "image": "forest.png",
                     "movementCost": 1,
                     "defenseBonus": 0,
                     "resources": "Holz, Eicheln",
-                    "description": "Eichenwald",
+                    "description": "Forest tile",
                     "isDefault": true,
                     "items": [],
                     "isUnassigned": false
@@ -528,15 +528,167 @@ class MapCore {
         if (!window.mountainsTilesList) {
             window.mountainsTilesList = [
                 {
-                    "id": 36,
-                    "name": "Felswand",
+                    "id": 6,
+                    "name": "Mountains",
                     "categoryId": 6,
                     "categoryName": "Mountains",
-                    "image": "/assets/biomes/Mountains/tiles/Slice_36.png",
+                    "image": "Mountain.png",
                     "movementCost": 3,
                     "defenseBonus": 2,
                     "resources": "Stein, Erz",
-                    "description": "Steile Felswand",
+                    "description": "Mountain terrain",
+                    "isDefault": true,
+                    "items": [],
+                    "isUnassigned": false
+                }
+            ];
+        }
+        
+        if (!window.waterTilesList) {
+            window.waterTilesList = [
+                {
+                    "id": 7,
+                    "name": "Water",
+                    "categoryId": 7,
+                    "categoryName": "Water",
+                    "image": "water.png",
+                    "movementCost": 2,
+                    "defenseBonus": 0,
+                    "resources": "Fisch",
+                    "description": "Water terrain",
+                    "isDefault": true,
+                    "items": [],
+                    "isUnassigned": false
+                }
+            ];
+        }
+        
+        if (!window.desertTilesList) {
+            window.desertTilesList = [
+                {
+                    "id": 8,
+                    "name": "Desert",
+                    "categoryId": 8,
+                    "categoryName": "Desert",
+                    "image": "desert.png",
+                    "movementCost": 2,
+                    "defenseBonus": 0,
+                    "resources": "Sand",
+                    "description": "Desert terrain",
+                    "isDefault": true,
+                    "items": [],
+                    "isUnassigned": false
+                }
+            ];
+        }
+        
+        if (!window.swampTilesList) {
+            window.swampTilesList = [
+                {
+                    "id": 9,
+                    "name": "Swamp",
+                    "categoryId": 9,
+                    "categoryName": "Swamp",
+                    "image": "swamp.png",
+                    "movementCost": 2,
+                    "defenseBonus": 0,
+                    "resources": "Sumpfgras",
+                    "description": "Swamp terrain",
+                    "isDefault": true,
+                    "items": [],
+                    "isUnassigned": false
+                }
+            ];
+        }
+        
+        if (!window.plainTilesList) {
+            window.plainTilesList = [
+                {
+                    "id": 10,
+                    "name": "Plain",
+                    "categoryId": 10,
+                    "categoryName": "Plain",
+                    "image": "grass.png",
+                    "movementCost": 1,
+                    "defenseBonus": 0,
+                    "resources": "Gras",
+                    "description": "Plain terrain",
+                    "isDefault": true,
+                    "items": [],
+                    "isUnassigned": false
+                }
+            ];
+        }
+        
+        if (!window.jungleTilesList) {
+            window.jungleTilesList = [
+                {
+                    "id": 11,
+                    "name": "Jungle",
+                    "categoryId": 11,
+                    "categoryName": "Jungle",
+                    "image": "jungle.png",
+                    "movementCost": 2,
+                    "defenseBonus": 1,
+                    "resources": "Tropenholz",
+                    "description": "Jungle terrain",
+                    "isDefault": true,
+                    "items": [],
+                    "isUnassigned": false
+                }
+            ];
+        }
+        
+        if (!window.badlandsTilesList) {
+            window.badlandsTilesList = [
+                {
+                    "id": 12,
+                    "name": "Badlands",
+                    "categoryId": 12,
+                    "categoryName": "Badlands",
+                    "image": "badlands.png",
+                    "movementCost": 2,
+                    "defenseBonus": 0,
+                    "resources": "Lehm",
+                    "description": "Badlands terrain",
+                    "isDefault": true,
+                    "items": [],
+                    "isUnassigned": false
+                }
+            ];
+        }
+        
+        if (!window.snowTilesList) {
+            window.snowTilesList = [
+                {
+                    "id": 13,
+                    "name": "Snow",
+                    "categoryId": 13,
+                    "categoryName": "Snow",
+                    "image": "snow.png",
+                    "movementCost": 2,
+                    "defenseBonus": 0,
+                    "resources": "Eis",
+                    "description": "Snow terrain",
+                    "isDefault": true,
+                    "items": [],
+                    "isUnassigned": false
+                }
+            ];
+        }
+        
+        if (!window.oceanTilesList) {
+            window.oceanTilesList = [
+                {
+                    "id": 14,
+                    "name": "Ocean",
+                    "categoryId": 14,
+                    "categoryName": "Ocean",
+                    "image": "ocean.png",
+                    "movementCost": 3,
+                    "defenseBonus": 0,
+                    "resources": "Salz",
+                    "description": "Ocean terrain",
                     "isDefault": true,
                     "items": [],
                     "isUnassigned": false
@@ -552,62 +704,83 @@ class MapCore {
                     "name": "Haus",
                     "categoryId": 1,
                     "categoryName": "Buildings",
-                    "image": "/assets/biomes/Buildings/tiles/Slice_333.png",
+                    "image": "slice_333.png",
                     "movementCost": 1,
                     "defenseBonus": 0,
                     "resources": "",
                     "description": "Einfaches Haus",
                     "isDefault": true,
                     "items": [],
-                    "isUnassigned": false
+                    "isUnassigned": false,
+                    "buildingCategory": "building"
                 },
                 {
                     "id": 344,
                     "name": "Turm",
                     "categoryId": 1,
                     "categoryName": "Buildings",
-                    "image": "/assets/biomes/Buildings/tiles/Slice_344.png",
+                    "image": "slice_344.png",
                     "movementCost": 1,
                     "defenseBonus": 2,
                     "resources": "",
                     "description": "Wachturm",
                     "isDefault": true,
                     "items": [],
-                    "isUnassigned": false
+                    "isUnassigned": false,
+                    "buildingCategory": "tower"
                 },
                 {
                     "id": 352,
                     "name": "Burg",
                     "categoryId": 1,
                     "categoryName": "Buildings",
-                    "image": "/assets/biomes/Buildings/tiles/Slice_352.png",
+                    "image": "slice_352.png",
                     "movementCost": 1,
                     "defenseBonus": 3,
                     "resources": "",
                     "description": "Festung",
                     "isDefault": true,
                     "items": [],
-                    "isUnassigned": false
+                    "isUnassigned": false,
+                    "buildingCategory": "castle"
                 },
                 {
                     "id": 358,
                     "name": "Mine",
                     "categoryId": 1,
                     "categoryName": "Buildings",
-                    "image": "/assets/biomes/Buildings/tiles/Slice_358.png",
+                    "image": "slice_358.png",
                     "movementCost": 1,
                     "defenseBonus": 0,
                     "resources": "Erz",
                     "description": "Bergwerk",
                     "isDefault": true,
                     "items": [],
-                    "isUnassigned": false
+                    "isUnassigned": false,
+                    "buildingCategory": "mining_site"
                 }
             ];
         }
         
-        const loadedCount = Object.keys(window).filter(key => key.endsWith('TilesList')).length;
-        // console.log(`[MapCore] Total biome tile lists available: ${loadedCount}`);
+        // Fallback für Void/Unassigned
+        if (!window.unassignedTilesList) {
+            window.unassignedTilesList = [
+                {
+                    "id": 0,
+                    "name": "Void",
+                    "categoryId": 0,
+                    "categoryName": "Unassigned",
+                    "image": "Slice 1.png",
+                    "movementCost": 0,
+                    "defenseBonus": 0,
+                    "resources": "",
+                    "description": "Empty space",
+                    "isDefault": true,
+                    "items": [],
+                    "isUnassigned": true
+                }
+            ];
+        }
     }
     
     async loadBiomeData() {
@@ -798,6 +971,10 @@ class MapCore {
 
     // Konvertiere Biome-Namen zu Tile-Typen
     convertBiomeToTileType(biomeName) {
+        console.log('[MapCore] Converting biome:', biomeName);
+        console.log('[MapCore] TileTypes available:', !!TileTypes);
+        console.log('[MapCore] TileTypes.BUILDING:', TileTypes?.BUILDING);
+        
         const biomeToTileMap = {
             'Void': TileTypes.VOID,
             'Forest': TileTypes.FOREST,
@@ -811,7 +988,8 @@ class MapCore {
             'Badlands': TileTypes.DESERT,
             'Snow': TileTypes.SNOW,
             'Ocean': TileTypes.WATER,
-            'Unassigned': TileTypes.GRASS
+            'Unassigned': TileTypes.GRASS,
+            'Buildings': TileTypes.BUILDING // Buildings als eigenständiger Tile-Typ
         };
         
         const tileType = biomeToTileMap[biomeName];

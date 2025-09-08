@@ -1,0 +1,1728 @@
+{
+  "abilities": [
+    {
+      "id": 1,
+      "name": "Axt-Wut",
+      "category": "combat",
+      "type": "combat",
+      "description": "Wilde Axtangriffe mit erhöhter Wucht",
+      "cost": 75,
+      "status": "active",
+      "races": [
+        "Dwarves",
+        "Humans",
+        "Orcs"
+      ],
+      "characterData": {
+        "id": "axe_fury",
+        "name": "Axt-Wut",
+        "icon": "🪓",
+        "iconPath": "assets/abilities/combat/axe_fury.png",
+        "type": "combat",
+        "level": 8,
+        "cost": 75,
+        "rank": 2,
+        "rankIconPath": "assets/ranks/rare_2.png",
+        "magicRequirement": "none",
+        "description": "Wilde Axtangriffe mit erhöhter Wucht",
+        "effect": "+25% Axthschaden, -10% Genauigkeit",
+        "availableFor": [
+          "orcs",
+          "dwarves"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 2,
+      "name": "Kampferprobt",
+      "category": "combat",
+      "type": "passive",
+      "description": "Erhöhte Widerstandskraft durch Erfahrung",
+      "cost": 85,
+      "status": "active",
+      "races": [
+        "Orcs",
+        "Goblins"
+      ],
+      "characterData": {
+        "id": "battle_hardened",
+        "name": "Kampferprobt",
+        "icon": "💪",
+        "iconPath": "assets/abilities/combat/battle_hardened.png",
+        "type": "passive",
+        "level": 9,
+        "cost": 85,
+        "rank": 3,
+        "rankIconPath": "assets/ranks/rare_3.png",
+        "magicRequirement": "none",
+        "description": "Erhöhte Widerstandskraft durch Erfahrung",
+        "effect": "+25% Widerstand gegen Status-Effekte",
+        "availableFor": [
+          "orcs",
+          "dwarves"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 3,
+      "name": "Berserker-Wut",
+      "category": "combat",
+      "type": "passive",
+      "description": "Verfällt in wilde Kampfeswut",
+      "cost": 75,
+      "status": "active",
+      "races": [
+        "Orcs"
+      ],
+      "characterData": {
+        "id": "berserker_rage",
+        "name": "Berserker-Wut",
+        "icon": "😡",
+        "iconPath": "assets/abilities/combat/berserker_rage.png",
+        "type": "passive",
+        "level": 8,
+        "cost": 75,
+        "rank": 2,
+        "rankIconPath": "assets/ranks/rare_2.png",
+        "magicRequirement": "none",
+        "description": "Verfällt in wilde Kampfeswut",
+        "effect": "+50% Angriff, -25% Verteidigung für 3 Runden",
+        "availableFor": [
+          "orcs",
+          "humans"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 4,
+      "name": "Bogen-Präzision",
+      "category": "combat",
+      "type": "combat",
+      "description": "Erhöhte Genauigkeit beim Bogenschießen",
+      "cost": 60,
+      "status": "active",
+      "races": [],
+      "characterData": {
+        "id": "bow_precision",
+        "name": "Bogen-Präzision",
+        "icon": "🏹",
+        "iconPath": "assets/abilities/combat/bow_precision.png",
+        "type": "combat",
+        "level": 6,
+        "cost": 60,
+        "rank": 1,
+        "rankIconPath": "assets/ranks/rare_1.png",
+        "magicRequirement": "none",
+        "description": "Erhöhte Genauigkeit beim Bogenschießen",
+        "effect": "+20% Bogenschaden, +15% Kritische Chance",
+        "availableFor": [
+          "elves",
+          "humans"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 5,
+      "name": "Gegenangriff",
+      "category": "combat",
+      "type": "combat",
+      "description": "Sofortiger Gegenangriff nach Ausweichen",
+      "cost": 75,
+      "status": "active",
+      "races": [],
+      "characterData": {
+        "id": "counter_strike",
+        "name": "Gegenangriff",
+        "icon": "🔄",
+        "iconPath": "assets/abilities/combat/counter_strike.png",
+        "type": "combat",
+        "level": 8,
+        "cost": 75,
+        "rank": 2,
+        "rankIconPath": "assets/ranks/rare_2.png",
+        "magicRequirement": "none",
+        "description": "Sofortiger Gegenangriff nach Ausweichen",
+        "effect": "+60% Schaden bei Gegenangriff",
+        "availableFor": [
+          "elves",
+          "humans"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 6,
+      "name": "Dolchstoß",
+      "category": "combat",
+      "type": "combat",
+      "description": "Schneller Dolchangriff aus dem Hinterhalt",
+      "cost": 40,
+      "status": "active",
+      "races": [],
+      "characterData": {
+        "id": "dagger_strike",
+        "name": "Dolchstoß",
+        "icon": "🗡",
+        "iconPath": "assets/abilities/combat/dagger_strike.png",
+        "type": "combat",
+        "level": 4,
+        "cost": 40,
+        "rank": 1,
+        "rankIconPath": "assets/ranks/rare_1.png",
+        "magicRequirement": "none",
+        "description": "Schneller Dolchangriff aus dem Hinterhalt",
+        "effect": "+40% Kritische Chance, +50% Schaden bei Überraschung",
+        "availableFor": [
+          "goblins",
+          "elves"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 7,
+      "name": "Zweihandkampf",
+      "category": "combat",
+      "type": "combat",
+      "description": "Kampf mit zwei Waffen gleichzeitig",
+      "cost": 85,
+      "status": "active",
+      "races": [],
+      "characterData": {
+        "id": "dual_wielding",
+        "name": "Zweihandkampf",
+        "icon": "⚔⚔",
+        "iconPath": "assets/abilities/combat/dual_wielding.png",
+        "type": "combat",
+        "level": 9,
+        "cost": 85,
+        "rank": 3,
+        "rankIconPath": "assets/ranks/rare_3.png",
+        "magicRequirement": "none",
+        "description": "Kampf mit zwei Waffen gleichzeitig",
+        "effect": "+40% Angriff, -15% Verteidigung",
+        "availableFor": [
+          "humans",
+          "orcs"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 8,
+      "name": "Adlerauge",
+      "category": "combat",
+      "type": "passive",
+      "description": "Überlegene Sehkraft und Wahrnehmung",
+      "cost": 50,
+      "status": "active",
+      "races": [
+        "Humans",
+        "Elves",
+        "Dwarves",
+        "Orcs",
+        "Goblins"
+      ],
+      "characterData": {
+        "id": "eagle_eye",
+        "name": "Adlerauge",
+        "icon": "👁",
+        "iconPath": "assets/abilities/combat/eagle_eye.png",
+        "type": "passive",
+        "level": 5,
+        "cost": 50,
+        "rank": 1,
+        "rankIconPath": "assets/ranks/rare_1.png",
+        "magicRequirement": "none",
+        "description": "Überlegene Sehkraft und Wahrnehmung",
+        "effect": "+25% Genauigkeit, +15% Reichweite",
+        "availableFor": [
+          "elves",
+          "humans"
+        ],
+        "availableForArchetypes": [],
+        "evolvedFrom": null,
+        "evolvesTo": [
+          "Adlerauge+"
+        ]
+      }
+    },
+    {
+      "id": 9,
+      "name": "Adlerauge+",
+      "category": "combat",
+      "type": "passive",
+      "description": "Überlegene Sehkraft und Wahrnehmung",
+      "cost": 95,
+      "status": "active",
+      "races": [],
+      "characterData": {
+        "id": "eagle_eye_plus",
+        "name": "Adlerauge+",
+        "icon": "👁✨",
+        "iconPath": "assets/abilities/combat/eagle_eye_plus.png",
+        "type": "passive",
+        "level": 10,
+        "cost": 95,
+        "rank": 3,
+        "rankIconPath": "assets/ranks/rare_3.png",
+        "magicRequirement": "none",
+        "description": "Überlegene Sehkraft und Wahrnehmung",
+        "effect": "+35% Genauigkeit, +25% Reichweite",
+        "availableFor": [
+          "elves"
+        ],
+        "availableForArchetypes": [],
+        "evolvedFrom": "Adlerauge",
+        "evolvesTo": null
+      }
+    },
+    {
+      "id": 10,
+      "name": "Eisenhaut",
+      "category": "combat",
+      "type": "passive",
+      "description": "Haut wird so hart wie Eisen",
+      "cost": 60,
+      "status": "active",
+      "races": [
+        "Orcs"
+      ],
+      "characterData": {
+        "id": "iron_skin",
+        "name": "Eisenhaut",
+        "icon": "🛡",
+        "iconPath": "assets/abilities/combat/iron_skin.png",
+        "type": "passive",
+        "level": 6,
+        "cost": 60,
+        "rank": 2,
+        "rankIconPath": "assets/ranks/rare_2.png",
+        "magicRequirement": "none",
+        "description": "Haut wird so hart wie Eisen",
+        "effect": "+30% Physische Verteidigung",
+        "availableFor": [
+          "dwarves",
+          "orcs"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 11,
+      "name": "Magischer Schild",
+      "category": "combat",
+      "type": "magic",
+      "description": "Erschafft einen magischen Schutzschild",
+      "cost": 70,
+      "status": "active",
+      "races": [],
+      "characterData": {
+        "id": "magic_shield",
+        "name": "Magischer Schild",
+        "icon": "🔮",
+        "iconPath": "assets/abilities/combat/magic_shield.png",
+        "type": "magic",
+        "level": 7,
+        "cost": 70,
+        "rank": 2,
+        "rankIconPath": "assets/ranks/rare_2.png",
+        "magicRequirement": "basic",
+        "description": "Erschafft einen magischen Schutzschild",
+        "effect": "+40% Magische Verteidigung für 2 Runden",
+        "availableFor": [
+          "elves",
+          "humans"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 12,
+      "name": "Präzisionsschuss",
+      "category": "combat",
+      "type": "combat",
+      "description": "Hochpräziser Fernkampfangriff",
+      "cost": 70,
+      "status": "active",
+      "races": [],
+      "characterData": {
+        "id": "precise_shot",
+        "name": "Präzisionsschuss",
+        "icon": "🎯",
+        "iconPath": "assets/abilities/combat/precise_shot.png",
+        "type": "combat",
+        "level": 7,
+        "cost": 70,
+        "rank": 2,
+        "rankIconPath": "assets/ranks/rare_2.png",
+        "magicRequirement": "none",
+        "description": "Hochpräziser Fernkampfangriff",
+        "effect": "+50% Kritische Chance, +30% Schaden",
+        "availableFor": [
+          "elves"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 13,
+      "name": "Schneller Schritt",
+      "category": "combat",
+      "type": "passive",
+      "description": "Erhöhte Beweglichkeit und Geschwindigkeit",
+      "cost": 40,
+      "status": "active",
+      "races": [],
+      "characterData": {
+        "id": "quick_step",
+        "name": "Schneller Schritt",
+        "icon": "🏃",
+        "iconPath": "assets/abilities/combat/quick_step.png",
+        "type": "passive",
+        "level": 4,
+        "cost": 40,
+        "rank": 1,
+        "rankIconPath": "assets/ranks/rare_1.png",
+        "magicRequirement": "none",
+        "description": "Erhöhte Beweglichkeit und Geschwindigkeit",
+        "effect": "+20% Geschwindigkeit, +15% Ausweichen",
+        "availableFor": [
+          "goblins",
+          "elves"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 14,
+      "name": "Schildstoß",
+      "category": "combat",
+      "type": "combat",
+      "description": "Offensiver Schildeinsatz",
+      "cost": 60,
+      "status": "active",
+      "races": [],
+      "characterData": {
+        "id": "shield_bash",
+        "name": "Schildstoß",
+        "icon": "🛡💥",
+        "iconPath": "assets/abilities/combat/shield_bash.png",
+        "type": "combat",
+        "level": 6,
+        "cost": 60,
+        "rank": 1,
+        "rankIconPath": "assets/ranks/rare_1.png",
+        "magicRequirement": "none",
+        "description": "Offensiver Schildeinsatz",
+        "effect": "+25% Schaden, 30% Chance zu betäuben",
+        "availableFor": [
+          "dwarves",
+          "humans"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 15,
+      "name": "Schildwall",
+      "category": "combat",
+      "type": "combat",
+      "description": "Defensive Formation mit Schilden",
+      "cost": 65,
+      "status": "active",
+      "races": [],
+      "characterData": {
+        "id": "shield_wall",
+        "name": "Schildwall",
+        "icon": "🛡",
+        "iconPath": "assets/abilities/combat/shield_wall.png",
+        "type": "combat",
+        "level": 7,
+        "cost": 65,
+        "rank": 2,
+        "rankIconPath": "assets/ranks/rare_2.png",
+        "magicRequirement": "none",
+        "description": "Defensive Formation mit Schilden",
+        "effect": "+30% Verteidigung für 3 Runden",
+        "availableFor": [
+          "dwarves",
+          "humans"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 16,
+      "name": "Tarnung",
+      "category": "combat",
+      "type": "passive",
+      "description": "Macht unsichtbar für eine kurze Zeit",
+      "cost": 30,
+      "status": "active",
+      "races": [],
+      "characterData": {
+        "id": "stealth",
+        "name": "Tarnung",
+        "icon": "👻",
+        "iconPath": "assets/abilities/combat/stealth.png",
+        "type": "passive",
+        "level": 3,
+        "cost": 30,
+        "rank": 1,
+        "rankIconPath": "assets/ranks/rare_1.png",
+        "magicRequirement": "none",
+        "description": "Macht unsichtbar für eine kurze Zeit",
+        "effect": "Unsichtbarkeit für 2 Runden",
+        "availableFor": [
+          "goblins",
+          "elves"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 17,
+      "name": "Schwertmeister",
+      "category": "combat",
+      "type": "combat",
+      "description": "Beherrschung der Schwertkampftechniken",
+      "cost": 50,
+      "status": "active",
+      "races": [],
+      "characterData": {
+        "id": "sword_mastery",
+        "name": "Schwertmeister",
+        "icon": "⚔",
+        "iconPath": "assets/abilities/combat/sword_mastery.png",
+        "type": "combat",
+        "level": 5,
+        "cost": 50,
+        "rank": 1,
+        "rankIconPath": "assets/ranks/rare_1.png",
+        "magicRequirement": "none",
+        "description": "Beherrschung der Schwertkampftechniken",
+        "effect": "+15% Schwertschaden",
+        "availableFor": [
+          "humans",
+          "elves"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 18,
+      "name": "Wirbelwind",
+      "category": "combat",
+      "type": "combat",
+      "description": "Rotierender Angriff gegen alle Gegner",
+      "cost": 110,
+      "status": "active",
+      "races": [],
+      "characterData": {
+        "id": "whirlwind",
+        "name": "Wirbelwind",
+        "icon": "🌪",
+        "iconPath": "assets/abilities/combat/whirlwind.png",
+        "type": "combat",
+        "level": 12,
+        "cost": 110,
+        "rank": 4,
+        "rankIconPath": "assets/ranks/rare_4.png",
+        "magicRequirement": "none",
+        "description": "Rotierender Angriff gegen alle Gegner",
+        "effect": "+45% Schaden gegen alle in Reichweite",
+        "availableFor": [
+          "orcs",
+          "dwarves"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 19,
+      "name": "Fortgeschrittene Alchemie",
+      "category": "craft",
+      "type": "craft",
+      "description": "Brewing von legendären Tränken",
+      "cost": 120,
+      "status": "active",
+      "races": [],
+      "characterData": {
+        "id": "advanced_alchemy",
+        "name": "Fortgeschrittene Alchemie",
+        "icon": "🧪✨",
+        "iconPath": "assets/abilities/craft/advanced_alchemy.png",
+        "type": "craft",
+        "level": 12,
+        "cost": 120,
+        "rank": 4,
+        "rankIconPath": "assets/ranks/rare_4.png",
+        "magicRequirement": "advanced",
+        "description": "Brewing von legendären Tränken",
+        "effect": "+50% Trankqualität, +30% Effektdauer",
+        "availableFor": [
+          "elves"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 20,
+      "name": "Alchemie",
+      "category": "craft",
+      "type": "craft",
+      "description": "Brewing von mächtigen Tränken",
+      "cost": 80,
+      "status": "active",
+      "races": [],
+      "characterData": {
+        "id": "alchemy",
+        "name": "Alchemie",
+        "icon": "🧪",
+        "iconPath": "assets/abilities/craft/alchemy.png",
+        "type": "craft",
+        "level": 8,
+        "cost": 80,
+        "rank": 2,
+        "rankIconPath": "assets/ranks/rare_2.png",
+        "magicRequirement": "basic",
+        "description": "Brewing von mächtigen Tränken",
+        "effect": "+30% Trankqualität, +20% Effektdauer",
+        "availableFor": [
+          "elves",
+          "humans"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 21,
+      "name": "Meisterkoch",
+      "category": "craft",
+      "type": "craft",
+      "description": "Kocht nahrhafte und heilende Mahlzeiten",
+      "cost": 60,
+      "status": "active",
+      "races": [],
+      "characterData": {
+        "id": "cooking",
+        "name": "Meisterkoch",
+        "icon": "🍳",
+        "iconPath": "assets/abilities/craft/cooking.png",
+        "type": "craft",
+        "level": 6,
+        "cost": 60,
+        "rank": 1,
+        "rankIconPath": "assets/ranks/rare_1.png",
+        "magicRequirement": "none",
+        "description": "Kocht nahrhafte und heilende Mahlzeiten",
+        "effect": "+35% Heilungseffekt von Mahlzeiten",
+        "availableFor": [
+          "humans",
+          "dwarves"
+        ],
+        "availableForArchetypes": [],
+        "evolvedFrom": null,
+        "evolvesTo": [
+          "Gourmet-Kochen"
+        ]
+      }
+    },
+    {
+      "id": 22,
+      "name": "Verzauberung",
+      "category": "craft",
+      "type": "craft",
+      "description": "Verzaubert Gegenstände mit magischen Eigenschaften",
+      "cost": 120,
+      "status": "active",
+      "races": [],
+      "characterData": {
+        "id": "enchanting",
+        "name": "Verzauberung",
+        "icon": "✨",
+        "iconPath": "assets/abilities/craft/enchanting.png",
+        "type": "craft",
+        "level": 12,
+        "cost": 120,
+        "rank": 4,
+        "rankIconPath": "assets/ranks/rare_4.png",
+        "magicRequirement": "advanced",
+        "description": "Verzaubert Gegenstände mit magischen Eigenschaften",
+        "effect": "+40% Verzauberungsstärke",
+        "availableFor": [
+          "elves"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 23,
+      "name": "Gourmet-Kochen",
+      "category": "craft",
+      "type": "craft",
+      "description": "Kochen von legendären Mahlzeiten",
+      "cost": 100,
+      "status": "active",
+      "races": [],
+      "characterData": {
+        "id": "gourmet_cooking",
+        "name": "Gourmet-Kochen",
+        "icon": "🍳✨",
+        "iconPath": "assets/abilities/craft/gourmet_cooking.png",
+        "type": "craft",
+        "level": 10,
+        "cost": 100,
+        "rank": 3,
+        "rankIconPath": "assets/ranks/rare_3.png",
+        "magicRequirement": "none",
+        "description": "Kochen von legendären Mahlzeiten",
+        "effect": "+50% Heilungseffekt, +25% Temporäre Boni",
+        "availableFor": [
+          "humans"
+        ],
+        "availableForArchetypes": [],
+        "evolvedFrom": "Meisterkoch",
+        "evolvesTo": null
+      }
+    },
+    {
+      "id": 24,
+      "name": "Lederverarbeitung",
+      "category": "craft",
+      "type": "craft",
+      "description": "Herstellung von hochwertigem Leder",
+      "cost": 70,
+      "status": "active",
+      "races": [],
+      "characterData": {
+        "id": "leatherworking",
+        "name": "Lederverarbeitung",
+        "icon": "👜",
+        "iconPath": "assets/abilities/craft/leatherworking.png",
+        "type": "craft",
+        "level": 7,
+        "cost": 70,
+        "rank": 2,
+        "rankIconPath": "assets/ranks/rare_2.png",
+        "magicRequirement": "none",
+        "description": "Herstellung von hochwertigem Leder",
+        "effect": "+25% Lederqualität, +15% Haltbarkeit",
+        "availableFor": [
+          "dwarves",
+          "humans"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 25,
+      "name": "Meisterverzauberung",
+      "category": "craft",
+      "type": "craft",
+      "description": "Verzauberung mit legendären Eigenschaften",
+      "cost": 180,
+      "status": "active",
+      "races": [],
+      "characterData": {
+        "id": "master_enchanting",
+        "name": "Meisterverzauberung",
+        "icon": "✨✨",
+        "iconPath": "assets/abilities/craft/master_enchanting.png",
+        "type": "craft",
+        "level": 18,
+        "cost": 180,
+        "rank": 5,
+        "rankIconPath": "assets/ranks/rare_5.png",
+        "magicRequirement": "master",
+        "description": "Verzauberung mit legendären Eigenschaften",
+        "effect": "+60% Verzauberungsstärke, +40% Magische Eigenschaften",
+        "availableFor": [
+          "elves"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 26,
+      "name": "Meisterlederverarbeitung",
+      "category": "craft",
+      "type": "craft",
+      "description": "Herstellung von legendärem Leder",
+      "cost": 130,
+      "status": "active",
+      "races": [],
+      "characterData": {
+        "id": "master_leatherworking",
+        "name": "Meisterlederverarbeitung",
+        "icon": "👜✨",
+        "iconPath": "assets/abilities/craft/master_leatherworking.png",
+        "type": "craft",
+        "level": 13,
+        "cost": 130,
+        "rank": 4,
+        "rankIconPath": "assets/ranks/rare_4.png",
+        "magicRequirement": "none",
+        "description": "Herstellung von legendärem Leder",
+        "effect": "+40% Lederqualität, +30% Haltbarkeit",
+        "availableFor": [
+          "dwarves"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 27,
+      "name": "Meisterschmied+",
+      "category": "craft",
+      "type": "craft",
+      "description": "Herstellung legendärer Waffen",
+      "cost": 150,
+      "status": "active",
+      "races": [],
+      "characterData": {
+        "id": "master_smithing",
+        "name": "Meisterschmied+",
+        "icon": "🔨✨",
+        "iconPath": "assets/abilities/craft/master_smithing.png",
+        "type": "craft",
+        "level": 15,
+        "cost": 150,
+        "rank": 5,
+        "rankIconPath": "assets/ranks/rare_5.png",
+        "magicRequirement": "none",
+        "description": "Herstellung legendärer Waffen",
+        "effect": "+50% Waffenqualität, +25% Magische Eigenschaften",
+        "availableFor": [
+          "dwarves"
+        ],
+        "availableForArchetypes": [],
+        "evolvedFrom": "Meisterschmied",
+        "evolvesTo": null
+      }
+    },
+    {
+      "id": 28,
+      "name": "Meisterschmied",
+      "category": "craft",
+      "type": "craft",
+      "description": "Kann legendäre Waffen schmieden",
+      "cost": 100,
+      "status": "active",
+      "races": [],
+      "characterData": {
+        "id": "smithing",
+        "name": "Meisterschmied",
+        "icon": "🔨",
+        "iconPath": "assets/abilities/craft/smithing.png",
+        "type": "craft",
+        "level": 10,
+        "cost": 100,
+        "rank": 3,
+        "rankIconPath": "assets/ranks/rare_3.png",
+        "magicRequirement": "none",
+        "description": "Kann legendäre Waffen schmieden",
+        "effect": "+25% Waffenqualität beim Schmieden",
+        "availableFor": [
+          "dwarves"
+        ],
+        "availableForArchetypes": [],
+        "evolvedFrom": null,
+        "evolvesTo": [
+          "Meisterschmied+"
+        ]
+      }
+    },
+    {
+      "id": 29,
+      "name": "Kettenblitz",
+      "category": "magic",
+      "type": "magic",
+      "description": "Blitz springt zwischen Gegnern",
+      "cost": "105",
+      "status": "active",
+      "races": [
+        "Humans",
+        "Elves",
+        "Orcs"
+      ],
+      "characterData": {
+        "id": "chain_lightning",
+        "name": "Kettenblitz",
+        "icon": "⚡⚡",
+        "iconPath": "assets/abilities/magic/chain_lightning.png",
+        "type": "magic",
+        "level": 11,
+        "cost": 105,
+        "rank": 4,
+        "rankIconPath": "assets/ranks/rare_4.png",
+        "magicRequirement": "advanced",
+        "description": "Blitz springt zwischen Gegnern",
+        "effect": "+25 Blitzschaden pro Sprung, max 5 Ziele",
+        "availableFor": [
+          "elves"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 30,
+      "name": "Drachenatem",
+      "category": "magic",
+      "type": "magic",
+      "description": "Atmet Feuer wie ein Drache",
+      "cost": "200",
+      "status": "active",
+      "races": [
+        "Humans",
+        "Elves",
+        "Dwarves",
+        "Orcs",
+        "Goblins"
+      ],
+      "characterData": {
+        "id": "dragon_breath",
+        "name": "Drachenatem",
+        "icon": "🐉🔥",
+        "iconPath": "assets/abilities/magic/dragon_breath.png",
+        "type": "magic",
+        "level": 20,
+        "cost": 200,
+        "rank": 5,
+        "rankIconPath": "assets/ranks/rare_5.png",
+        "magicRequirement": "legendary",
+        "description": "Atmet Feuer wie ein Drache",
+        "effect": "+100 Feuerschaden an alle in Kegel",
+        "availableFor": [
+          "humans"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 31,
+      "name": "Feuerball",
+      "category": "magic",
+      "type": "magic",
+      "description": "Schleudert einen Feuerball auf den Gegner",
+      "cost": 50,
+      "status": "active",
+      "races": [
+        "Orcs",
+        "Dwarves"
+      ],
+      "characterData": {
+        "id": "fireball",
+        "name": "Feuerball",
+        "icon": "🔥",
+        "iconPath": "assets/abilities/magic/fireball.png",
+        "type": "magic",
+        "level": 5,
+        "cost": 50,
+        "rank": 1,
+        "rankIconPath": "assets/ranks/rare_1.png",
+        "magicRequirement": "basic",
+        "description": "Schleudert einen Feuerball auf den Gegner",
+        "effect": "+20 Feuerschaden",
+        "availableFor": [
+          "humans",
+          "elves"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 32,
+      "name": "Frost-Nova",
+      "category": "magic",
+      "type": "magic",
+      "description": "Explosive Eisexplosion um den Zauberer",
+      "cost": 95,
+      "status": "active",
+      "races": [
+        "Elves",
+        "Dwarves",
+        "Goblins",
+        "Humans"
+      ],
+      "characterData": {
+        "id": "frost_nova",
+        "name": "Frost-Nova",
+        "icon": "❄💥",
+        "iconPath": "assets/abilities/magic/frost_nova.png",
+        "type": "magic",
+        "level": 10,
+        "cost": 95,
+        "rank": 3,
+        "rankIconPath": "assets/ranks/rare_3.png",
+        "magicRequirement": "advanced",
+        "description": "Explosive Eisexplosion um den Zauberer",
+        "effect": "+30 Eisschaden an alle, 40% Chance zu verlangsamen",
+        "availableFor": [
+          "elves"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 33,
+      "name": "Wunden heilen",
+      "category": "magic",
+      "type": "magic",
+      "description": "Heilt leichte Wunden mit magischer Energie",
+      "cost": 45,
+      "status": "active",
+      "races": [
+        "Dwarves",
+        "Elves",
+        "Goblins",
+        "Humans",
+        "Orcs"
+      ],
+      "characterData": {
+        "id": "heal_wounds",
+        "name": "Wunden heilen",
+        "icon": "💚",
+        "iconPath": "assets/abilities/magic/heal_wounds.png",
+        "type": "magic",
+        "level": 4,
+        "cost": 45,
+        "rank": 1,
+        "rankIconPath": "assets/ranks/rare_1.png",
+        "magicRequirement": "basic",
+        "description": "Heilt leichte Wunden mit magischer Energie",
+        "effect": "+25 Heilung",
+        "availableFor": [
+          "elves",
+          "humans"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 34,
+      "name": "Eissplitter",
+      "category": "magic",
+      "type": "magic",
+      "description": "Scharfe Eiskristalle als Projektile",
+      "cost": 55,
+      "status": "active",
+      "races": [
+        "Dwarves",
+        "Goblins"
+      ],
+      "characterData": {
+        "id": "ice_shard",
+        "name": "Eissplitter",
+        "icon": "❄",
+        "iconPath": "assets/abilities/magic/ice_shard.png",
+        "type": "magic",
+        "level": 6,
+        "cost": 55,
+        "rank": 2,
+        "rankIconPath": "assets/ranks/rare_2.png",
+        "magicRequirement": "basic",
+        "description": "Scharfe Eiskristalle als Projektile",
+        "effect": "+18 Eisschaden, 20% Chance zu verlangsamen",
+        "availableFor": [
+          "elves"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 35,
+      "name": "Unsterblichkeit",
+      "category": "magic",
+      "type": "passive",
+      "description": "Gewährt Unsterblichkeit",
+      "cost": 300,
+      "status": "active",
+      "races": [
+        "Elves",
+        "Humans",
+        "Dwarves"
+      ],
+      "characterData": {
+        "id": "immortality",
+        "name": "Unsterblichkeit",
+        "icon": "💀❌",
+        "iconPath": "assets/abilities/magic/immortality.png",
+        "type": "passive",
+        "level": 30,
+        "cost": 300,
+        "rank": 5,
+        "rankIconPath": "assets/ranks/rare_5.png",
+        "magicRequirement": "legendary",
+        "description": "Gewährt Unsterblichkeit",
+        "effect": "Kann nicht sterben, nur betäubt werden",
+        "availableFor": [
+          "humans"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 36,
+      "name": "Unsichtbarkeit",
+      "category": "magic",
+      "type": "magic",
+      "description": "Macht den Zauberer unsichtbar",
+      "cost": 80,
+      "status": "active",
+      "races": [
+        "Elves"
+      ],
+      "characterData": {
+        "id": "invisibility",
+        "name": "Unsichtbarkeit",
+        "icon": "👻✨",
+        "iconPath": "assets/abilities/magic/invisibility.png",
+        "type": "magic",
+        "level": 8,
+        "cost": 80,
+        "rank": 3,
+        "rankIconPath": "assets/ranks/rare_3.png",
+        "magicRequirement": "advanced",
+        "description": "Macht den Zauberer unsichtbar",
+        "effect": "Unsichtbarkeit für 3 Runden",
+        "availableFor": [
+          "elves"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 37,
+      "name": "Blitzschlag",
+      "category": "magic",
+      "type": "magic",
+      "description": "Mächtiger Blitzschlag aus dem Himmel",
+      "cost": 80,
+      "status": "active",
+      "races": [
+        "Orcs"
+      ],
+      "characterData": {
+        "id": "lightning_bolt",
+        "name": "Blitzschlag",
+        "icon": "⚡",
+        "iconPath": "assets/abilities/magic/lightning_bolt.png",
+        "type": "magic",
+        "level": 8,
+        "cost": 80,
+        "rank": 3,
+        "rankIconPath": "assets/ranks/rare_3.png",
+        "magicRequirement": "advanced",
+        "description": "Mächtiger Blitzschlag aus dem Himmel",
+        "effect": "+35 Blitzschaden, 30% Chance zu betäuben",
+        "availableFor": [
+          "elves",
+          "humans"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 38,
+      "name": "Blitzreflexe",
+      "category": "magic",
+      "type": "passive",
+      "description": "Übermenschliche Reaktionsgeschwindigkeit",
+      "cost": 80,
+      "status": "active",
+      "races": [
+        "Elves",
+        "Goblins"
+      ],
+      "characterData": {
+        "id": "lightning_reflexes",
+        "name": "Blitzreflexe",
+        "icon": "⚡🏃",
+        "iconPath": "assets/abilities/magic/lightning_reflexes.png",
+        "type": "passive",
+        "level": 8,
+        "cost": 80,
+        "rank": 2,
+        "rankIconPath": "assets/ranks/rare_2.png",
+        "magicRequirement": "none",
+        "description": "Übermenschliche Reaktionsgeschwindigkeit",
+        "effect": "+30% Ausweichen, +20% Initiative",
+        "availableFor": [
+          "goblins",
+          "elves"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 39,
+      "name": "Massenheilung",
+      "category": "magic",
+      "type": "magic",
+      "description": "Heilt alle Verbündeten gleichzeitig",
+      "cost": 115,
+      "status": "active",
+      "races": [
+        "Elves",
+        "Humans"
+      ],
+      "characterData": {
+        "id": "mass_heal",
+        "name": "Massenheilung",
+        "icon": "💚💚",
+        "iconPath": "assets/abilities/magic/mass_heal.png",
+        "type": "magic",
+        "level": 12,
+        "cost": 115,
+        "rank": 4,
+        "rankIconPath": "assets/ranks/rare_4.png",
+        "magicRequirement": "master",
+        "description": "Heilt alle Verbündeten gleichzeitig",
+        "effect": "+20 Heilung an alle Verbündeten",
+        "availableFor": [
+          "elves",
+          "humans"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 40,
+      "name": "Allwissenheit",
+      "category": "magic",
+      "type": "passive",
+      "description": "Kennt alle Geheimnisse der Welt",
+      "cost": 400,
+      "status": "active",
+      "races": [],
+      "characterData": {
+        "id": "omniscience",
+        "name": "Allwissenheit",
+        "icon": "👁🌌",
+        "iconPath": "assets/abilities/magic/omniscience.png",
+        "type": "passive",
+        "level": 40,
+        "cost": 400,
+        "rank": 5,
+        "rankIconPath": "assets/ranks/rare_5.png",
+        "magicRequirement": "legendary",
+        "description": "Kennt alle Geheimnisse der Welt",
+        "effect": "+100% alle Fähigkeiten, +50% alle Statistiken",
+        "availableFor": [
+          "humans"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 41,
+      "name": "Realitätsverzerrung",
+      "category": "magic",
+      "type": "magic",
+      "description": "Verzerrt die Realität selbst",
+      "cost": 350,
+      "status": "active",
+      "races": [
+        "Goblins",
+        "Dwarves"
+      ],
+      "characterData": {
+        "id": "reality_bend",
+        "name": "Realitätsverzerrung",
+        "icon": "🌌🌀",
+        "iconPath": "assets/abilities/magic/reality_bend.png",
+        "type": "magic",
+        "level": 35,
+        "cost": 350,
+        "rank": 5,
+        "rankIconPath": "assets/ranks/rare_5.png",
+        "magicRequirement": "legendary",
+        "description": "Verzerrt die Realität selbst",
+        "effect": "+200% alle Schadensarten für 1 Runde",
+        "availableFor": [
+          "elves"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 42,
+      "name": "Regeneration",
+      "category": "magic",
+      "type": "passive",
+      "description": "Automatische Heilung über Zeit",
+      "cost": 70,
+      "status": "active",
+      "races": [
+        "Elves",
+        "Orcs"
+      ],
+      "characterData": {
+        "id": "regeneration",
+        "name": "Regeneration",
+        "icon": "🔄💚",
+        "iconPath": "assets/abilities/magic/regeneration.png",
+        "type": "passive",
+        "level": 7,
+        "cost": 70,
+        "rank": 2,
+        "rankIconPath": "assets/ranks/rare_2.png",
+        "magicRequirement": "basic",
+        "description": "Automatische Heilung über Zeit",
+        "effect": "+5 Heilung pro Runde",
+        "availableFor": [
+          "elves",
+          "humans"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 43,
+      "name": "Teleportation",
+      "category": "magic",
+      "type": "magic",
+      "description": "Sofortige Bewegung an einen anderen Ort",
+      "cost": 90,
+      "status": "active",
+      "races": [
+        "Goblins",
+        "Dwarves"
+      ],
+      "characterData": {
+        "id": "teleport",
+        "name": "Teleportation",
+        "icon": "🌀",
+        "iconPath": "assets/abilities/magic/teleport.png",
+        "type": "magic",
+        "level": 9,
+        "cost": 90,
+        "rank": 3,
+        "rankIconPath": "assets/ranks/rare_3.png",
+        "magicRequirement": "advanced",
+        "description": "Sofortige Bewegung an einen anderen Ort",
+        "effect": "Teleportation über kurze Distanz",
+        "availableFor": [
+          "elves"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 44,
+      "name": "Zeitverzerrung",
+      "category": "magic",
+      "type": "magic",
+      "description": "Manipuliert die Zeit selbst",
+      "cost": 250,
+      "status": "active",
+      "races": [
+        "Elves"
+      ],
+      "characterData": {
+        "id": "time_warp",
+        "name": "Zeitverzerrung",
+        "icon": "⏰🌀",
+        "iconPath": "assets/abilities/magic/time_warp.png",
+        "type": "magic",
+        "level": 25,
+        "cost": 250,
+        "rank": 5,
+        "rankIconPath": "assets/ranks/rare_5.png",
+        "magicRequirement": "legendary",
+        "description": "Manipuliert die Zeit selbst",
+        "effect": "Verlangsamt alle Gegner für 2 Runden",
+        "availableFor": [
+          "elves"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 45,
+      "name": "Feilschen",
+      "category": "social",
+      "type": "social",
+      "description": "Geschicktes Verhandeln um Preise",
+      "cost": 40,
+      "status": "active",
+      "races": [
+        "Dwarves",
+        "Elves",
+        "Goblins",
+        "Humans",
+        "Orcs"
+      ],
+      "characterData": {
+        "id": "bargaining",
+        "name": "Feilschen",
+        "icon": "💰",
+        "iconPath": "assets/abilities/social/bargaining.png",
+        "type": "social",
+        "level": 4,
+        "cost": 40,
+        "rank": 1,
+        "rankIconPath": "assets/ranks/rare_1.png",
+        "magicRequirement": "none",
+        "description": "Geschicktes Verhandeln um Preise",
+        "effect": "+20% Handelspreis, +15% Rabatte",
+        "availableFor": [
+          "goblins",
+          "humans"
+        ],
+        "availableForArchetypes": [],
+        "evolvedFrom": null,
+        "evolvesTo": [
+          "Meisterfeilschen"
+        ]
+      }
+    },
+    {
+      "id": 46,
+      "name": "Diplomatie",
+      "category": "social",
+      "type": "social",
+      "description": "Überzeugende Gesprächsführung",
+      "cost": 50,
+      "status": "active",
+      "races": [
+        "Dwarves",
+        "Elves",
+        "Humans"
+      ],
+      "characterData": {
+        "id": "diplomacy",
+        "name": "Diplomatie",
+        "icon": "🤝",
+        "iconPath": "assets/abilities/social/diplomacy.png",
+        "type": "social",
+        "level": 5,
+        "cost": 50,
+        "rank": 1,
+        "rankIconPath": "assets/ranks/rare_1.png",
+        "magicRequirement": "none",
+        "description": "Überzeugende Gesprächsführung",
+        "effect": "+30% Handelspreis, +25% Reputation",
+        "availableFor": [
+          "humans",
+          "elves"
+        ],
+        "availableForArchetypes": [],
+        "evolvedFrom": null,
+        "evolvesTo": [
+          "Meisterdiplomatie"
+        ]
+      }
+    },
+    {
+      "id": 47,
+      "name": "Angstaura",
+      "category": "social",
+      "type": "social",
+      "description": "Einschüchternde Aura um den Charakter",
+      "cost": 90,
+      "status": "active",
+      "races": [
+        "Orcs"
+      ],
+      "characterData": {
+        "id": "fear_aura",
+        "name": "Angstaura",
+        "icon": "😱",
+        "iconPath": "assets/abilities/social/fear_aura.png",
+        "type": "social",
+        "level": 9,
+        "cost": 90,
+        "rank": 3,
+        "rankIconPath": "assets/ranks/rare_3.png",
+        "magicRequirement": "none",
+        "description": "Einschüchternde Aura um den Charakter",
+        "effect": "+60% Einschüchterung, -30% Handelspreis",
+        "availableFor": [
+          "orcs"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 48,
+      "name": "Inspirierende Führung",
+      "category": "social",
+      "type": "social",
+      "description": "Legendäre Führungsqualitäten",
+      "cost": 150,
+      "status": "active",
+      "races": [
+        "Elves",
+        "Goblins",
+        "Humans",
+        "Orcs"
+      ],
+      "characterData": {
+        "id": "inspirational_leadership",
+        "name": "Inspirierende Führung",
+        "icon": "👑✨",
+        "iconPath": "assets/abilities/social/inspirational_leadership.png",
+        "type": "social",
+        "level": 15,
+        "cost": 150,
+        "rank": 5,
+        "rankIconPath": "assets/ranks/rare_5.png",
+        "magicRequirement": "none",
+        "description": "Legendäre Führungsqualitäten",
+        "effect": "+75% Gruppenmoral, +50% Gruppenleistung",
+        "availableFor": [
+          "humans"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 49,
+      "name": "Einschüchterung",
+      "category": "social",
+      "type": "social",
+      "description": "Einschüchternde Präsenz",
+      "cost": 55,
+      "status": "active",
+      "races": [
+        "Orcs"
+      ],
+      "characterData": {
+        "id": "intimidation",
+        "name": "Einschüchterung",
+        "icon": "😠",
+        "iconPath": "assets/abilities/social/intimidation.png",
+        "type": "social",
+        "level": 6,
+        "cost": 55,
+        "rank": 2,
+        "rankIconPath": "assets/ranks/rare_2.png",
+        "magicRequirement": "none",
+        "description": "Einschüchternde Präsenz",
+        "effect": "+40% Einschüchterung, -20% Handelspreis",
+        "availableFor": [
+          "orcs",
+          "dwarves"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 50,
+      "name": "Eiserner Wille",
+      "category": "social",
+      "type": "passive",
+      "description": "Unerschütterlicher mentaler Widerstand",
+      "cost": 100,
+      "status": "active",
+      "races": [
+        "Orcs",
+        "Dwarves"
+      ],
+      "characterData": {
+        "id": "iron_will",
+        "name": "Eiserner Wille",
+        "icon": "🧠💪",
+        "iconPath": "assets/abilities/social/iron_will.png",
+        "type": "passive",
+        "level": 11,
+        "cost": 100,
+        "rank": 4,
+        "rankIconPath": "assets/ranks/rare_4.png",
+        "magicRequirement": "none",
+        "description": "Unerschütterlicher mentaler Widerstand",
+        "effect": "+50% Widerstand gegen mentale Effekte",
+        "availableFor": [
+          "dwarves",
+          "humans"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 51,
+      "name": "Führung",
+      "category": "social",
+      "type": "social",
+      "description": "Inspirierende Führungsqualitäten",
+      "cost": 100,
+      "status": "active",
+      "races": [
+        "Humans",
+        "Dwarves",
+        "Elves"
+      ],
+      "characterData": {
+        "id": "leadership",
+        "name": "Führung",
+        "icon": "👑",
+        "iconPath": "assets/abilities/social/leadership.png",
+        "type": "social",
+        "level": 10,
+        "cost": 100,
+        "rank": 3,
+        "rankIconPath": "assets/ranks/rare_3.png",
+        "magicRequirement": "none",
+        "description": "Inspirierende Führungsqualitäten",
+        "effect": "+50% Gruppenmoral, +25% Gruppenleistung",
+        "availableFor": [
+          "humans",
+          "orcs"
+        ],
+        "availableForArchetypes": []
+      }
+    },
+    {
+      "id": 52,
+      "name": "Meisterfeilschen",
+      "category": "social",
+      "type": "social",
+      "description": "Überragende Verhandlungsfähigkeiten",
+      "cost": 80,
+      "status": "active",
+      "races": [
+        "Dwarves",
+        "Elves"
+      ],
+      "characterData": {
+        "id": "master_bargaining",
+        "name": "Meisterfeilschen",
+        "icon": "💰✨",
+        "iconPath": "assets/abilities/social/master_bargaining.png",
+        "type": "social",
+        "level": 8,
+        "cost": 80,
+        "rank": 2,
+        "rankIconPath": "assets/ranks/rare_2.png",
+        "magicRequirement": "none",
+        "description": "Überragende Verhandlungsfähigkeiten",
+        "effect": "+35% Handelspreis, +25% Rabatte",
+        "availableFor": [
+          "goblins"
+        ],
+        "availableForArchetypes": [],
+        "evolvedFrom": "Feilschen",
+        "evolvesTo": null
+      }
+    },
+    {
+      "id": 53,
+      "name": "Meisterdiplomatie",
+      "category": "social",
+      "type": "social",
+      "description": "Überragende diplomatische Fähigkeiten",
+      "cost": 120,
+      "status": "active",
+      "races": [
+        "Humans",
+        "Elves"
+      ],
+      "characterData": {
+        "id": "master_diplomacy",
+        "name": "Meisterdiplomatie",
+        "icon": "🤝✨",
+        "iconPath": "assets/abilities/social/master_diplomacy.png",
+        "type": "social",
+        "level": 12,
+        "cost": 120,
+        "rank": 4,
+        "rankIconPath": "assets/ranks/rare_4.png",
+        "magicRequirement": "none",
+        "description": "Überragende diplomatische Fähigkeiten",
+        "effect": "+50% Handelspreis, +40% Reputation",
+        "availableFor": [
+          "humans"
+        ],
+        "availableForArchetypes": [],
+        "evolvedFrom": "Diplomatie",
+        "evolvesTo": null
+      }
+    },
+    {
+      "id": 54,
+      "name": "Überredung",
+      "category": "social",
+      "type": "social",
+      "description": "Überzeugende Argumentation",
+      "cost": 65,
+      "status": "active",
+      "races": [],
+      "characterData": {
+        "id": "persuasion",
+        "name": "Überredung",
+        "icon": "💬",
+        "iconPath": "assets/abilities/social/persuasion.png",
+        "type": "social",
+        "level": 7,
+        "cost": 65,
+        "rank": 2,
+        "rankIconPath": "assets/ranks/rare_2.png",
+        "magicRequirement": "none",
+        "description": "Überzeugende Argumentation",
+        "effect": "+35% Überredungserfolg, +20% Information",
+        "availableFor": [
+          "elves",
+          "humans"
+        ],
+        "availableForArchetypes": [],
+        "evolvedFrom": null,
+        "evolvesTo": [
+          "Silberzunge"
+        ]
+      }
+    },
+    {
+      "id": 55,
+      "name": "Silberzunge",
+      "category": "social",
+      "type": "social",
+      "description": "Überragende Überredungskünste",
+      "cost": 110,
+      "status": "active",
+      "races": [],
+      "characterData": {
+        "id": "silver_tongue",
+        "name": "Silberzunge",
+        "icon": "💬✨",
+        "iconPath": "assets/abilities/social/silver_tongue.png",
+        "type": "social",
+        "level": 11,
+        "cost": 110,
+        "rank": 4,
+        "rankIconPath": "assets/ranks/rare_4.png",
+        "magicRequirement": "none",
+        "description": "Überragende Überredungskünste",
+        "effect": "+50% Überredungserfolg, +35% Information",
+        "availableFor": [
+          "elves"
+        ],
+        "availableForArchetypes": [],
+        "evolvedFrom": "Überredung",
+        "evolvesTo": null
+      }
+    },
+    {
+      "id": 1756379356565,
+      "name": "Neue Fähigkeit",
+      "category": "combat",
+      "type": "Unbekannt",
+      "description": "Beschreibung der neuen Fähigkeit",
+      "cost": "Keine Kosten",
+      "status": "active",
+      "races": [],
+      "characterData": {}
+    }
+  ],
+  "metadata": {
+    "lastModified": "2025-08-29T07:36:55.987Z",
+    "version": "1.0.0",
+    "totalAbilities": 56
+  }
+}

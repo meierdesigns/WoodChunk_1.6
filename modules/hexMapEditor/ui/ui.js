@@ -18,8 +18,11 @@ class UIManager {
         this.biomeModule = new BiomeModule(core);
         this.mapsModule = new MapsModule(core);
         
-        // Make settingsModule globally available
+        // Make modules globally available
         window.settingsModule = this.settingsModule;
+        window.mapsModule = this.mapsModule;
+        window.toolsModule = this.toolsModule;
+        window.biomeModule = this.biomeModule;
         
         // Überprüfe Core-Initialisierung
         if (!this.core) {

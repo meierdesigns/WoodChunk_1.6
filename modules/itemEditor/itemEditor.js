@@ -1863,7 +1863,64 @@ class ItemEditor {
             if (modalDescription) console.log('[ItemEditor] ✅ modalDescription.value:', modalDescription.value, '(expected:', currentItem.description + ')');
             
             console.log('[ItemEditor] 🎯 DIAGNOSIS COMPLETE - Check if values match expectations above!');
+            
+            // Setup range validation
+            this.setupRangeValidation();
         }, 100);
+    }
+    
+    setupRangeValidation() {
+        // Damage range validation
+        const damageMin = document.getElementById('modalDamageMin');
+        const damageMax = document.getElementById('modalDamageMax');
+        
+        if (damageMin && damageMax) {
+            damageMin.addEventListener('input', () => {
+                const minValue = parseInt(damageMin.value) || 0;
+                damageMax.min = minValue;
+                if (parseInt(damageMax.value) < minValue) {
+                    damageMax.value = minValue;
+                }
+                // Trigger change event to update the item data
+                damageMax.dispatchEvent(new Event('change'));
+            });
+            
+            damageMax.addEventListener('input', () => {
+                const maxValue = parseInt(damageMax.value) || 0;
+                damageMin.max = maxValue;
+                if (parseInt(damageMin.value) > maxValue) {
+                    damageMin.value = maxValue;
+                }
+                // Trigger change event to update the item data
+                damageMin.dispatchEvent(new Event('change'));
+            });
+        }
+        
+        // Defense range validation
+        const defenseMin = document.getElementById('modalDefenseMin');
+        const defenseMax = document.getElementById('modalDefenseMax');
+        
+        if (defenseMin && defenseMax) {
+            defenseMin.addEventListener('input', () => {
+                const minValue = parseInt(defenseMin.value) || 0;
+                defenseMax.min = minValue;
+                if (parseInt(defenseMax.value) < minValue) {
+                    defenseMax.value = minValue;
+                }
+                // Trigger change event to update the item data
+                defenseMax.dispatchEvent(new Event('change'));
+            });
+            
+            defenseMax.addEventListener('input', () => {
+                const maxValue = parseInt(defenseMax.value) || 0;
+                defenseMin.max = maxValue;
+                if (parseInt(defenseMin.value) > maxValue) {
+                    defenseMin.value = maxValue;
+                }
+                // Trigger change event to update the item data
+                defenseMin.dispatchEvent(new Event('change'));
+            });
+        }
     }
 
     async updateTypeDropdown(category, preserveValue = null) {

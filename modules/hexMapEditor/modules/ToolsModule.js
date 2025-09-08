@@ -67,18 +67,75 @@ class ToolsModule {
     setupToolsEventListeners() {
         console.log('[ToolsModule] Setting up event listeners');
         
-        // Pinsel-Größe
+        // Warte länger, damit alle DOM-Elemente geladen sind
+        setTimeout(() => {
+            console.log('[ToolsModule] Starting brush controls setup after delay...');
+            this.setupBrushControls();
+        }, 500);
+        
+        // Zusätzlicher Fallback nach längerer Verzögerung
+        setTimeout(() => {
+            console.log('[ToolsModule] Fallback brush controls setup...');
+            this.setupBrushControls();
+        }, 1000);
+    }
+    
+    setupBrushControls() {
+        console.log('[ToolsModule] Setting up brush controls');
+        
+        // Debug: Prüfe alle möglichen Elemente
         const brushSizeSlider = document.getElementById('brush-size-slider');
         const brushSizeDisplay = document.getElementById('brush-size-display');
         const brushSizeReset = document.getElementById('brush-size-reset');
-        const brushSizeControls = document.getElementById('brush-size-controls');
+        const brushSizeControls = document.getElementById('brush-size-container') || document.getElementById('combined-controls');
         
-        console.log('[ToolsModule] Found elements:', {
+        console.log('[ToolsModule] Element search results:', {
             slider: !!brushSizeSlider,
             display: !!brushSizeDisplay,
             reset: !!brushSizeReset,
-            controls: !!brushSizeControls
+            controls: !!brushSizeControls,
+            sliderElement: brushSizeSlider,
+            displayElement: brushSizeDisplay,
+            resetElement: brushSizeReset,
+            controlsElement: brushSizeControls
         });
+        
+        // Debug: Prüfe alle Elemente mit "brush" im Namen
+        const allBrushElements = document.querySelectorAll('[id*="brush"]');
+        console.log('[ToolsModule] All brush elements found:', allBrushElements.length);
+        allBrushElements.forEach((el, index) => {
+            console.log(`[ToolsModule] Brush element ${index}:`, {
+                id: el.id,
+                tagName: el.tagName,
+                className: el.className
+            });
+        });
+        
+        // Debug: Prüfe alle Elemente mit "size" im Namen
+        const allSizeElements = document.querySelectorAll('[id*="size"]');
+        console.log('[ToolsModule] All size elements found:', allSizeElements.length);
+        allSizeElements.forEach((el, index) => {
+            console.log(`[ToolsModule] Size element ${index}:`, {
+                id: el.id,
+                tagName: el.tagName,
+                className: el.className
+            });
+        });
+        
+        if (!brushSizeControls) {
+            console.error('[ToolsModule] ❌ Brush controls container not found!');
+            console.error('[ToolsModule] Available elements in document:');
+            const allElements = document.querySelectorAll('*[id]');
+            allElements.forEach((el, index) => {
+                if (index < 20) { // Nur erste 20 Elemente zeigen
+                    console.log(`[ToolsModule] Element ${index}:`, {
+                        id: el.id,
+                        tagName: el.tagName
+                    });
+                }
+            });
+            return;
+        }
         
         if (brushSizeSlider && brushSizeDisplay) {
             console.log('[ToolsModule] Setting up slider event listener');
@@ -105,11 +162,11 @@ class ToolsModule {
                 const currentLayer = this.core.getCurrentLayer();
                 console.log('[ToolsModule] Current layer:', currentLayer);
                 if (currentLayer === 'terrain') {
-                    brushSizeControls.style.display = 'block';
+                    brushSizeControls.style.display = 'flex';
                     console.log('[ToolsModule] Showing brush controls');
                 } else {
-                    brushSizeControls.style.display = 'none';
-                    console.log('[ToolsModule] Hiding brush controls');
+                    brushSizeControls.style.display = 'flex'; // Always show, but disable controls
+                    console.log('[ToolsModule] Showing brush controls (disabled for non-terrain)');
                 }
             } else {
                 console.error('[ToolsModule] Brush controls not found!');
@@ -153,8 +210,6 @@ class ToolsModule {
                 this.selectMode(mode);
             });
         });
-        
-
         
         // Werkzeug-Aktionen
         const resetViewBtn = document.getElementById('reset-view-btn');

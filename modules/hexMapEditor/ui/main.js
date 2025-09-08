@@ -47,6 +47,18 @@ class MapEditor {
             console.error('[MapEditor] BiomeTileSelector class not found!');
         }
 
+        // Initialisiere MapsModule separat für besseren Zugriff
+        if (typeof MapsModule !== 'undefined') {
+            this.mapsModule = new MapsModule(this.core);
+            
+            // Speichere die Instanz global für Debug-Zugriff
+            window.mapsModule = this.mapsModule;
+            
+            console.log('[MapEditor] MapsModule initialized successfully');
+        } else {
+            console.error('[MapEditor] MapsModule class not found!');
+        }
+
         // Verbinde den SurroundingChecker mit UI und Renderer
         this.ui.setSurroundingChecker(this.surroundingChecker);
 
@@ -242,17 +254,73 @@ class MapEditor {
         // Update-Tiles-Button
         const updateTilesBtn = document.getElementById('update-tiles-btn');
         if (updateTilesBtn) {
-            updateTilesBtn.addEventListener('click', () => {
+            updateTilesBtn.addEventListener('click', async () => {
                 console.log('[MapEditor] Update-Tiles-Button geklickt');
-                if (this.renderer && typeof this.renderer.updateAllTilesWithSelectedTile === 'function') {
-                    this.renderer.updateAllTilesWithSelectedTile();
-                    // Visuelles Feedback
-                    updateTilesBtn.textContent = '✅ Aktualisiert';
-                    updateTilesBtn.style.backgroundColor = '#4CAF50';
-                    setTimeout(() => {
-                        updateTilesBtn.textContent = '🔄 Tiles aktualisieren';
-                        updateTilesBtn.style.backgroundColor = '';
-                    }, 2000);
+                
+                if (this.renderer && typeof this.renderer.updateAllTilesWithSelectedTileAsync === 'function') {
+                    // Zeige Loading-Status
+                    updateTilesBtn.textContent = '⏳ Aktualisiere...';
+                    updateTilesBtn.style.backgroundColor = '#FF9800';
+                    updateTilesBtn.disabled = true;
+                    
+                    try {
+                        // Führe Update aus
+                        await this.renderer.updateAllTilesWithSelectedTileAsync();
+                        
+                        // Erfolg-Feedback
+                        updateTilesBtn.textContent = '✅ Aktualisiert';
+                        updateTilesBtn.style.backgroundColor = '#4CAF50';
+                        
+                        // Nach 2 Sekunden zurücksetzen
+                        setTimeout(() => {
+                            updateTilesBtn.textContent = '🔄 Tiles aktualisieren';
+                            updateTilesBtn.style.backgroundColor = '';
+                            updateTilesBtn.disabled = false;
+                        }, 2000);
+                        
+                    } catch (error) {
+                        console.error('[MapEditor] Error updating tiles:', error);
+                        updateTilesBtn.textContent = '❌ Fehler';
+                        updateTilesBtn.style.backgroundColor = '#f44336';
+                        
+                        setTimeout(() => {
+                            updateTilesBtn.textContent = '🔄 Tiles aktualisieren';
+                            updateTilesBtn.style.backgroundColor = '';
+                            updateTilesBtn.disabled = false;
+                        }, 2000);
+                    }
+                } else if (this.renderer && typeof this.renderer.updateAllTilesWithSelectedTile === 'function') {
+                    // Fallback zur synchronen Version
+                    updateTilesBtn.textContent = '⏳ Aktualisiere...';
+                    updateTilesBtn.style.backgroundColor = '#FF9800';
+                    updateTilesBtn.disabled = true;
+                    
+                    try {
+                        // Führe Update aus
+                        this.renderer.updateAllTilesWithSelectedTile();
+                        
+                        // Erfolg-Feedback
+                        updateTilesBtn.textContent = '✅ Aktualisiert';
+                        updateTilesBtn.style.backgroundColor = '#4CAF50';
+                        
+                        // Nach 2 Sekunden zurücksetzen
+                        setTimeout(() => {
+                            updateTilesBtn.textContent = '🔄 Tiles aktualisieren';
+                            updateTilesBtn.style.backgroundColor = '';
+                            updateTilesBtn.disabled = false;
+                        }, 2000);
+                        
+                    } catch (error) {
+                        console.error('[MapEditor] Error updating tiles:', error);
+                        updateTilesBtn.textContent = '❌ Fehler';
+                        updateTilesBtn.style.backgroundColor = '#f44336';
+                        
+                        setTimeout(() => {
+                            updateTilesBtn.textContent = '🔄 Tiles aktualisieren';
+                            updateTilesBtn.style.backgroundColor = '';
+                            updateTilesBtn.disabled = false;
+                        }, 2000);
+                    }
                 } else {
                     console.error('[MapEditor] updateAllTilesWithSelectedTile Funktion nicht verfügbar');
                     updateTilesBtn.textContent = '❌ Fehler';

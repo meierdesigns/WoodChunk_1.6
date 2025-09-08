@@ -28,8 +28,10 @@ class AbilitiesTable {
         // Set up action button listeners
         this.setupActionButtonListeners();
         
-        // Update table with current data
-        this.updateAbilitiesTable();
+        // Update table with current data (with a small delay to ensure DOM is ready)
+        setTimeout(() => {
+            this.updateAbilitiesTable();
+        }, 100);
     }
 
     updateAbilitiesTable() {
@@ -39,13 +41,26 @@ class AbilitiesTable {
             return;
         }
 
-        console.log('[AbilitiesTable] Updating table with', this.abilitiesEditor.getFilteredAbilities().length, 'abilities');
+        const filteredAbilities = this.abilitiesEditor.getFilteredAbilities();
+        const totalAbilities = this.abilitiesEditor.getAbilities().length;
+        
+        console.log('[AbilitiesTable] Updating table with', filteredAbilities.length, 'abilities (total:', totalAbilities, ')');
+
+        // Update abilities count display
+        const countElement = document.getElementById('abilitiesCount');
+        console.log('[AbilitiesTable] Looking for count element:', countElement);
+        if (countElement) {
+            countElement.textContent = `${filteredAbilities.length} von ${totalAbilities}`;
+            console.log('[AbilitiesTable] Updated count display to:', `${filteredAbilities.length} von ${totalAbilities}`);
+        } else {
+            console.error('[AbilitiesTable] Count element not found!');
+        }
 
         // Clear existing rows
         tableBody.innerHTML = '';
 
         // Add rows for each ability
-        this.abilitiesEditor.getFilteredAbilities().forEach(ability => {
+        filteredAbilities.forEach(ability => {
             const row = this.createAbilityRow(ability);
             tableBody.appendChild(row);
         });
@@ -125,7 +140,19 @@ class AbilitiesTable {
         costCell.innerHTML = `<span class="cost-value">${ability.cost || '0'}</span>`;
         row.appendChild(costCell);
 
+        // Damage column
+        const damageCell = document.createElement('td');
+        damageCell.className = 'col-damage';
+        const damageDisplay = this.getDamageDisplay(ability);
+        damageCell.innerHTML = `<span class="damage-value">${damageDisplay}</span>`;
+        row.appendChild(damageCell);
 
+        // Healing column
+        const healingCell = document.createElement('td');
+        healingCell.className = 'col-healing';
+        const healingDisplay = this.getHealingDisplay(ability);
+        healingCell.innerHTML = `<span class="healing-value">${healingDisplay}</span>`;
+        row.appendChild(healingCell);
 
         return row;
     }
@@ -145,7 +172,10 @@ class AbilitiesTable {
                 this.abilitiesEditor.getAbilityDetailsModal().showAbilityDetails(abilityId);
             } else if (e.target.classList.contains('btn-secondary')) {
                 const abilityId = e.target.dataset.abilityId;
-                this.abilitiesEditor.openEditModal(this.abilitiesEditor.getAbilities().find(a => a.id == abilityId));
+                const ability = this.abilitiesEditor.getAbilities().find(a => a.id == abilityId);
+                if (ability) {
+                    this.abilitiesEditor.openEditModal(ability);
+                }
             } else if (e.target.classList.contains('btn-test')) {
                 const abilityId = e.target.dataset.abilityId;
                 this.abilitiesEditor.getAbilityDetailsModal().showAbilityDetails(abilityId);
@@ -165,9 +195,37 @@ class AbilitiesTable {
     }
 
 
+    getDamageDisplay(ability) {
+        if (ability.damage_min !== undefined && ability.damage_max !== undefined) {
+            if (ability.damage_min === ability.damage_max) {
+                return ability.damage_min || '0';
+            } else {
+                return `${ability.damage_min || '0'}-${ability.damage_max || '0'}`;
+            }
+        } else if (ability.damage !== undefined) {
+            return ability.damage || '0';
+        }
+        return '0';
+    }
+
+    getHealingDisplay(ability) {
+        if (ability.healing_min !== undefined && ability.healing_max !== undefined) {
+            if (ability.healing_min === ability.healing_max) {
+                return ability.healing_min || '0';
+            } else {
+                return `${ability.healing_min || '0'}-${ability.healing_max || '0'}`;
+            }
+        } else if (ability.healing !== undefined) {
+            return ability.healing || '0';
+        }
+        return '0';
+    }
+
     saveAbilities() {
         try {
-            localStorage.setItem('abilitiesData', JSON.stringify(this.abilitiesEditor.getAbilities()));
+            localStorage.setItem('abilitiesEditor_abilities', JSON.stringify({
+                abilities: this.abilitiesEditor.getAbilities()
+            }));
         } catch (error) {
             // Silent error handling
         }

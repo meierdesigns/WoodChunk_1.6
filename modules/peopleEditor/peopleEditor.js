@@ -115,10 +115,14 @@ class PeopleEditor {
                  <!-- Edit Modal -->
                  <div id="editModal" class="modal" style="display: none;">
                      <div class="modal-content">
-                         <div class="modal-header">
-                             <h3>Klasse/Beruf bearbeiten</h3>
-                             <span class="close">&times;</span>
-                         </div>
+                        <div class="modal-header">
+                            <h3>Klasse/Beruf bearbeiten</h3>
+                            <div class="header-actions">
+                                <button type="button" class="btn btn-primary" id="saveEditBtn">Speichern</button>
+                                <button type="button" class="btn btn-secondary" id="cancelEdit">Abbrechen</button>
+                            </div>
+                            <span class="close">&times;</span>
+                        </div>
                          <div class="modal-body">
                              <form id="editForm">
                                  <div class="form-layout-with-icon">
@@ -148,47 +152,42 @@ class PeopleEditor {
                                                                  <div class="form-group">
                                     <label for="editAbilities">Fähigkeiten:</label>
                                     <div class="abilities-list-container">
-                                        <div class="abilities-filter-tabs">
-                                            <button type="button" class="ability-tab active" data-category="all">
-                                                <span>Alle</span>
-                                            </button>
-                                            <button type="button" class="ability-tab" data-category="combat">
-                                                <span>⚔️ Kampf</span>
-                                            </button>
-                                            <button type="button" class="ability-tab" data-category="magic">
-                                                <span>🔮 Magie</span>
-                                            </button>
-                                            <button type="button" class="ability-tab" data-category="craft">
-                                                <span>⚒️ Handwerk</span>
-                                            </button>
-                                            <button type="button" class="ability-tab" data-category="social">
-                                                <span>💬 Sozial</span>
-                                            </button>
-                                        </div>
+                                        <!-- Filter tabs removed -->
                                         
-                                        <div class="abilities-dual-panel">
-                                            <div class="selected-abilities-panel">
-                                                <h4 class="panel-title">✅ Ausgewählte Fähigkeiten</h4>
-                                                <div class="selected-abilities-list" id="selectedAbilitiesList">
-                                                    <!-- Ausgewählte Fähigkeiten werden hier angezeigt -->
+                                        <div class="abilities-four-columns">
+                                            <div class="ability-column">
+                                                <h4 class="column-title">⚔️ Kampf</h4>
+                                                <div id="abilitiesCombatList">
+                                                    <!-- Kampf-Fähigkeiten werden hier angezeigt -->
                                                 </div>
                                             </div>
                                             
-                                            <div class="available-abilities-panel">
-                                                <h4 class="panel-title">📋 Verfügbare Fähigkeiten</h4>
-                                                <div class="abilities-search-bar">
-                                                    <input type="text" id="abilitiesQuickSearch" placeholder="🔍 Fähigkeit suchen..." class="quick-search">
-                                                </div>
-                                                <div class="abilities-clickable-list" id="abilitiesClickableList">
-                                                    <!-- Fähigkeiten werden hier als klickbare Liste angezeigt -->
+                                            <div class="ability-column">
+                                                <h4 class="column-title">🔮 Magie</h4>
+                                                <div id="abilitiesMagicList">
+                                                    <!-- Magie-Fähigkeiten werden hier angezeigt -->
                                                 </div>
                                             </div>
+                                            
+                                            <div class="ability-column">
+                                                <h4 class="column-title">⚒️ Handwerk</h4>
+                                                <div id="abilitiesCraftList">
+                                                    <!-- Handwerk-Fähigkeiten werden hier angezeigt -->
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="ability-column">
+                                                <h4 class="column-title">💬 Sozial</h4>
+                                                <div id="abilitiesSocialList">
+                                                    <!-- Sozial-Fähigkeiten werden hier angezeigt -->
+                                                </div>
+                                            </div>
+                                        </div>
                                         </div>
                                     </div>
                                 </div>
                                  <div class="form-actions">
-                                     <button type="submit" class="btn btn-primary">Speichern</button>
-                                     <button type="button" class="btn btn-secondary" id="cancelEdit">Abbrechen</button>
+                                     <!-- Buttons moved to header -->
                                  </div>
                              </form>
                          </div>
@@ -404,7 +403,7 @@ class PeopleEditor {
                     <td class="job-name-cell">
                         <div class="job-name-with-race">
                             ${raceIcon}
-                            <span class="job-name">${people.name}</span>
+                            <span class="job-name clickable" data-id="${people.id}" style="cursor: pointer; color: #000000;">${people.name}</span>
                         </div>
                     </td>
                     <td>${people.description}</td>
@@ -431,7 +430,8 @@ class PeopleEditor {
          if (tbody) {
              tbody.querySelectorAll('.btn-edit').forEach(btn => {
                  btn.addEventListener('click', (e) => {
-                     const id = parseInt(e.target.dataset.id);
+                     const id = e.target.dataset.id;
+                     console.log(`[PeopleEditor] Edit button clicked for ID: ${id}`);
                      this.editPeople(id);
                  });
              });
@@ -483,8 +483,191 @@ class PeopleEditor {
             });
         }
         
+        // Setup clickable class names
+        this.setupClickableClassNames();
+        
         // Setup abilities-related event listeners
         this.setupAbilitiesEventListeners();
+    }
+    
+    setupClickableClassNames() {
+        // Use event delegation for dynamically created elements
+        const table = document.getElementById('peoplesTable');
+        if (table) {
+            table.addEventListener('click', (event) => {
+                if (event.target.classList.contains('job-name') && event.target.classList.contains('clickable')) {
+                    const classId = event.target.getAttribute('data-id');
+                    console.log(`[PeopleEditor] Class name clicked: ${classId}`);
+                    this.editPeople(classId);
+                }
+            });
+        }
+    }
+    
+    openClassDetails(classId) {
+        console.log(`[PeopleEditor] Opening details for class: ${classId}`);
+        
+        // Find the class data
+        const classData = this.peoples.find(people => people.id === classId);
+        if (!classData) {
+            console.error(`[PeopleEditor] Class not found: ${classId}`);
+            return;
+        }
+        
+        // Create and show modal
+        this.showClassDetailsModal(classData);
+    }
+    
+    showClassDetailsModal(classData) {
+        console.log(`[PeopleEditor] Showing details modal for: ${classData.name}`);
+        
+        // Create modal HTML
+        const modalHTML = `
+            <div class="modal-overlay" id="classDetailsModal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>📋 ${classData.name}</h3>
+                        <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">✕</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="class-details">
+                            <div class="detail-row">
+                                <label>🏷️ ID:</label>
+                                <span>${classData.id}</span>
+                            </div>
+                            <div class="detail-row">
+                                <label>👥 Volk:</label>
+                                <span>${this.getRaceDisplayName(classData.race)}</span>
+                            </div>
+                            <div class="detail-row">
+                                <label>📝 Beschreibung:</label>
+                                <span>${classData.description}</span>
+                            </div>
+                            <div class="detail-row">
+                                <label>⚡ Fähigkeiten:</label>
+                                <div class="abilities-list">
+                                    ${classData.assignedAbilities && classData.assignedAbilities.length > 0 
+                                        ? classData.assignedAbilities.map(ability => `<span class="ability-tag">${ability}</span>`).join('')
+                                        : '<span class="no-abilities">Keine Fähigkeiten zugewiesen</span>'
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" onclick="peopleEditor.editClass('${classData.id}')">✏️ Bearbeiten</button>
+                        <button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">Schließen</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Add modal to page
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+        
+        // Add some basic styling
+        const style = document.createElement('style');
+        style.textContent = `
+            .modal-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+            }
+            .modal-content {
+                background: white;
+                border-radius: 8px;
+                padding: 0;
+                max-width: 600px;
+                width: 90%;
+                max-height: 80vh;
+                overflow-y: auto;
+            }
+            .modal-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 20px;
+                border-bottom: 1px solid #eee;
+                background: #f8f9fa;
+                border-radius: 8px 8px 0 0;
+            }
+            .modal-header h3 {
+                margin: 0;
+                color: #333;
+            }
+            .modal-close {
+                background: none;
+                border: none;
+                font-size: 20px;
+                cursor: pointer;
+                color: #666;
+            }
+            .modal-body {
+                padding: 20px;
+            }
+            .class-details {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+            }
+            .detail-row {
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+            }
+            .detail-row label {
+                font-weight: bold;
+                color: #555;
+            }
+            .abilities-list {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 5px;
+            }
+            .ability-tag {
+                background: #e3f2fd;
+                color: #1976d2;
+                padding: 4px 8px;
+                border-radius: 4px;
+                font-size: 12px;
+            }
+            .no-abilities {
+                color: #666;
+                font-style: italic;
+            }
+            .modal-footer {
+                padding: 20px;
+                border-top: 1px solid #eee;
+                display: flex;
+                gap: 10px;
+                justify-content: flex-end;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    editClass(classId) {
+        console.log(`[PeopleEditor] Edit class: ${classId}`);
+        // Close modal first
+        const modal = document.getElementById('classDetailsModal');
+        if (modal) {
+            modal.remove();
+        }
+        
+        // Find the edit button and click it
+        const editButton = document.querySelector(`button.btn-edit[data-id="${classId}"]`);
+        if (editButton) {
+            editButton.click();
+        } else {
+            console.error(`[PeopleEditor] Edit button not found for class: ${classId}`);
+        }
     }
 
     cleanupAllAbilities() {
@@ -525,12 +708,20 @@ class PeopleEditor {
         }
     }
 
-         editPeople(id) {
-         const people = this.peoples.find(p => p.id === id);
-         if (people) {
-             this.openEditModal(people);
-         }
-     }
+    editPeople(id) {
+        console.log(`[PeopleEditor] editPeople called with ID: ${id}`);
+        console.log(`[PeopleEditor] Available peoples:`, this.peoples.map(p => ({id: p.id, name: p.name})));
+        
+        const people = this.peoples.find(p => p.id === id);
+        console.log(`[PeopleEditor] Found people:`, people);
+        
+        if (people) {
+            console.log(`[PeopleEditor] Opening edit modal for: ${people.name}`);
+            this.openEditModal(people);
+        } else {
+            console.error(`[PeopleEditor] People not found with ID: ${id}`);
+        }
+    }
      
      openEditModal(people) {
          const modal = document.getElementById('editModal');
@@ -702,17 +893,37 @@ class PeopleEditor {
              }
          };
          
-         // Handle form submission
-         form.onsubmit = (e) => {
-             e.preventDefault();
-             this.saveEditForm();
-         };
+        // Handle form submission
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            console.log('[PeopleEditor] Form submitted');
+            this.handleFormSubmit();
+        });
+        
+        // Handle form submission
+        form.onsubmit = (e) => {
+            e.preventDefault();
+            this.saveEditForm();
+        };
+        
+        // Handle save button click
+        const saveBtn = document.getElementById('saveEditBtn');
+        if (saveBtn) {
+            saveBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                console.log('[PeopleEditor] Save button clicked');
+                this.saveEditForm();
+            });
+        }
      }
      
          saveEditForm() {
         const form = document.getElementById('editForm');
-        const peopleId = parseInt(form.dataset.peopleId);
+        const peopleId = form.dataset.peopleId;
+        console.log(`[PeopleEditor] saveEditForm called with ID: ${peopleId}`);
+        
         const people = this.peoples.find(p => p.id === peopleId);
+        console.log(`[PeopleEditor] Found people to save:`, people);
         
         if (people) {
             // Update people data
@@ -722,7 +933,7 @@ class PeopleEditor {
             
             // Clean abilities - only save what was actually selected
             people.assignedAbilities = [...this.selectedAbilities];
-            people.abilities = this.selectedAbilities.join(', ');
+            people.abilities = this.selectedAbilities.map(a => a.name).join(', ');
             
             // Clear any legacy ability references not in selectedAbilities
             if (people.legacyAbilities) {
@@ -751,7 +962,7 @@ class PeopleEditor {
         }
         
         try {
-            const response = await fetch('/api/save-peoples', {
+            const response = await fetch('http://localhost:8080/api/save-peoples', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -921,9 +1132,17 @@ class PeopleEditor {
         
         console.log('[PeopleEditor] Available abilities:', this.availableAbilities.length);
         console.log('[PeopleEditor] Selected abilities:', this.selectedAbilities);
+        console.log('[PeopleEditor] Current editing person:', this.currentEditingPerson);
+        
+        // Convert selected ability names to full objects if needed
+        if (this.selectedAbilities.length > 0 && typeof this.selectedAbilities[0] === 'string') {
+            this.selectedAbilities = this.selectedAbilities.map(abilityName => {
+                const fullAbility = this.availableAbilities.find(ability => ability.name === abilityName);
+                return fullAbility || { id: abilityName, name: abilityName, icon: '⚡', category: 'unknown' };
+            });
+        }
         
         this.renderAbilitiesList();
-        this.renderSelectedAbilitiesList();
     }
 
     filterAbilitiesByRace(abilities, race) {
@@ -986,95 +1205,118 @@ class PeopleEditor {
     }
 
     renderAbilitiesList() {
-        console.log('[PeopleEditor] Rendering abilities list...');
-        const listContainer = document.getElementById('abilitiesClickableList');
-        if (!listContainer) {
-            console.warn('[PeopleEditor] abilitiesClickableList element not found');
-            return;
-        }
+        console.log('[PeopleEditor] Rendering abilities list in four columns...');
+        console.log('[PeopleEditor] Total available abilities:', this.availableAbilities.length);
         
-        // Get active tab category
-        const activeTab = document.querySelector('.ability-tab.active');
-        const categoryFilter = activeTab ? activeTab.dataset.category : 'all';
+        // Get search filter
         const searchFilter = document.getElementById('abilitiesQuickSearch')?.value?.toLowerCase() || '';
         
-        // Filter abilities
+        // Filter abilities by race assignments from Abilities Editor
         let filteredAbilities = this.availableAbilities;
+        console.log('[PeopleEditor] Filtered abilities before race filter:', filteredAbilities.length);
         
-        // Filter by race assignments from Abilities Editor
+        // Temporarily disable race filtering to debug
+        /*
         if (this.currentEditingPerson && this.currentEditingPerson.race) {
             filteredAbilities = this.filterAbilitiesByRace(filteredAbilities, this.currentEditingPerson.race);
+            console.log('[PeopleEditor] Filtered abilities after race filter:', filteredAbilities.length);
         }
+        */
         
-        if (categoryFilter !== 'all') {
-            filteredAbilities = filteredAbilities.filter(ability => ability.category === categoryFilter);
-        }
+        // Apply search filter
         if (searchFilter) {
             filteredAbilities = filteredAbilities.filter(ability => 
                 ability.name.toLowerCase().includes(searchFilter) ||
-                ability.description.toLowerCase().includes(searchFilter)
+                (ability.description && ability.description.toLowerCase().includes(searchFilter))
             );
         }
         
-        // Sort abilities: selected first, then alphabetically
-        filteredAbilities.sort((a, b) => {
-            const aSelected = this.selectedAbilities.includes(a.name);
-            const bSelected = this.selectedAbilities.includes(b.name);
-            
-            if (aSelected && !bSelected) return -1;
-            if (!aSelected && bSelected) return 1;
-            return a.name.localeCompare(b.name);
-        });
+        // Group abilities by category
+        const abilitiesByCategory = {
+            combat: filteredAbilities.filter(ability => ability.category === 'combat'),
+            magic: filteredAbilities.filter(ability => ability.category === 'magic'),
+            craft: filteredAbilities.filter(ability => ability.category === 'craft'),
+            social: filteredAbilities.filter(ability => ability.category === 'social')
+        };
         
-        // Render abilities as clickable list
-        listContainer.innerHTML = filteredAbilities.map(ability => {
-            const isSelected = this.selectedAbilities.includes(ability.name);
-            return `
-                <div class="ability-list-item ${isSelected ? 'selected' : ''}" 
-                     data-ability-name="${ability.name}">
-                    <div class="ability-status">
-                        <span class="ability-check">${isSelected ? '✅' : '⚪'}</span>
-                    </div>
-                    <div class="ability-icon-small">${ability.icon || '⚡'}</div>
-                    <div class="ability-details">
-                        <div class="ability-name-small">${ability.name}</div>
-                        <div class="ability-meta">
-                            <span class="ability-category-small">${this.getCategoryDisplayName(ability.category)}</span>
-                            <span class="ability-cost-small">${ability.cost}</span>
-                        </div>
+        console.log('[PeopleEditor] Abilities by category:', abilitiesByCategory);
+        
+        // Render each column
+        this.renderAbilityColumn('abilitiesCombatList', abilitiesByCategory.combat);
+        this.renderAbilityColumn('abilitiesMagicList', abilitiesByCategory.magic);
+        this.renderAbilityColumn('abilitiesCraftList', abilitiesByCategory.craft);
+        this.renderAbilityColumn('abilitiesSocialList', abilitiesByCategory.social);
+    }
+    
+    renderAbilityColumn(containerId, abilities) {
+        console.log(`[PeopleEditor] Rendering ${containerId} with ${abilities.length} abilities`);
+        const container = document.getElementById(containerId);
+        if (!container) {
+            console.warn(`[PeopleEditor] ${containerId} element not found`);
+            return;
+        }
+        
+        container.innerHTML = '';
+        
+        if (abilities.length === 0) {
+            console.log(`[PeopleEditor] No abilities for ${containerId}`);
+            return;
+        }
+        
+        abilities.forEach(ability => {
+            console.log(`[PeopleEditor] Rendering ability:`, ability);
+            const abilityItem = document.createElement('div');
+            abilityItem.className = 'ability-item';
+            abilityItem.dataset.abilityId = ability.id;
+            
+            const isSelected = this.selectedAbilities.some(selected => selected.id === ability.id);
+            abilityItem.classList.toggle('selected', isSelected);
+            
+            abilityItem.innerHTML = `
+                <div class="ability-icon">${(ability.icon || '⚡').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+                <div class="ability-info">
+                    <div class="ability-name" title="${(ability.name || '').replace(/"/g, '&quot;')}">${(ability.name || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+                    <div class="ability-values">
+                        <span class="ability-cost">${(ability.cost || '0').toString().replace(/</g, '&lt;').replace(/>/g, '&gt;')}</span>
+                        ${ability.level ? `<span class="ability-level">Level: ${ability.level.toString().replace(/</g, '&lt;').replace(/>/g, '&gt;')}</span>` : ''}
+                        ${ability.rank ? `<span class="ability-rank">Rang: ${ability.rank.toString().replace(/</g, '&lt;').replace(/>/g, '&gt;')}</span>` : ''}
                     </div>
                 </div>
             `;
-        }).join('');
-        
-        // Add click event listeners to ability items
-        const abilityItems = listContainer.querySelectorAll('.ability-list-item');
-        abilityItems.forEach(item => {
-            item.addEventListener('click', (e) => {
-                const abilityName = item.dataset.abilityName;
-                this.toggleAbilityInList(abilityName);
+            
+            // Add click event listener for the whole item
+            abilityItem.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.toggleAbilitySelection(ability);
             });
+            
+            container.appendChild(abilityItem);
         });
-        
-        // Show count
-        const count = filteredAbilities.length;
-        const selectedCount = this.selectedAbilities.length;
-        
-        // Remove existing count info
-        const parentPanel = listContainer.closest('.available-abilities-panel');
-        const existingCountInfo = parentPanel?.querySelector('.abilities-count-info');
-        if (existingCountInfo) {
-            existingCountInfo.remove();
-        }
-        
-        // Add new count info
-        if (parentPanel) {
-            parentPanel.insertAdjacentHTML('beforeend', 
-                `<div class="abilities-count-info">${selectedCount} von ${count} Fähigkeiten ausgewählt</div>`
-            );
-        }
     }
-
+    
+    toggleAbilitySelection(ability) {
+        console.log('[PeopleEditor] Toggling ability selection:', ability.name);
+        
+        const index = this.selectedAbilities.findIndex(selected => selected.id === ability.id);
+        if (index > -1) {
+            this.selectedAbilities.splice(index, 1);
+            console.log('[PeopleEditor] Removed ability:', ability.name);
+        } else {
+            this.selectedAbilities.push(ability);
+            console.log('[PeopleEditor] Added ability:', ability.name);
+        }
+        
+        // Update current person's abilities immediately
+        if (this.currentEditingPerson) {
+            this.currentEditingPerson.assignedAbilities = this.selectedAbilities.map(a => a.name);
+            this.currentEditingPerson.abilities = this.selectedAbilities.map(a => a.name).join(', ');
+            console.log('[PeopleEditor] Updated person abilities:', this.currentEditingPerson.abilities);
+        }
+        
+        // Re-render abilities list to show updated state
+        this.renderAbilitiesList();
+    }
+    
     getCategoryDisplayName(category) {
         const categoryNames = {
             'combat': '⚔️ Kampf',
@@ -1084,91 +1326,9 @@ class PeopleEditor {
         };
         return categoryNames[category] || category;
     }
-
-    toggleAbilityInList(abilityName) {
-        console.log('[PeopleEditor] Toggling ability in list:', abilityName);
-        console.log('[PeopleEditor] Current selected abilities:', this.selectedAbilities);
-        
-        const index = this.selectedAbilities.indexOf(abilityName);
-        if (index > -1) {
-            this.selectedAbilities.splice(index, 1);
-            console.log('[PeopleEditor] Removed ability:', abilityName);
-        } else {
-            this.selectedAbilities.push(abilityName);
-            console.log('[PeopleEditor] Added ability:', abilityName);
-        }
-        
-        console.log('[PeopleEditor] New selected abilities:', this.selectedAbilities);
-        
-        // Update current person's abilities immediately
-        if (this.currentEditingPerson) {
-            this.currentEditingPerson.assignedAbilities = [...this.selectedAbilities];
-            this.currentEditingPerson.abilities = this.selectedAbilities.join(', ');
-            console.log('[PeopleEditor] Updated person abilities:', this.currentEditingPerson.abilities);
-        }
-        
-        // Re-render both lists to show updated state
-        this.renderAbilitiesList();
-        this.renderSelectedAbilitiesList();
-    }
-
-    renderSelectedAbilitiesList() {
-        console.log('[PeopleEditor] Rendering selected abilities list...');
-        const selectedList = document.getElementById('selectedAbilitiesList');
-        if (!selectedList) {
-            console.warn('[PeopleEditor] selectedAbilitiesList element not found');
-            return;
-        }
-        
-        if (this.selectedAbilities.length === 0) {
-            selectedList.innerHTML = '<div class="no-selected-abilities">Keine Fähigkeiten ausgewählt</div>';
-            return;
-        }
-        
-        // Get selected abilities with full data
-        const selectedAbilitiesData = this.selectedAbilities.map(abilityName => {
-            return this.availableAbilities.find(ab => ab.name === abilityName);
-        }).filter(Boolean);
-        
-        selectedList.innerHTML = selectedAbilitiesData.map(ability => {
-            return `
-                <div class="selected-ability-item" data-ability-name="${ability.name}">
-                    <div class="selected-ability-icon">${ability.icon || '⚡'}</div>
-                    <div class="selected-ability-details">
-                        <div class="selected-ability-name">${ability.name}</div>
-                        <div class="selected-ability-category">${this.getCategoryDisplayName(ability.category)}</div>
-                    </div>
-                    <button type="button" class="remove-selected-ability" data-ability-name="${ability.name}" title="Entfernen">
-                        ❌
-                    </button>
-                </div>
-            `;
-        }).join('');
-        
-        // Add click event listeners to remove buttons
-        const removeButtons = selectedList.querySelectorAll('.remove-selected-ability');
-        removeButtons.forEach(button => {
-            button.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const abilityName = button.dataset.abilityName;
-                this.toggleAbilityInList(abilityName);
-            });
-        });
-    }
-
+    
     setupAbilitiesEventListeners() {
-        // Tab event listeners
-        const abilityTabs = document.querySelectorAll('.ability-tab');
-        abilityTabs.forEach(tab => {
-            tab.addEventListener('click', (e) => {
-                // Remove active class from all tabs
-                abilityTabs.forEach(t => t.classList.remove('active'));
-                // Add active class to clicked tab
-                e.target.closest('.ability-tab').classList.add('active');
-                // Re-render list
-                this.renderAbilitiesList();
-            });
-        });
+        // Tab functionality removed
         
         // Search input event listener
         const quickSearch = document.getElementById('abilitiesQuickSearch');

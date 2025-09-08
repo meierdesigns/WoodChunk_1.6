@@ -79,6 +79,80 @@ class AbilitiesUI {
                         <button id="resetToOriginalBtn" class="btn btn-warning">🔄 Original wiederherstellen</button>
                     </div>
                     
+            <div class="abilities-filter">
+                <div class="filter-group">
+                    <label>Völker:</label>
+                    <div class="multiselect-dropdown">
+                        <div class="multiselect-trigger">
+                            <div class="multiselect-selected">
+                                <span class="multiselect-text">Alle Völker</span>
+                            </div>
+                            <div class="multiselect-actions">
+                                <button class="multiselect-clear" style="display: none;">✕</button>
+                                <span class="multiselect-arrow">▼</span>
+                            </div>
+                        </div>
+                        <div class="multiselect-options">
+                            <div class="race-item">
+                                <input type="checkbox" value="Humans" class="race-checkbox" id="race-humans">
+                                <label for="race-humans" class="race-label">
+                                    <img src="../../assets/peoples/humans/humans.png" alt="Menschen" class="race-portrait" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                                    <span class="race-icon" style="display: none;">👤</span>
+                                    <span>Menschen</span>
+                                </label>
+                            </div>
+                            <div class="race-item">
+                                <input type="checkbox" value="Elves" class="race-checkbox" id="race-elves">
+                                <label for="race-elves" class="race-label">
+                                    <img src="../../assets/peoples/elves/elves.png" alt="Elfen" class="race-portrait" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                                    <span class="race-icon" style="display: none;">🧝</span>
+                                    <span>Elfen</span>
+                                </label>
+                            </div>
+                            <div class="race-item">
+                                <input type="checkbox" value="Dwarves" class="race-checkbox" id="race-dwarves">
+                                <label for="race-dwarves" class="race-label">
+                                    <img src="../../assets/peoples/dwarves/dwarves.png" alt="Zwerge" class="race-portrait" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                                    <span class="race-icon" style="display: none;">🧔</span>
+                                    <span>Zwerge</span>
+                                </label>
+                            </div>
+                            <div class="race-item">
+                                <input type="checkbox" value="Orcs" class="race-checkbox" id="race-orcs">
+                                <label for="race-orcs" class="race-label">
+                                    <img src="../../assets/peoples/orcs/orcs.png" alt="Orks" class="race-portrait" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                                    <span class="race-icon" style="display: none;">🧌</span>
+                                    <span>Orks</span>
+                                </label>
+                            </div>
+                            <div class="race-item">
+                                <input type="checkbox" value="Goblins" class="race-checkbox" id="race-goblins">
+                                <label for="race-goblins" class="race-label">
+                                    <img src="../../assets/peoples/goblins/goblins.png" alt="Goblins" class="race-portrait" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                                    <span class="race-icon" style="display: none;">👺</span>
+                                    <span>Goblins</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                        <div class="filter-group">
+                            <label for="abilityMagicFilter">Magie-Anforderung:</label>
+                            <select id="abilityMagicFilter">
+                                <option value="">Alle</option>
+                                <option value="none">Keine</option>
+                                <option value="basic">Basis</option>
+                                <option value="advanced">Fortgeschritten</option>
+                                <option value="master">Meister</option>
+                                <option value="legendary">Legendär</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="abilitySearchFilter">Suche:</label>
+                            <input type="text" id="abilitySearchFilter" placeholder="Fähigkeit suchen...">
+                        </div>
+                    </div>
+                    
                     <div class="abilities-table-container">
                         <table class="abilities-table">
                             <thead>
@@ -87,6 +161,8 @@ class AbilitiesUI {
                                     <th class="col-name">Name</th>
                                     <th class="col-description">Beschreibung</th>
                                     <th class="col-cost">Kosten</th>
+                                    <th class="col-damage">Schaden</th>
+                                    <th class="col-healing">Heilung</th>
                                 </tr>
                             </thead>
                             <tbody id="abilitiesTableBody">
@@ -121,7 +197,8 @@ class AbilitiesUI {
                 // Save category to localStorage
                 localStorage.setItem('abilitiesEditorCategory', this.core.getCurrentCategory());
                 
-                this.updateDisplay();
+                // Apply all filters including the new category
+                this.applyFilters();
             });
         });
         
@@ -162,7 +239,132 @@ class AbilitiesUI {
             });
         }
         
+        // Filter event listeners
+        this.setupFilterListeners();
+        
         // Race selection listeners removed - using AbilityDetailsModal instead
+    }
+
+    setupFilterListeners() {
+        // Multiselect dropdown toggle
+        const multiselectTrigger = document.querySelector('.multiselect-trigger');
+        const multiselectOptions = document.querySelector('.multiselect-options');
+        
+        if (multiselectTrigger && multiselectOptions) {
+            multiselectTrigger.addEventListener('click', (e) => {
+                // Don't toggle if clicking on clear button
+                if (!e.target.classList.contains('multiselect-clear')) {
+                    multiselectTrigger.classList.toggle('active');
+                    multiselectOptions.classList.toggle('show');
+                }
+            });
+            
+            // Clear button functionality
+            const clearButton = document.querySelector('.multiselect-clear');
+            if (clearButton) {
+                clearButton.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.clearAllRaces();
+                });
+            }
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!multiselectTrigger.contains(e.target) && !multiselectOptions.contains(e.target)) {
+                    multiselectTrigger.classList.remove('active');
+                    multiselectOptions.classList.remove('show');
+                }
+            });
+        }
+        
+        // Race checkboxes
+        const raceCheckboxes = document.querySelectorAll('.race-checkbox');
+        raceCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                this.updateMultiselectText();
+                this.applyFilters();
+            });
+        });
+        
+        // Magic requirement filter
+        const magicFilter = document.getElementById('abilityMagicFilter');
+        if (magicFilter) {
+            magicFilter.addEventListener('change', () => {
+                this.applyFilters();
+            });
+        }
+        
+        // Search filter
+        const searchFilter = document.getElementById('abilitySearchFilter');
+        if (searchFilter) {
+            searchFilter.addEventListener('input', () => {
+                this.applyFilters();
+            });
+        }
+    }
+
+    updateMultiselectText() {
+        const checkedBoxes = document.querySelectorAll('.race-checkbox:checked');
+        const multiselectSelected = document.querySelector('.multiselect-selected');
+        const clearButton = document.querySelector('.multiselect-clear');
+        
+        if (!multiselectSelected) return;
+        
+        // Clear existing content
+        multiselectSelected.innerHTML = '';
+        
+        if (checkedBoxes.length === 0) {
+            multiselectSelected.innerHTML = '<span class="multiselect-text">Alle Völker</span>';
+            if (clearButton) clearButton.style.display = 'none';
+        } else {
+            // Show selected race portraits
+            checkedBoxes.forEach(checkbox => {
+                const label = checkbox.nextElementSibling;
+                const portrait = label.querySelector('.race-portrait');
+                const icon = label.querySelector('.race-icon');
+                
+                const portraitElement = document.createElement('img');
+                portraitElement.className = 'multiselect-selected-portrait';
+                portraitElement.src = portrait.src;
+                portraitElement.alt = portrait.alt;
+                portraitElement.onerror = function() {
+                    this.style.display = 'none';
+                    const fallback = document.createElement('span');
+                    fallback.textContent = icon.textContent;
+                    fallback.style.fontSize = '14px';
+                    multiselectSelected.appendChild(fallback);
+                };
+                
+                multiselectSelected.appendChild(portraitElement);
+            });
+            
+            if (clearButton) clearButton.style.display = 'inline-block';
+        }
+    }
+
+    clearAllRaces() {
+        const raceCheckboxes = document.querySelectorAll('.race-checkbox');
+        raceCheckboxes.forEach(checkbox => {
+            checkbox.checked = false;
+        });
+        this.updateMultiselectText();
+        this.applyFilters();
+    }
+
+    applyFilters() {
+        const raceCheckboxes = document.querySelectorAll('.race-checkbox:checked');
+        const magicFilter = document.getElementById('abilityMagicFilter');
+        const searchFilter = document.getElementById('abilitySearchFilter');
+        
+        const filters = {
+            category: this.core.currentCategory,
+            races: Array.from(raceCheckboxes).map(checkbox => checkbox.value),
+            magicRequirement: magicFilter ? magicFilter.value : '',
+            search: searchFilter ? searchFilter.value : ''
+        };
+        
+        this.core.filterAbilitiesAdvanced(filters);
+        this.updateDisplay();
     }
 
     // setupRaceSelectionListeners removed - using AbilityDetailsModal instead
@@ -258,7 +460,7 @@ class AbilitiesUI {
 
     openEditModal(ability) {
         // Use the new AbilityDetailsModal instead
-        if (this.abilityDetailsModal) {
+        if (this.abilityDetailsModal && ability && ability.id) {
             this.abilityDetailsModal.showAbilityDetails(ability.id);
         }
     }

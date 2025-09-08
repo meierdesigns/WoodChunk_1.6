@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tile Inspector Demo - WoodChunk 1.6</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .demo-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .demo-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .demo-content {
+            padding: 20px;
+        }
+        
+        .demo-section {
+            margin-bottom: 30px;
+        }
+        
+        .demo-section h3 {
+            color: #333;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .feature-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .feature-list li:before {
+            content: "✅ ";
+            margin-right: 10px;
+        }
+        
+        .code-block {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            margin: 5px;
+        }
+        
+        .btn:hover {
+            background: #5a6fd8;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <div class="demo-header">
+            <h1>🔍 Tile Inspector Module</h1>
+            <p>WoodChunk 1.6 - Hexmap Tile Inspection System</p>
+        </div>
+        
+        <div class="demo-content">
+            <div class="demo-section">
+                <h3>Overview</h3>
+                <p>The Tile Inspector module allows users to examine hexmap tiles in detail. When a user clicks on a tile in inspection mode, they can see comprehensive information about that tile including its properties, position, type, and neighbors.</p>
+            </div>
+            
+            <div class="demo-section">
+                <h3>Features</h3>
+                <ul class="feature-list">
+                    <li>Visual tile preview with type-specific icons and colors</li>
+                    <li>Detailed position information (X, Y, Z coordinates)</li>
+                    <li>Tile type classification and color coding</li>
+                    <li>Custom properties display</li>
+                    <li>Neighbor tile information</li>
+                    <li>Modal overlay with smooth animations</li>
+                    <li>Responsive design for mobile devices</li>
+                    <li>Integration with existing hexmap editor</li>
+                    <li>Inspection mode toggle functionality</li>
+                </ul>
+            </div>
+            
+            <div class="demo-section">
+                <h3>Usage</h3>
+                <p>To use the Tile Inspector:</p>
+                <ol>
+                    <li>Enable inspection mode by clicking the "🔍 Inspect Mode" button</li>
+                    <li>Click on any tile in the hexmap to inspect it</li>
+                    <li>View detailed information in the modal overlay</li>
+                    <li>Click "Close" or the X button to dismiss the inspector</li>
+                    <li>Toggle back to edit mode to continue editing tiles</li>
+                </ol>
+            </div>
+            
+            <div class="demo-section">
+                <h3>Integration</h3>
+                <p>The Tile Inspector integrates seamlessly with the existing hexmap editor through:</p>
+                <div class="code-block">
+// Tile Inspection Bridge
+const bridge = new TileInspectionBridge(tileInspector);
+bridge.enableInspectionMode();
+
+// Integration with existing click handler
+window.MapRenderer.prototype.handleTileClick = function(e) {
+    if (window.tileInspectionBridge.isInspectionModeActive()) {
+        // Handle inspection instead of editing
+        window.tileInspectionBridge.handleTileClickForInspection(hexPos, this.core);
+        return;
+    }
+    // Continue with normal editing...
+};
+                </div>
+            </div>
+            
+            <div class="demo-section">
+                <h3>File Structure</h3>
+                <div class="code-block">
+src/modules/ui/
+├── TileInspector.tsx          # Main React component
+├── TileInspector.css          # Styling for the modal
+├── TileInspectionBridge.ts    # Integration bridge
+└── TileInspectionIntegration.js # Patches existing editor
+
+src/shared/types.ts            # Updated with TileInspector interface
+                </div>
+            </div>
+            
+            <div class="demo-section">
+                <h3>Try It Out</h3>
+                <p>To test the Tile Inspector in your hexmap editor:</p>
+                <button class="btn" onclick="loadTileInspector()">Load Tile Inspector</button>
+                <button class="btn btn-secondary" onclick="toggleInspectionMode()">Toggle Inspection Mode</button>
+                <button class="btn btn-secondary" onclick="showSampleTile()">Show Sample Tile</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Demo functions
+        function loadTileInspector() {
+            console.log('Loading Tile Inspector...');
+            // In a real implementation, this would load the module
+            alert('Tile Inspector loaded! Click "Toggle Inspection Mode" to enable tile inspection.');
+        }
+        
+        function toggleInspectionMode() {
+            console.log('Toggling inspection mode...');
+            // In a real implementation, this would toggle the mode
+            alert('Inspection mode toggled! Click on tiles to inspect them.');
+        }
+        
+        function showSampleTile() {
+            console.log('Showing sample tile...');
+            // In a real implementation, this would show a sample tile
+            alert('Sample tile inspection would be shown here!');
+        }
+        
+        // Initialize demo
+        console.log('Tile Inspector Demo loaded');
+    </script>
+</body>
+</html>

@@ -10,7 +10,7 @@
     "experience": 18,
     "goldDrop": 6,
     "description": "Ein flinker Goblin-Kundschafter, spezialisiert auf Aufklärung und Hinterhalte.",
-    "abilities": "Tarnung, Schnellschuss, Fallen stellen",
+    "abilities": "Adlerauge",
     "lootTable": "[{\"item\":\"Goblin-Bogen\",\"chance\":0.3},{\"item\":\"Vergiftete Pfeile\",\"chance\":0.5},{\"item\":\"Tarnumhang\",\"chance\":0.2}]",
     "rank": 1,
     "rankIconPath": "assets/ranks/rare_1.png"

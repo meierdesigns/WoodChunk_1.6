@@ -518,9 +518,9 @@ class BiomeTileSelector {
     
     getBiomeNameForImage(imagePath) {
         // Bestimme Biome basierend auf dem Bildnamen
-        if (imagePath.includes('forest') || imagePath.includes('wald')) {
+        if (imagePath.includes('forest') || imagePath.includes('wald') || imagePath.includes('Forest')) {
             return 'Forest';
-        } else if (imagePath.includes('mountain') || imagePath.includes('berg')) {
+        } else if (imagePath.includes('mountain') || imagePath.includes('berg') || imagePath.includes('Mountain')) {
             return 'Mountains';
         } else if (imagePath.includes('water') || imagePath.includes('wasser')) {
             return 'Water';
@@ -534,6 +534,10 @@ class BiomeTileSelector {
             return 'Jungle';
         } else if (imagePath.includes('badlands')) {
             return 'Badlands';
+        } else if (imagePath.includes('Slice ')) {
+            return 'Unassigned';
+        } else if (imagePath.includes('void') || imagePath.includes('Void')) {
+            return 'Unassigned';
         }
         return 'Forest'; // Fallback
     }
@@ -921,9 +925,24 @@ class BiomeTileSelector {
                         
                         // Fallback: Erstelle ein Standard-Tile wenn keine Tiles gefunden wurden
                         if (biome.tiles.length === 0) {
+                            // Use existing tile files instead of generating non-existent names
+                            const fallbackImageMap = {
+                                'Forest': 'forest.png',
+                                'Mountains': 'Mountain.png',
+                                'Water': 'water.png',
+                                'Desert': 'desert.png',
+                                'Swamp': 'swamp.png',
+                                'Plain': 'grass.png',
+                                'Jungle': 'jungle.png',
+                                'Badlands': 'badlands.png',
+                                'Snow': 'snow.png',
+                                'Ocean': 'ocean.png',
+                                'Unassigned': 'Slice 1.png'
+                            };
+                            
                             biome.tiles.push({
                                 name: biomeOption.name,
-                                image: `${biomeOption.name.toLowerCase()}1.png`,
+                                image: fallbackImageMap[biomeOption.name] || `${biomeOption.name.toLowerCase()}.png`,
                                 icon: this.getBiomeIcon(biomeOption.name)
                             });
                         }
@@ -1131,9 +1150,7 @@ class BiomeTileSelector {
                 icon: '🏠',
                 color: '#4CAF50',
                 tiles: [
-                    { name: 'Haus 1', image: 'house1.png', icon: '🏠' },
-                    { name: 'Haus 2', image: 'house2.png', icon: '🏠' },
-                    { name: 'Hütte', image: 'hut1.png', icon: '🏠' }
+                    { name: 'Haus', image: 'slice_333.png', icon: '🏠', buildingCategory: 'building' }
                 ]
             },
             {
@@ -1141,9 +1158,7 @@ class BiomeTileSelector {
                 icon: '🗼',
                 color: '#FF9800',
                 tiles: [
-                    { name: 'Wachturm', image: 'tower1.png', icon: '🗼' },
-                    { name: 'Leuchtturm', image: 'tower2.png', icon: '🗼' },
-                    { name: 'Magierturm', image: 'tower3.png', icon: '🗼' }
+                    { name: 'Wachturm', image: 'slice_344.png', icon: '🗼', buildingCategory: 'tower' }
                 ]
             },
             {
@@ -1151,19 +1166,7 @@ class BiomeTileSelector {
                 icon: '🏰',
                 color: '#9C27B0',
                 tiles: [
-                    { name: 'Burg', image: 'castle1.png', icon: '🏰' },
-                    { name: 'Festung', image: 'castle2.png', icon: '🏰' },
-                    { name: 'Palast', image: 'castle3.png', icon: '🏰' }
-                ]
-            },
-            {
-                name: 'Tempel',
-                icon: '⛪',
-                color: '#2196F3',
-                tiles: [
-                    { name: 'Tempel', image: 'temple1.png', icon: '⛪' },
-                    { name: 'Kirche', image: 'temple2.png', icon: '⛪' },
-                    { name: 'Schrein', image: 'temple3.png', icon: '⛪' }
+                    { name: 'Burg', image: 'slice_352.png', icon: '🏰', buildingCategory: 'castle' }
                 ]
             },
             {
@@ -1171,9 +1174,7 @@ class BiomeTileSelector {
                 icon: '⛏️',
                 color: '#795548',
                 tiles: [
-                    { name: 'Mine', image: 'mine1.png', icon: '⛏️' },
-                    { name: 'Steinbruch', image: 'mine2.png', icon: '⛏️' },
-                    { name: 'Erzgrube', image: 'mine3.png', icon: '⛏️' }
+                    { name: 'Mine', image: 'slice_358.png', icon: '⛏️', buildingCategory: 'mining_site' }
                 ]
             }
         ];

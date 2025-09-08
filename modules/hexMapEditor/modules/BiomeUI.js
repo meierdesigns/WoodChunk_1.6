@@ -718,27 +718,22 @@ class BiomeUI {
         console.log('[BiomeUI] Using hardcoded fallback tiles for category:', category);
         const fallbackTiles = {
             'building': [
-                { name: 'Haus', image: 'house1.png', icon: '🏠' },
-                { name: 'Turm', image: 'tower1.png', icon: '🗼' },
-                { name: 'Burg', image: 'castle1.png', icon: '🏰' },
-                { name: 'Tempel', image: 'temple1.png', icon: '⛪' },
-                { name: 'Mine', image: 'mine1.png', icon: '⛏️' }
+                { name: 'Haus', image: 'slice_333.png', icon: '🏠', buildingCategory: 'building' },
+                { name: 'Turm', image: 'slice_344.png', icon: '🗼', buildingCategory: 'tower' },
+                { name: 'Burg', image: 'slice_352.png', icon: '🏰', buildingCategory: 'castle' },
+                { name: 'Mine', image: 'slice_358.png', icon: '⛏️', buildingCategory: 'mining_site' }
             ],
             'tower': [
-                { name: 'Wachturm', image: 'tower1.png', icon: '🗼' },
-                { name: 'Leuchtturm', image: 'tower2.png', icon: '🗼' }
+                { name: 'Wachturm', image: 'slice_344.png', icon: '🗼', buildingCategory: 'tower' }
             ],
             'castle': [
-                { name: 'Burg', image: 'castle1.png', icon: '🏰' },
-                { name: 'Festung', image: 'castle2.png', icon: '🏰' }
+                { name: 'Burg', image: 'slice_352.png', icon: '🏰', buildingCategory: 'castle' }
             ],
             'temple': [
-                { name: 'Tempel', image: 'temple1.png', icon: '⛪' },
-                { name: 'Kirche', image: 'temple2.png', icon: '⛪' }
+                { name: 'Tempel', image: 'slice_344.png', icon: '⛪', buildingCategory: 'tower' }
             ],
             'mining_site': [
-                { name: 'Mine', image: 'mine1.png', icon: '⛏️' },
-                { name: 'Steinbruch', image: 'mine2.png', icon: '⛏️' }
+                { name: 'Mine', image: 'slice_358.png', icon: '⛏️', buildingCategory: 'mining_site' }
             ]
         };
         
@@ -1198,6 +1193,23 @@ class BiomeUI {
         if (imagePath.startsWith('assets/')) {
             return '/' + imagePath;
         } else if (!imagePath.startsWith('/') && !imagePath.startsWith('http')) {
+            // Spezielle Behandlung für Buildings tiles
+            if (imagePath.includes('slice_') || imagePath.includes('tile_')) {
+                return '/assets/biomes/Buildings/tiles/' + imagePath;
+            }
+            // Für andere Tiles, verwende den Standard-Pfad basierend auf dem Tile-Typ
+            if (imagePath.includes('forest') || imagePath.includes('Forest')) {
+                return '/assets/biomes/Forest/tiles/' + imagePath;
+            } else if (imagePath.includes('mountain') || imagePath.includes('Mountain')) {
+                return '/assets/biomes/Mountains/tiles/' + imagePath;
+            } else if (imagePath.includes('desert')) {
+                return '/assets/biomes/Desert/tiles/' + imagePath;
+            } else if (imagePath.includes('water')) {
+                return '/assets/biomes/Water/tiles/' + imagePath;
+            } else if (imagePath.includes('Slice ')) {
+                return '/assets/biomes/Unassigned/tiles/' + imagePath;
+            }
+            // Standard: Buildings für unbekannte Tiles
             return '/assets/biomes/Buildings/tiles/' + imagePath;
         }
         return imagePath;

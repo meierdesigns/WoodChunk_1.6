@@ -130,6 +130,23 @@ class TileMapper {
         if (imagePath.startsWith('assets/')) {
             return '/' + imagePath;
         } else if (!imagePath.startsWith('/') && !imagePath.startsWith('http')) {
+            // Spezielle Behandlung für Buildings tiles
+            if (imagePath.includes('slice_') || imagePath.includes('tile_')) {
+                return '/assets/biomes/Buildings/tiles/' + imagePath;
+            }
+            // Für andere Tiles, verwende den Standard-Pfad basierend auf dem Tile-Typ
+            if (imagePath.includes('forest') || imagePath.includes('Forest')) {
+                return '/assets/biomes/Forest/tiles/' + imagePath;
+            } else if (imagePath.includes('mountain') || imagePath.includes('Mountain')) {
+                return '/assets/biomes/Mountains/tiles/' + imagePath;
+            } else if (imagePath.includes('desert')) {
+                return '/assets/biomes/Desert/tiles/' + imagePath;
+            } else if (imagePath.includes('water')) {
+                return '/assets/biomes/Water/tiles/' + imagePath;
+            } else if (imagePath.includes('Slice ')) {
+                return '/assets/biomes/Unassigned/tiles/' + imagePath;
+            }
+            // Standard: Buildings für unbekannte Tiles
             return '/assets/biomes/Buildings/tiles/' + imagePath;
         }
         

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { CoreModule } from './modules/core';
 import { GameModule } from './modules/game';
 import { UIModule } from './modules/ui';
-import { MainMenu, MainCard, MapEditor, ItemEditor, PeopleEditor, CharacterEditor, Settings } from './modules/ui';
+import { MainMenu, MainCard, MapEditor, ItemEditor, PeopleEditor, CharacterEditor, Settings, TileInspector } from './modules/ui';
 import { addCacheBusting } from './shared/types';
 import './styles.css';
 
@@ -161,6 +161,7 @@ const App: React.FC = () => {
       
       <main className="app-content">
         {renderCurrentView()}
+        <TileInspector />
       </main>
     </div>
   );

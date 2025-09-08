@@ -1,4 +1,4 @@
-import { UIAPI, MainCard, MainMenu, MapEditor, ItemEditor, PeopleEditor, CharacterEditor, Settings, addCacheBusting } from '../../shared/types';
+import { UIAPI, MainCard, MainMenu, MapEditor, ItemEditor, PeopleEditor, CharacterEditor, Settings, TileInspector, addCacheBusting } from '../../shared/types';
 
 // Cache busting utility for Buildings images
 const correctImagePath = (imagePath: string): string => {
@@ -20,6 +20,7 @@ export class UIModule implements UIAPI {
   private peopleEditor: PeopleEditor;
   private characterEditor: CharacterEditor;
   private settings: Settings;
+  private tileInspector: TileInspector;
 
 
   constructor() {
@@ -63,6 +64,10 @@ export class UIModule implements UIAPI {
     return this.settings;
   }
 
+  getTileInspector(): TileInspector {
+    return this.tileInspector;
+  }
+
 
 
   initialize(): void {
@@ -76,6 +81,7 @@ export class UIModule implements UIAPI {
     this.peopleEditor = new PeopleEditorImpl();
     this.characterEditor = new CharacterEditorImpl();
     this.settings = new SettingsImpl();
+    this.tileInspector = new TileInspectorImpl();
 
     
     console.debug('[ui/UIModule] All UI components initialized');
@@ -108,6 +114,10 @@ export class CharacterEditorImpl implements CharacterEditor {
 }
 
 export class SettingsImpl implements Settings {
+  // Implementation will be added
+}
+
+export class TileInspectorImpl implements TileInspector {
   // Implementation will be added
 }
 

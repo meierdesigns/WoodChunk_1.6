@@ -266,11 +266,10 @@ class BiomeData {
         // Simuliere das Laden von Tiles aus einer Datei
         // In einer echten Implementierung würde hier ein fetch() stehen
         const mockTiles = [
-            { name: 'Haus', image: 'assets/biomes/Buildings/tiles/house1.png', buildingCategory: 'building' },
-            { name: 'Turm', image: 'assets/biomes/Buildings/tiles/tower1.png', buildingCategory: 'tower' },
-            { name: 'Burg', image: 'assets/biomes/Buildings/tiles/castle1.png', buildingCategory: 'castle' },
-            { name: 'Tempel', image: 'assets/biomes/Buildings/tiles/temple1.png', buildingCategory: 'temple' },
-            { name: 'Mine', image: 'assets/biomes/Buildings/tiles/mine1.png', buildingCategory: 'mining_site' }
+            { name: 'Haus', image: 'slice_333.png', buildingCategory: 'building' },
+            { name: 'Turm', image: 'slice_344.png', buildingCategory: 'tower' },
+            { name: 'Burg', image: 'slice_352.png', buildingCategory: 'castle' },
+            { name: 'Mine', image: 'slice_358.png', buildingCategory: 'mining_site' }
         ];
         
         return mockTiles;
@@ -337,6 +336,23 @@ class BiomeData {
         if (imagePath.startsWith('assets/')) {
             return '/' + imagePath;
         } else if (!imagePath.startsWith('/') && !imagePath.startsWith('http')) {
+            // Spezielle Behandlung für Buildings tiles
+            if (imagePath.includes('slice_') || imagePath.includes('tile_')) {
+                return '/assets/biomes/Buildings/tiles/' + imagePath;
+            }
+            // Für andere Tiles, verwende den Standard-Pfad basierend auf dem Tile-Typ
+            if (imagePath.includes('forest') || imagePath.includes('Forest')) {
+                return '/assets/biomes/Forest/tiles/' + imagePath;
+            } else if (imagePath.includes('mountain') || imagePath.includes('Mountain')) {
+                return '/assets/biomes/Mountains/tiles/' + imagePath;
+            } else if (imagePath.includes('desert')) {
+                return '/assets/biomes/Desert/tiles/' + imagePath;
+            } else if (imagePath.includes('water')) {
+                return '/assets/biomes/Water/tiles/' + imagePath;
+            } else if (imagePath.includes('Slice ')) {
+                return '/assets/biomes/Unassigned/tiles/' + imagePath;
+            }
+            // Standard: Buildings für unbekannte Tiles
             return '/assets/biomes/Buildings/tiles/' + imagePath;
         }
         
@@ -490,29 +506,22 @@ class BiomeData {
     getMockTilesForCategory(category) {
         const mockTiles = {
             'building': [
-                { name: 'Haus 1', image: 'house1.png', icon: '🏠', movementCost: 1, defenseBonus: 0 },
-                { name: 'Haus 2', image: 'house2.png', icon: '🏠', movementCost: 1, defenseBonus: 0 },
-                { name: 'Hütte', image: 'hut1.png', icon: '🏠', movementCost: 1, defenseBonus: 0 }
+                { name: 'Haus', image: 'slice_333.png', icon: '🏠', movementCost: 1, defenseBonus: 0, buildingCategory: 'building' },
+                { name: 'Turm', image: 'slice_344.png', icon: '🗼', movementCost: 1, defenseBonus: 2, buildingCategory: 'tower' },
+                { name: 'Burg', image: 'slice_352.png', icon: '🏰', movementCost: 1, defenseBonus: 3, buildingCategory: 'castle' },
+                { name: 'Mine', image: 'slice_358.png', icon: '⛏️', movementCost: 1, defenseBonus: 0, buildingCategory: 'mining_site' }
             ],
             'tower': [
-                { name: 'Wachturm', image: 'tower1.png', icon: '🗼', movementCost: 1, defenseBonus: 2 },
-                { name: 'Leuchtturm', image: 'tower2.png', icon: '🗼', movementCost: 1, defenseBonus: 2 },
-                { name: 'Magierturm', image: 'tower3.png', icon: '🗼', movementCost: 1, defenseBonus: 2 }
+                { name: 'Wachturm', image: 'slice_344.png', icon: '🗼', movementCost: 1, defenseBonus: 2, buildingCategory: 'tower' }
             ],
             'castle': [
-                { name: 'Burg', image: 'castle1.png', icon: '🏰', movementCost: 1, defenseBonus: 3 },
-                { name: 'Festung', image: 'castle2.png', icon: '🏰', movementCost: 1, defenseBonus: 3 },
-                { name: 'Palast', image: 'castle3.png', icon: '🏰', movementCost: 1, defenseBonus: 3 }
+                { name: 'Burg', image: 'slice_352.png', icon: '🏰', movementCost: 1, defenseBonus: 3, buildingCategory: 'castle' }
             ],
             'temple': [
-                { name: 'Tempel', image: 'temple1.png', icon: '⛪', movementCost: 1, defenseBonus: 1 },
-                { name: 'Kathedrale', image: 'temple2.png', icon: '⛪', movementCost: 1, defenseBonus: 1 },
-                { name: 'Kloster', image: 'temple3.png', icon: '⛪', movementCost: 1, defenseBonus: 1 }
+                { name: 'Tempel', image: 'slice_344.png', icon: '⛪', movementCost: 1, defenseBonus: 1, buildingCategory: 'tower' }
             ],
             'mining_site': [
-                { name: 'Mine', image: 'mine1.png', icon: '⛏️', movementCost: 1, defenseBonus: 0 },
-                { name: 'Steinbruch', image: 'mine2.png', icon: '⛏️', movementCost: 1, defenseBonus: 0 },
-                { name: 'Erzgrube', image: 'mine3.png', icon: '⛏️', movementCost: 1, defenseBonus: 0 }
+                { name: 'Mine', image: 'slice_358.png', icon: '⛏️', movementCost: 1, defenseBonus: 0, buildingCategory: 'mining_site' }
             ]
         };
         

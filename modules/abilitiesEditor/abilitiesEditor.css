@@ -17,6 +17,226 @@
     border-radius: 8px;
 }
 
+/* Filter Groups */
+.abilities-filter {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 24px;
+    margin-bottom: 20px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    align-items: start;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: relative;
+    width: fit-content;
+}
+
+.filter-group label {
+    font-weight: 600;
+    color: #333;
+    font-size: 0.9em;
+    margin-bottom: 4px;
+}
+
+.filter-group select,
+.filter-group input {
+    padding: 10px 12px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.9em;
+    background: white;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.filter-group select:focus,
+.filter-group input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Multiselect Dropdown */
+.multiselect-dropdown {
+    position: relative;
+    width: 300px;
+}
+
+.multiselect-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 44px;
+}
+
+.multiselect-trigger:hover {
+    border-color: #667eea;
+}
+
+.multiselect-trigger.active {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.multiselect-selected {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+    min-width: 0;
+}
+
+.multiselect-text {
+    font-size: 0.9em;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.multiselect-selected-portrait {
+    width: 20px;
+    height: 20px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 1px solid #ddd;
+    background: white;
+    flex-shrink: 0;
+}
+
+.multiselect-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.multiselect-clear {
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 2px;
+    border-radius: 3px;
+    transition: all 0.2s ease;
+}
+
+.multiselect-clear:hover {
+    background: #f0f0f0;
+    color: #333;
+}
+
+.multiselect-arrow {
+    font-size: 0.8em;
+    color: #666;
+    transition: transform 0.2s ease;
+}
+
+.multiselect-trigger.active .multiselect-arrow {
+    transform: rotate(180deg);
+}
+
+.multiselect-options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 2px solid #ddd;
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    z-index: 1000;
+    display: none;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.multiselect-options.show {
+    display: block;
+}
+
+.multiselect-options .race-item {
+    padding: 4px 6px;
+    border-bottom: 1px solid #eee;
+    margin: 0;
+    border-radius: 0;
+    border: none;
+    background: white;
+}
+
+.multiselect-options .race-item:last-child {
+    border-bottom: none;
+}
+
+.multiselect-options .race-item:hover {
+    background: #f8f9fa;
+    transform: none;
+}
+
+.race-checkbox {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: #51cf66;
+    transform: scale(1.2);
+    flex-shrink: 0;
+}
+
+.race-label {
+    cursor: pointer;
+    font-weight: 500;
+    color: #333;
+    flex: 1;
+    margin: 0;
+    font-size: 0.9em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.race-portrait {
+    width: 24px;
+    height: 24px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #e0e0e0;
+    background: white;
+    flex-shrink: 0;
+}
+
+.race-icon {
+    font-size: 1.2em;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 2px solid #e0e0e0;
+    background: white;
+    flex-shrink: 0;
+}
+
+.race-label span:last-child {
+    color: #333;
+    font-weight: 500;
+}
+
 /* Kategorie-Tab-Styles */
 .category-tabs {
     margin-bottom: 20px;
@@ -1757,5 +1977,47 @@
 .element-label span:last-child {
     color: #333;
     font-weight: 500;
+}
+
+/* Range Input Groups */
+.range-input-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.range-input-group .edit-input {
+    flex: 1;
+    min-width: 60px;
+}
+
+.range-separator {
+    font-weight: 600;
+    color: #666;
+    font-size: 0.9em;
+    min-width: 12px;
+    text-align: center;
+}
+
+/* Table Column Styles for Damage and Healing */
+.col-damage,
+.col-healing {
+    text-align: center;
+    width: 80px;
+}
+
+.damage-value,
+.healing-value {
+    font-weight: 600;
+    color: #333;
+    font-size: 0.9em;
+}
+
+.damage-value {
+    color: #dc3545;
+}
+
+.healing-value {
+    color: #28a745;
 }
 

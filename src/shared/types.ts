@@ -28,7 +28,7 @@ export interface UIAPI {
   getPeopleEditor(): PeopleEditor;
   getCharacterEditor(): CharacterEditor;
   getSettings(): Settings;
-
+  getTileInspector(): TileInspector;
 }
 
 // Shared Types
@@ -180,4 +180,49 @@ export interface EntityTemplate {
   type: EntityType;
   position: Position;
   properties: Record<string, any>;
+}
+
+// Tile Inspector
+export interface TileInspector {
+  showTileDetails(tile: HexTile, position: Position): void;
+  hideTileDetails(): void;
+  isVisible(): boolean;
+  getCurrentTile(): HexTile | null;
+  getCurrentPosition(): Position | null;
+}
+
+// UI Component Interfaces
+export interface MainCard {
+  render(): void;
+  update(): void;
+}
+
+export interface MainMenu {
+  render(): void;
+  update(): void;
+}
+
+export interface MapEditor {
+  render(): void;
+  update(): void;
+}
+
+export interface ItemEditor {
+  render(): void;
+  update(): void;
+}
+
+export interface PeopleEditor {
+  render(): void;
+  update(): void;
+}
+
+export interface CharacterEditor {
+  render(): void;
+  update(): void;
+}
+
+export interface Settings {
+  render(): void;
+  update(): void;
 }

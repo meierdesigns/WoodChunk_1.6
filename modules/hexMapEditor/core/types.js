@@ -6,7 +6,8 @@ const TileTypes = {
     FOREST: 'forest',
     DESERT: 'desert',
     SNOW: 'snow',
-    VOID: 'void'
+    VOID: 'void',
+    BUILDING: 'building'
 };
 
 const TileColors = {
@@ -16,7 +17,8 @@ const TileColors = {
     [TileTypes.FOREST]: '#388E3C',
     [TileTypes.DESERT]: '#FF9800',
     [TileTypes.SNOW]: '#FFFFFF',
-    [TileTypes.VOID]: '#000000'
+    [TileTypes.VOID]: '#000000',
+    [TileTypes.BUILDING]: '#8B4513'
 };
 
 class HexPosition {

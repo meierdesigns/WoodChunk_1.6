@@ -152,7 +152,7 @@ class SettingsModule {
             <div style="margin-top: 20px;">
                 <button id="reset-settings-btn" class="secondary" style="font-size: 10px; height: 20px; padding: 2px 6px;">Zurücksetzen</button>
                 <button id="apply-settings-btn" style="font-size: 10px; height: 20px; padding: 2px 6px;">Anwenden</button>
-                <button id="save-map-btn" style="font-size: 10px; height: 20px; padding: 2px 6px;">Speichern</button>
+                <button id="settings-save-map-btn" style="font-size: 10px; height: 20px; padding: 2px 6px;">Speichern</button>
                 
                 <!-- Debug Toggle Button -->
                 <button id="debug-toggle-btn" class="secondary" style="font-size: 10px; height: 20px; padding: 2px 6px; margin-top: 4px; width: 100%;">🐛 Debug Tools ▼</button>
@@ -539,10 +539,10 @@ class SettingsModule {
             });
         }
         
-        // Save Map Button
-        const saveMapBtn = document.getElementById('save-map-btn');
-        if (saveMapBtn) {
-            saveMapBtn.addEventListener('click', () => {
+        // Save Map Button (Settings Module)
+        const settingsSaveMapBtn = document.getElementById('settings-save-map-btn');
+        if (settingsSaveMapBtn) {
+            settingsSaveMapBtn.addEventListener('click', () => {
                 if (!this.isCoreAvailable()) {
                     ToastManager.showToast('Core nicht verfügbar!', 'error');
                     return;
